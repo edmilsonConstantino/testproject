@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
-import { Header } from './components/Header';
+import { Topbar } from './components/Topbar';
 import { MapHeroSection } from './components/MapHeroSection';
 import { FeaturedCountriesSection } from './components/FeaturedCountriesSection';
 import { CountryDetailModal } from './components/CountryDetailModal';
@@ -84,12 +84,11 @@ export default function App() {
 
       {/* 2. Main Content Area (Right of Sidebar) */}
       <div className="flex-1 lg:pl-64 flex flex-col min-w-0 transition-all duration-300">
-        {/* Top Header */}
-        <Header
-          onOpenSearch={() => setIsSearchModalOpen(true)}
+        {/* Topbar Navigation */}
+        <Topbar
+          onOpenSearchModal={() => setIsSearchModalOpen(true)}
           onOpenMobileMenu={() => setIsMobileSidebarOpen(true)}
           onOpenAuth={handleOpenAuth}
-          onOpenAiChat={() => setIsAiModalOpen(true)}
         />
 
         {/* Scrollable Main Body */}
