@@ -273,14 +273,14 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
   };
 
   return (
-    <div id="mundo-em-movimento-view" className="w-full bg-[#F1F5F9] min-h-full pb-14">
-      <div className="max-w-[1600px] mx-auto px-3.5 sm:px-5 lg:px-6 py-5 sm:py-6 flex flex-col gap-6">
+    <div id="mundo-em-movimento-view" className="w-full bg-[#f5f7fb] min-h-full pb-14">
+      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-7 py-6 sm:py-7 flex flex-col gap-5">
         {/* 1. Cabeçalho Principal da Página */}
         <header className="flex flex-col gap-1.5">
-          <h1 className="text-[32px] sm:text-4xl font-extrabold text-[#0F172A] leading-tight tracking-tight font-['Outfit']">
+          <h1 className="text-[30px] sm:text-[34px] font-extrabold text-[#14265f] leading-tight tracking-tight font-['Outfit']">
             Mundo em Movimento
           </h1>
-          <p className="text-sm sm:text-base text-[#64748B] max-w-3xl leading-relaxed font-normal">
+          <p className="text-[12px] sm:text-[13px] text-[#52618a] max-w-3xl leading-relaxed font-normal">
             As notícias e acontecimentos que têm impacto global. <br className="hidden sm:inline" />
             Essencial para entender o presente e construir o futuro.
           </p>
@@ -374,15 +374,15 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
         </nav>
 
         {/* 3. Grade Principal em 2 Colunas: Área de Conteúdo à Esquerda + Barra Lateral à Direita */}
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start w-full">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start w-full">
           {/* COLUNA ESQUERDA (xl:col-span-9 / ~75%) */}
-          <div className="xl:col-span-9 flex flex-col gap-8 w-full">
+          <div className="xl:col-span-9 flex flex-col gap-5 w-full">
             {/* Bloco Superior: Hero à esquerda + Impacto em números à direita */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch w-full">
               {/* Card Hero (~65% da coluna esquerda / lg:col-span-8) */}
               <article
                 id="hero-news-card"
-                className="lg:col-span-8 relative overflow-hidden rounded-[18px] min-h-[410px] lg:h-[430px] flex flex-col justify-between p-6 sm:p-8 text-white shadow-md group border border-slate-900/10"
+                className="lg:col-span-8 relative overflow-hidden rounded-[15px] min-h-[360px] lg:h-[392px] flex flex-col justify-between p-5 sm:p-6 text-white shadow-md group border border-slate-900/10"
               >
                 {/* Imagem da Terra vista do espaço com iluminação noturna das cidades */}
                 <img
@@ -493,7 +493,7 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
               {/* Card "Impacto em números" (~35% da coluna esquerda / lg:col-span-4) */}
               <aside
                 id="impacto-em-numeros-card"
-                className="lg:col-span-4 bg-white rounded-[18px] border border-slate-200/80 shadow-xs min-h-[410px] lg:h-[430px] p-5 sm:p-6 flex flex-col justify-between"
+                className="lg:col-span-4 bg-white rounded-[15px] border border-[#e6ebf4] shadow-[0_5px_18px_rgba(26,55,100,0.05)] min-h-[360px] lg:h-[392px] p-4 sm:p-5 flex flex-col justify-between"
               >
                 {/* Header */}
                 <div className="flex items-center justify-between pb-3 border-b border-slate-100">
@@ -602,7 +602,7 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
               </div>
 
               {/* Grid dos 6 Cards (3 por linha em telas médias / 6 por linha em telas ultra-largas) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
                 {MAIN_NEWS_LIST.map((item) => {
                   const isSaved = savedNewsIds.has(item.id);
                   return (
@@ -673,11 +673,11 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
           </div>
 
           {/* COLUNA DIREITA (xl:col-span-3 / ~25%) */}
-          <div className="xl:col-span-3 flex flex-col gap-6 w-full">
+          <div className="xl:col-span-3 flex flex-col gap-4 w-full">
             {/* Card 1: Em destaque agora */}
             <div
               id="em-destaque-agora-card"
-              className="bg-white rounded-[18px] border border-slate-200/80 p-5 shadow-xs flex flex-col gap-4"
+              className="bg-white rounded-[15px] border border-[#e6ebf4] p-4 shadow-[0_5px_18px_rgba(26,55,100,0.05)] flex flex-col gap-3"
             >
               <div className="flex items-center justify-between pb-1 border-b border-slate-100">
                 <h3 className="text-base font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
@@ -735,7 +735,7 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
             {/* Card 2: Tendências globais */}
             <div
               id="tendencias-globais-card"
-              className="bg-white rounded-[18px] border border-slate-200/80 p-5 shadow-xs flex flex-col gap-4"
+              className="bg-white rounded-[15px] border border-[#e6ebf4] p-4 shadow-[0_5px_18px_rgba(26,55,100,0.05)] flex flex-col gap-3"
             >
               <div className="flex items-center justify-between pb-1 border-b border-slate-100">
                 <h3 className="text-base font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
