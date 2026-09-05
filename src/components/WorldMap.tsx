@@ -2,18 +2,22 @@ import React, { useMemo, useState } from 'react';
 import { geoNaturalEarth1, geoPath } from 'd3-geo';
 import { feature, mesh } from 'topojson-client';
 import worldData from 'world-atlas/countries-110m.json';
-import { Plus, Minus, Compass, Box, ArrowRight } from 'lucide-react';
+import { Plus, Minus, Crosshair, Box, ArrowRight, X } from 'lucide-react';
 import { CountryData } from '../types';
+import { COUNTRIES_DATA } from '../data/countriesData';
 
 interface WorldMapProps {
   selectedCountry: CountryData;
   onSelectCountry: (country: CountryData) => void;
   onExploreCountry: (country: CountryData) => void;
+  className?: string;
+  showLegend?: boolean;
+  controlsPosition?: 'bottom-left' | 'bottom-right' | 'lateral-right' | 'bottom-left-stacked';
 }
 
-// Coordinates configured to align with Natural Earth 1 projection matching the reference UI
+// Geographic coordinates for accurate pins and projection matching the global map
 export const MAP_PINS = [
-  // Active (Green)
+  // 1. Active (Green) - Portugal is the primary featured active country with animated ripple
   {
     id: 'portugal',
     name: 'Portugal',
@@ -25,61 +29,50 @@ export const MAP_PINS = [
     lng: -8.2245,
     lat: 39.3999,
   },
-  // Blue (With Activity)
+  // 2. Blue (País com Atividade) - As visible in screenshot: USA, Brasil, África do Sul, Japão, Austrália
   {
-    id: 'usa-east',
+    id: 'eua',
     name: 'Estados Unidos (Leste)',
     flag: '🇺🇸',
     status: 'with-activity' as const,
     statusLabel: 'COM ATIVIDADE',
-    projectsCount: 840,
-    communitiesCount: 310000,
-    lng: -84.0,
-    lat: 42.0,
+    projectsCount: 1120,
+    communitiesCount: 420000,
+    lng: -86.0,
+    lat: 41.5,
   },
   {
-    id: 'brazil',
+    id: 'brasil',
     name: 'Brasil',
     flag: '🇧🇷',
     status: 'with-activity' as const,
     statusLabel: 'COM ATIVIDADE',
     projectsCount: 1542,
     communitiesCount: 892130,
-    lng: -44.0,
-    lat: -15.0,
+    lng: -48.0,
+    lat: -14.5,
   },
   {
-    id: 'middle-east',
-    name: 'Médio Oriente / Golfo',
-    flag: '🇦🇪',
-    status: 'with-activity' as const,
-    statusLabel: 'COM ATIVIDADE',
-    projectsCount: 290,
-    communitiesCount: 95000,
-    lng: 54.0,
-    lat: 25.0,
-  },
-  {
-    id: 'south-africa',
+    id: 'africa-sul',
     name: 'África do Sul',
     flag: '🇿🇦',
     status: 'with-activity' as const,
     statusLabel: 'COM ATIVIDADE',
-    projectsCount: 512,
-    communitiesCount: 180000,
-    lng: 25.0,
-    lat: -29.0,
+    projectsCount: 280,
+    communitiesCount: 95000,
+    lng: 24.5,
+    lat: -29.5,
   },
   {
-    id: 'china-east',
-    name: 'Ásia Oriental',
-    flag: '🇨🇳',
+    id: 'japao',
+    name: 'Japão',
+    flag: '🇯🇵',
     status: 'with-activity' as const,
     statusLabel: 'COM ATIVIDADE',
-    projectsCount: 680,
-    communitiesCount: 240000,
-    lng: 118.0,
-    lat: 32.0,
+    projectsCount: 432,
+    communitiesCount: 156320,
+    lng: 138.2529,
+    lat: 36.2048,
   },
   {
     id: 'australia',
@@ -89,97 +82,119 @@ export const MAP_PINS = [
     statusLabel: 'COM ATIVIDADE',
     projectsCount: 340,
     communitiesCount: 124000,
-    lng: 138.0,
-    lat: -34.0,
+    lng: 145.0,
+    lat: -33.5,
   },
-  // Gray (Inactive / Observation)
+  // 3. Gray (País Inativo) - Neutral dots matching the screenshot across continents
   {
-    id: 'usa-northwest',
-    name: 'Estados Unidos (Oeste)',
-    flag: '🇺🇸',
-    status: 'inactive' as const,
-    statusLabel: 'INATIVO',
-    projectsCount: 45,
-    communitiesCount: 12000,
-    lng: -120.0,
-    lat: 47.0,
-  },
-  {
-    id: 'canada',
+    id: 'alasca',
     name: 'Canadá',
     flag: '🇨🇦',
     status: 'inactive' as const,
     statusLabel: 'INATIVO',
     projectsCount: 18,
     communitiesCount: 6500,
-    lng: -100.0,
-    lat: 55.0,
+    lng: -115.0,
+    lat: 56.0,
   },
   {
-    id: 'south-america-nw',
-    name: 'América do Sul (Noroeste)',
-    flag: '🇵🇪',
+    id: 'eua-oeste',
+    name: 'Estados Unidos (Oeste)',
+    flag: '🇺🇸',
+    status: 'inactive' as const,
+    statusLabel: 'INATIVO',
+    projectsCount: 45,
+    communitiesCount: 12000,
+    lng: -118.0,
+    lat: 44.0,
+  },
+  {
+    id: 'eua-central',
+    name: 'Estados Unidos (Centro)',
+    flag: '🇺🇸',
+    status: 'inactive' as const,
+    statusLabel: 'INATIVO',
+    projectsCount: 30,
+    communitiesCount: 9000,
+    lng: -100.0,
+    lat: 36.0,
+  },
+  {
+    id: 'colombia',
+    name: 'Colômbia',
+    flag: '🇨🇴',
+    status: 'inactive' as const,
+    statusLabel: 'INATIVO',
+    projectsCount: 35,
+    communitiesCount: 11000,
+    lng: -74.0,
+    lat: 4.5,
+  },
+  {
+    id: 'argentina',
+    name: 'Argentina',
+    flag: '🇦🇷',
     status: 'inactive' as const,
     statusLabel: 'INATIVO',
     projectsCount: 38,
     communitiesCount: 14200,
-    lng: -75.0,
-    lat: -6.0,
+    lng: -64.0,
+    lat: -34.0,
   },
   {
-    id: 'nordics',
-    name: 'Norte da Europa',
+    id: 'norte-africa',
+    name: 'Norte de África',
+    flag: '🇲🇦',
+    status: 'inactive' as const,
+    statusLabel: 'INATIVO',
+    projectsCount: 22,
+    communitiesCount: 8000,
+    lng: 18.0,
+    lat: 26.0,
+  },
+  {
+    id: 'africa-central',
+    name: 'África Central',
+    flag: '🇨🇩',
+    status: 'inactive' as const,
+    statusLabel: 'INATIVO',
+    projectsCount: 28,
+    communitiesCount: 10500,
+    lng: 22.0,
+    lat: 0.0,
+  },
+  {
+    id: 'escandinavia',
+    name: 'Escandinávia',
     flag: '🇸🇪',
     status: 'inactive' as const,
     statusLabel: 'INATIVO',
     projectsCount: 65,
     communitiesCount: 22000,
-    lng: 20.0,
+    lng: 16.0,
     lat: 62.0,
   },
   {
-    id: 'russia-central',
-    name: 'Rússia Central',
+    id: 'russia-ocidental',
+    name: 'Rússia Ocidental',
     flag: '🇷🇺',
     status: 'inactive' as const,
     statusLabel: 'INATIVO',
     projectsCount: 22,
     communitiesCount: 8900,
-    lng: 75.0,
+    lng: 78.0,
     lat: 58.0,
   },
   {
-    id: 'russia-east',
-    name: 'Sibéria Oriental',
-    flag: '🇷🇺',
+    id: 'siberia-central',
+    name: 'Ásia Central',
+    flag: '🇰🇿',
     status: 'inactive' as const,
     statusLabel: 'INATIVO',
-    projectsCount: 8,
-    communitiesCount: 2300,
-    lng: 125.0,
-    lat: 58.0,
-  },
-  {
-    id: 'west-africa',
-    name: 'África Ocidental',
-    flag: '🇬🇭',
-    status: 'inactive' as const,
-    statusLabel: 'INATIVO',
-    projectsCount: 42,
-    communitiesCount: 18000,
-    lng: 8.0,
-    lat: 12.0,
-  },
-  {
-    id: 'east-africa',
-    name: 'África Oriental',
-    flag: '🇰🇪',
-    status: 'inactive' as const,
-    statusLabel: 'INATIVO',
-    projectsCount: 756,
-    communitiesCount: 278910,
-    lng: 38.0,
-    lat: 6.0,
+    projectsCount: 15,
+    communitiesCount: 5400,
+    lng: 72.0,
+    lat: 44.0,
   },
   {
     id: 'india',
@@ -187,21 +202,43 @@ export const MAP_PINS = [
     flag: '🇮🇳',
     status: 'inactive' as const,
     statusLabel: 'INATIVO',
-    projectsCount: 110,
-    communitiesCount: 48000,
-    lng: 78.0,
-    lat: 21.0,
+    projectsCount: 940,
+    communitiesCount: 380000,
+    lng: 78.9629,
+    lat: 20.5937,
   },
   {
-    id: 'central-asia',
-    name: 'Ásia Central',
-    flag: '🇰🇿',
+    id: 'china',
+    name: 'China',
+    flag: '🇨🇳',
     status: 'inactive' as const,
     statusLabel: 'INATIVO',
-    projectsCount: 15,
-    communitiesCount: 5400,
-    lng: 68.0,
-    lat: 45.0,
+    projectsCount: 50,
+    communitiesCount: 19000,
+    lng: 104.0,
+    lat: 35.0,
+  },
+  {
+    id: 'sudeste-asiatico',
+    name: 'Sudeste Asiático',
+    flag: '🇹🇭',
+    status: 'inactive' as const,
+    statusLabel: 'INATIVO',
+    projectsCount: 32,
+    communitiesCount: 12000,
+    lng: 102.0,
+    lat: 14.0,
+  },
+  {
+    id: 'australia-oeste',
+    name: 'Austrália Ocidental',
+    flag: '🇦🇺',
+    status: 'inactive' as const,
+    statusLabel: 'INATIVO',
+    projectsCount: 18,
+    communitiesCount: 6200,
+    lng: 122.0,
+    lat: -26.0,
   },
 ];
 
@@ -209,9 +246,18 @@ export const WorldMap: React.FC<WorldMapProps> = ({
   selectedCountry,
   onSelectCountry,
   onExploreCountry,
+  className = '',
+  showLegend = true,
+  controlsPosition = 'bottom-left',
 }) => {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [is3DMode, setIs3DMode] = useState(false);
+  const [isPopupDismissed, setIsPopupDismissed] = useState(false);
+
+  // Whenever selectedCountry changes, re-open popup
+  React.useEffect(() => {
+    setIsPopupDismissed(false);
+  }, [selectedCountry.id]);
 
   const handleZoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.2, 1.8));
   const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.2, 0.85));
@@ -222,24 +268,41 @@ export const WorldMap: React.FC<WorldMapProps> = ({
   const toggle3D = () => setIs3DMode((prev) => !prev);
 
   // SVG Geometry generation with Natural Earth projection
-  const { landPath, bordersPath, portugalPath, projectedPins, portugalPos } = useMemo(() => {
-    const width = 1180;
-    const height = 580;
-
-    // Matches the visual layout in the reference screenshot
-    const projection = geoNaturalEarth1()
+  const { landPath, bordersPath, portugalPath, projectedPins, portugalPos, projection } = useMemo(() => {
+    // Natural Earth 1 projection matching the visual reference
+    const proj = geoNaturalEarth1()
       .scale(185)
       .translate([620, 290]);
 
-    const pathGenerator = geoPath(projection);
+    const pathGenerator = geoPath(proj);
 
-    // Extract TopoJSON features
+    // Extract TopoJSON features and exclude Antarctica (code 010 / 10 / ATA)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const topology = worldData as any;
-    const landFeature = feature(topology, topology.objects.land);
     const countriesFeature = feature(topology, topology.objects.countries);
+
+    // Filter out Antarctica
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const bordersMesh = mesh(topology, topology.objects.countries, (a: any, b: any) => a !== b);
+    const filteredCountries = {
+      type: 'FeatureCollection',
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      features: ((countriesFeature as any).features || []).filter((f: any) => {
+        const id = String(f.id);
+        const name = f.properties?.name;
+        if (id === '010' || id === '10' || id === 'ATA' || name === 'Antarctica') {
+          return false;
+        }
+        return true;
+      }),
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const bordersMesh = mesh(topology, topology.objects.countries, (a: any, b: any) => {
+      const isAntarcticaA = String(a.id) === '010' || String(a.id) === '10' || a.id === 'ATA';
+      const isAntarcticaB = String(b.id) === '010' || String(b.id) === '10' || b.id === 'ATA';
+      if (isAntarcticaA || isAntarcticaB) return false;
+      return a !== b;
+    });
 
     // Find Portugal (ISO 620)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -247,13 +310,13 @@ export const WorldMap: React.FC<WorldMapProps> = ({
       (f: { id: string | number }) => f.id === '620' || f.id === 620
     );
 
-    const landD = pathGenerator(landFeature) || '';
+    const landD = pathGenerator(filteredCountries as any) || '';
     const bordersD = pathGenerator(bordersMesh) || '';
     const ptD = ptFeature ? pathGenerator(ptFeature) || '' : '';
 
     // Calculate projected positions for all pins
     const pins = MAP_PINS.map((pin) => {
-      const coords = projection([pin.lng, pin.lat]);
+      const coords = proj([pin.lng, pin.lat]);
       return {
         ...pin,
         x: coords ? coords[0] : 0,
@@ -261,7 +324,7 @@ export const WorldMap: React.FC<WorldMapProps> = ({
       };
     });
 
-    const ptCoords = projection([-8.2245, 39.3999]) || [599, 161];
+    const ptCoords = proj([-8.2245, 39.3999]) || [599, 161];
 
     return {
       landPath: landD,
@@ -269,25 +332,82 @@ export const WorldMap: React.FC<WorldMapProps> = ({
       portugalPath: ptD,
       projectedPins: pins,
       portugalPos: { x: ptCoords[0], y: ptCoords[1] },
+      projection: proj,
     };
   }, []);
+
+  // Compute active target pin position for wave pulses & popup
+  const activePinPos = useMemo(() => {
+    // 1. Direct match by ID in projected pins
+    const found = projectedPins.find(
+      (p) => p.id === selectedCountry.id || p.name.toLowerCase() === selectedCountry.name.toLowerCase()
+    );
+    if (found) {
+      return { x: found.x, y: found.y };
+    }
+
+    // 2. Try mapPos percentage in selectedCountry
+    if (selectedCountry.mapPos) {
+      return {
+        x: (selectedCountry.mapPos.x / 100) * 1180,
+        y: (selectedCountry.mapPos.y / 100) * 580,
+      };
+    }
+
+    // Fallback to Portugal
+    return { x: portugalPos.x, y: portugalPos.y };
+  }, [selectedCountry, projectedPins, portugalPos]);
+
+  // Determine pulse ring color based on selectedCountry status
+  const ringColor = useMemo(() => {
+    if (selectedCountry.status === 'active') return '#10B981';
+    if (selectedCountry.status === 'with-activity') return '#1264FF';
+    return '#94A3B8';
+  }, [selectedCountry.status]);
+
+  // Determine popup coordinates:
+  // If pin is in the right area (x > 720), position popup on the LEFT of the pin with right-facing arrow
+  // If pin is in the left/center, position popup on the RIGHT of the pin with left-facing arrow
+  const isPinOnRight = activePinPos.x > 720;
+  const pinXPercent = (activePinPos.x / 1180) * 100;
+  const pinYPercent = (activePinPos.y / 580) * 100;
+  // Clamped Y position so popup stays visible inside SVG bounds
+  const clampedYPercent = Math.max(16, Math.min(84, pinYPercent));
 
   return (
     <div
       id="interactive-world-map-wrapper"
-      className="relative w-full h-[540px] sm:h-[580px] lg:h-[620px] rounded-3xl overflow-hidden select-none bg-gradient-to-b from-[#F9FBFE] via-[#F3F7FC] to-[#ECF2F9] border border-[#E2E8F0] shadow-sm"
+      className={`relative w-full h-[460px] sm:h-[500px] lg:h-[520px] select-none bg-transparent overflow-hidden ${className}`}
       style={{
         perspective: is3DMode ? '1200px' : 'none',
       }}
     >
-      {/* Background Soft Subtle Grid Texture */}
-      <div
-        className="absolute inset-0 opacity-[0.25] pointer-events-none"
-        style={{
-          backgroundImage: 'radial-gradient(#94A3B8 0.75px, transparent 0.75px)',
-          backgroundSize: '24px 24px',
-        }}
-      />
+      {/* 3. Fixed Legend Pill (Verde: País Ativo | Azul: País com Atividade | Cinza: País Inativo) */}
+      {showLegend && (
+        <div
+          id="world-map-fixed-legend"
+          className="absolute bottom-3.5 right-3.5 sm:bottom-4 sm:right-4 z-25 bg-white/95 backdrop-blur-md rounded-full px-5 py-2.5 sm:py-3 border border-slate-100/90 shadow-[0_4px_16px_rgba(15,30,61,0.08),0_2px_6px_rgba(0,0,0,0.04)] flex items-center gap-3.5 sm:gap-5 select-none animate-in fade-in duration-200"
+        >
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] ring-2 ring-emerald-200 shrink-0" />
+            <span className="text-[#0D1E3A] font-bold text-xs sm:text-[12px] whitespace-nowrap font-['Outfit']">
+              País Ativo
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#1264FF] ring-2 ring-blue-200 shrink-0" />
+            <span className="text-[#0D1E3A] font-bold text-xs sm:text-[12px] whitespace-nowrap font-['Outfit']">
+              País com Atividade
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#94A3B8] ring-2 ring-slate-200 shrink-0" />
+            <span className="text-[#0D1E3A] font-bold text-xs sm:text-[12px] whitespace-nowrap font-['Outfit']">
+              País Inativo
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* SVG Map Canvas with Zoom & 3D Transform */}
       <div
@@ -295,7 +415,7 @@ export const WorldMap: React.FC<WorldMapProps> = ({
         className="w-full h-full relative transition-all duration-700 ease-out"
         style={{
           transform: `scale(${zoomLevel}) ${is3DMode ? 'rotateX(22deg) rotateY(-6deg) translateZ(10px)' : ''}`,
-          transformOrigin: '60% 40%',
+          transformOrigin: '55% 45%',
         }}
       >
         <svg
@@ -304,30 +424,25 @@ export const WorldMap: React.FC<WorldMapProps> = ({
           preserveAspectRatio="xMidYMid slice"
         >
           <defs>
-            {/* Continent Gradient (Clean White to Soft Blue-Gray) */}
+            {/* Continent Gradient (Clean White to Light Embossed Soft Gray-Blue) */}
             <linearGradient id="geoContinentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#FFFFFF" />
-              <stop offset="70%" stopColor="#FFFFFF" />
-              <stop offset="100%" stopColor="#E6EFF8" />
+              <stop offset="60%" stopColor="#F8FAFD" />
+              <stop offset="100%" stopColor="#EDF3FB" />
             </linearGradient>
 
             {/* Elevation Drop Shadow for Natural Continents */}
             <filter id="geoElevationShadow" x="-15%" y="-15%" width="130%" height="130%">
-              <feDropShadow dx="0" dy="16" stdDeviation="18" floodColor="#0F1E3D" floodOpacity="0.10" />
-              <feDropShadow dx="0" dy="4" stdDeviation="5" floodColor="#0F1E3D" floodOpacity="0.05" />
+              <feDropShadow dx="0" dy="12" stdDeviation="14" floodColor="#0F1E3D" floodOpacity="0.06" />
+              <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#0F1E3D" floodOpacity="0.03" />
             </filter>
 
-            {/* Portugal Radial Glow Aura */}
-            <radialGradient id="ptAuraGrad" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#10B981" stopOpacity="0.55" />
-              <stop offset="40%" stopColor="#10B981" stopOpacity="0.22" />
+            {/* Radiant Aura Gradient - soft mint glow */}
+            <radialGradient id="activeAuraGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#10B981" stopOpacity="0.2" />
+              <stop offset="55%" stopColor="#10B981" stopOpacity="0.08" />
               <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
             </radialGradient>
-
-            {/* Soft Pin Drop Shadow */}
-            <filter id="pinShadow" x="-30%" y="-30%" width="160%" height="160%">
-              <feDropShadow dx="0" dy="3" stdDeviation="3" floodColor="#0F1E3D" floodOpacity="0.25" />
-            </filter>
           </defs>
 
           {/* High-Precision Continents Base Layer with Multi-Layer Shadow */}
@@ -335,8 +450,8 @@ export const WorldMap: React.FC<WorldMapProps> = ({
             <path
               d={landPath}
               fill="url(#geoContinentGrad)"
-              stroke="#CBD8E6"
-              strokeWidth="0.85"
+              stroke="#DDE6F4"
+              strokeWidth="0.75"
             />
           </g>
 
@@ -345,78 +460,57 @@ export const WorldMap: React.FC<WorldMapProps> = ({
             <path
               d={bordersPath}
               fill="none"
-              stroke="#DEE9F4"
-              strokeWidth="0.65"
+              stroke="#E2EBF7"
+              strokeWidth="0.5"
               strokeLinejoin="round"
             />
           </g>
 
-          {/* Highlighted Portugal Territory & Radiating Concentric Pulse Waves */}
-          <g id="geo-portugal-highlight">
-            {/* Concentric expanding wave rings matching image */}
+          {/* Concentric wave rings radiating gently from the active country (Portugal) */}
+          <g id="geo-active-waves">
+            {/* Soft subtle mint aura */}
             <circle
-              cx={portugalPos.x}
-              cy={portugalPos.y}
-              r="24"
-              fill="none"
-              stroke="#10B981"
-              strokeWidth="1.5"
-              opacity="0.65"
-              className="animate-ping origin-center"
-              style={{ animationDuration: '3.5s' }}
-            />
-            <circle
-              cx={portugalPos.x}
-              cy={portugalPos.y}
-              r="46"
-              fill="none"
-              stroke="#10B981"
-              strokeWidth="1.2"
-              opacity="0.4"
-            />
-            <circle
-              cx={portugalPos.x}
-              cy={portugalPos.y}
+              cx={activePinPos.x}
+              cy={activePinPos.y}
               r="68"
+              fill="url(#activeAuraGrad)"
+            />
+            {/* Inner Ring */}
+            <circle
+              cx={activePinPos.x}
+              cy={activePinPos.y}
+              r="28"
               fill="none"
               stroke="#10B981"
-              strokeWidth="1"
-              opacity="0.25"
+              strokeWidth="1.1"
+              opacity="0.45"
             />
+            {/* Middle Ring */}
             <circle
-              cx={portugalPos.x}
-              cy={portugalPos.y}
-              r="92"
+              cx={activePinPos.x}
+              cy={activePinPos.y}
+              r="48"
+              fill="none"
+              stroke="#10B981"
+              strokeWidth="0.95"
+              opacity="0.3"
+            />
+            {/* Outer Ring */}
+            <circle
+              cx={activePinPos.x}
+              cy={activePinPos.y}
+              r="74"
               fill="none"
               stroke="#10B981"
               strokeWidth="0.8"
-              opacity="0.15"
+              opacity="0.18"
             />
-
-            {/* Soft Green Glow Behind Portugal */}
-            <circle
-              cx={portugalPos.x}
-              cy={portugalPos.y}
-              r="55"
-              fill="url(#ptAuraGrad)"
-            />
-
-            {/* Portugal Country Polygon Fill in Vibrant Emerald Green */}
-            {portugalPath && (
-              <path
-                d={portugalPath}
-                fill="#10B981"
-                stroke="#059669"
-                strokeWidth="1.5"
-                className="transition-all duration-300"
-              />
-            )}
           </g>
         </svg>
 
         {/* Dynamic Map Pins Layer matching precise geographic coordinates */}
         {projectedPins.map((pin) => {
-          const isSelected = selectedCountry.id === pin.id || (pin.id === 'portugal' && selectedCountry.id === 'portugal');
+          const isSelected = selectedCountry.id === pin.id || selectedCountry.name.toLowerCase() === pin.name.toLowerCase();
           const isActiveGreen = pin.status === 'active';
           const isActivityBlue = pin.status === 'with-activity';
 
@@ -427,52 +521,64 @@ export const WorldMap: React.FC<WorldMapProps> = ({
                 left: `${(pin.x / 1180) * 100}%`,
                 top: `${(pin.y / 580) * 100}%`,
               }}
-              className="absolute -translate-x-1/2 -translate-y-1/2 z-20 cursor-pointer group"
+              className={`absolute -translate-x-1/2 -translate-y-1/2 cursor-pointer group transition-transform duration-200 ${
+                isSelected ? 'z-30 scale-105' : 'z-20 hover:scale-115'
+              }`}
               onClick={() => {
-                const matched = {
-                  ...selectedCountry,
+                const matched = COUNTRIES_DATA.find(
+                  (c) => c.id === pin.id || c.name.toLowerCase() === pin.name.toLowerCase()
+                ) || {
                   id: pin.id,
                   name: pin.name,
+                  code: pin.id.slice(0, 2).toUpperCase(),
                   flag: pin.flag,
                   status: pin.status,
                   statusLabel: pin.statusLabel,
                   projectsCount: pin.projectsCount,
                   communitiesCount: pin.communitiesCount,
+                  citizensCount: pin.communitiesCount * 2,
+                  imageUrl: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?auto=format&fit=crop&w=800&q=80',
+                  description: `Iniciativas de sustentabilidade e desenvolvimento comunitário em ${pin.name}.`,
+                  capital: pin.name,
+                  region: 'Global',
+                  mapPos: { x: (pin.x / 1180) * 100, y: (pin.y / 580) * 100 },
+                  initiatives: ['Desenvolvimento Local Sustentável', 'Educação Comunitária'],
                 };
                 onSelectCountry(matched);
               }}
               id={`map-pin-${pin.id}`}
+              title={`${pin.name} (${pin.statusLabel})`}
             >
               {isActiveGreen ? (
-                /* Active Green Teardrop Map Pin Icon matching screenshot */
-                <div className="relative flex flex-col items-center -translate-y-2">
-                  <div className="w-6 h-7 text-[#10B981] drop-shadow-md transition-transform duration-300 group-hover:scale-115">
-                    <svg viewBox="0 0 24 28" fill="none" className="w-full h-full">
+                /* Active Green Teardrop Map Pin with Center White Circle */
+                <div className="relative flex flex-col items-center -translate-y-6 select-none pointer-events-auto">
+                  <div className={`w-7 h-8.5 text-[#10B981] drop-shadow-[0_4px_10px_rgba(16,185,129,0.35)] transition-all duration-300 ${isSelected ? 'scale-110' : 'group-hover:scale-105'}`}>
+                    <svg viewBox="0 0 28 34" fill="none" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
                       <path
-                        d="M12 0C5.37 0 0 5.37 0 12c0 8.5 12 16 12 16s12-7.5 12-16c0-6.63-5.37-12-12-12z"
+                        d="M14 1C6.82 1 1 6.82 1 14C1 23.5 14 33 14 33C14 33 27 23.5 27 14C27 6.82 21.18 1 14 1Z"
                         fill="#10B981"
+                        stroke="#059669"
+                        strokeWidth="0.6"
                       />
-                      <circle cx="12" cy="11" r="4.5" fill="#FFFFFF" />
+                      <circle cx="14" cy="13.5" r="4.8" fill="#FFFFFF" />
                     </svg>
                   </div>
                 </div>
               ) : isActivityBlue ? (
-                /* Solid Blue Pin (País com Atividade) matching screenshot */
+                /* Solid Blue Pin with White Ring (País com Atividade) */
                 <div className="relative flex items-center justify-center">
-                  <div className="w-4 h-4 rounded-full bg-[#2563EB] flex items-center justify-center shadow-md shadow-blue-500/40 ring-2.5 ring-white transition-transform duration-200 group-hover:scale-125">
-                    <div className="w-1.5 h-1.5 rounded-full bg-white" />
-                  </div>
+                  <div className={`w-3.5 h-3.5 rounded-full bg-[#0055FE] ring-2 ring-white shadow-[0_2px_6px_rgba(0,85,254,0.35)] transition-transform duration-200 ${isSelected ? 'ring-3 ring-blue-300 scale-125' : 'group-hover:scale-125'}`} />
                 </div>
               ) : (
-                /* Neutral Gray Pin (País Inativo) matching screenshot */
+                /* Neutral Gray Pin with White Ring (País Inativo) */
                 <div className="relative flex items-center justify-center">
-                  <div className="w-3.5 h-3.5 rounded-full bg-[#94A3B8] ring-2 ring-white shadow-xs transition-transform duration-200 group-hover:scale-125" />
+                  <div className={`w-3 h-3 rounded-full bg-[#94A3B8] ring-2 ring-white shadow-[0_1px_4px_rgba(0,0,0,0.12)] transition-transform duration-200 ${isSelected ? 'ring-3 ring-slate-400 scale-125' : 'group-hover:scale-125'}`} />
                 </div>
               )}
 
-              {/* Hover Quick Name Capsule */}
-              {!isActiveGreen && (
-                <div className="absolute left-1/2 -translate-x-1/2 top-full mt-1 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none bg-[#0F1E3D] text-white text-[11px] font-semibold py-1 px-2 rounded-lg whitespace-nowrap shadow-lg z-40">
+              {/* Hover Quick Name Capsule for non-selected pins */}
+              {!isSelected && (
+                <div className="absolute left-1/2 -translate-x-1/2 top-full mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none bg-[#0F1E3D] text-white text-[10px] font-semibold py-0.5 px-2 rounded-md whitespace-nowrap shadow-lg z-40">
                   {pin.flag} {pin.name}
                 </div>
               )}
@@ -480,100 +586,130 @@ export const WorldMap: React.FC<WorldMapProps> = ({
           );
         })}
 
-        {/* Floating Tooltip Card over Portugal matching reference screenshot exactly */}
-        <div
-          style={{
-            left: `${(portugalPos.x / 1180) * 100 + 7}%`,
-            top: `${(portugalPos.y / 580) * 100 - 4}%`,
-          }}
-          id="country-card-pin-tooltip"
-          className="absolute -translate-x-0 -translate-y-1/2 z-30 min-w-[240px] sm:min-w-[260px] bg-white rounded-2xl p-4 sm:p-5 shadow-2xl border border-[#E2E8F0] animate-in fade-in zoom-in-95 duration-200"
-        >
-          {/* Header with Flag, Name & Badge */}
-          <div className="flex items-center justify-between gap-3 pb-3 border-b border-slate-100">
-            <div className="flex items-center gap-2">
-              <span className="text-xl leading-none">🇵🇹</span>
-              <h3 className="text-sm sm:text-base font-bold text-[#0F1E3D]">
-                Portugal
-              </h3>
-            </div>
-            <span className="text-[10px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider bg-[#DCFCE7] text-[#16A34A]">
-              PAÍS ATIVO
-            </span>
-          </div>
+        {/* 4. Floating Popup / Card Flutuante sobre o mapa (Portugal e países selecionados) */}
+        {!isPopupDismissed && (
+          <div
+            style={{
+              left: isPinOnRight
+                ? `${pinXPercent - 3}%`
+                : `${pinXPercent + 4}%`,
+              top: `${clampedYPercent}%`,
+              transform: isPinOnRight
+                ? 'translate(-100%, -50%)'
+                : 'translate(0%, -50%)',
+            }}
+            id="country-card-pin-tooltip"
+            className="absolute z-35 min-w-[220px] sm:min-w-[238px] bg-white rounded-[22px] p-4 sm:p-4.5 shadow-[0_16px_38px_rgba(15,30,61,0.09),0_4px_12px_rgba(15,30,61,0.03)] border-0 animate-in fade-in zoom-in-95 duration-200 select-none"
+          >
+            {/* Card Header: Code/Flag + Country Name + Status Badge */}
+            <div className="relative flex items-center justify-between gap-2 pb-3">
+              <div className="flex items-center gap-2 min-w-0">
+                {selectedCountry.id === 'portugal' ? (
+                  <span className="text-[13px] font-semibold text-slate-400 shrink-0">
+                    PT
+                  </span>
+                ) : (
+                  <span className="text-base leading-none shrink-0" role="img" aria-label={selectedCountry.name}>
+                    {selectedCountry.flag}
+                  </span>
+                )}
 
-          {/* Stats List */}
-          <div className="py-3 space-y-2 text-xs">
-            <div className="flex items-center justify-between text-[#64748B]">
-              <span>Projetos ativos</span>
-              <span className="font-bold text-[#0F1E3D] text-sm">
-                1.284
-              </span>
-            </div>
-            <div className="flex items-center justify-between text-[#64748B]">
-              <span>Comunidades</span>
-              <span className="font-bold text-[#0F1E3D] text-sm">
-                532.760
-              </span>
-            </div>
-          </div>
+                <h3 className="text-[15px] font-bold text-[#0D1E3A] tracking-tight font-['Outfit'] truncate">
+                  {selectedCountry.name}
+                </h3>
+              </div>
 
-          {/* Explore Action Button */}
-          <div className="pt-2 border-t border-slate-100">
-            <button
-              onClick={() => onExploreCountry(selectedCountry)}
-              className="w-full flex items-center justify-start gap-1.5 text-xs font-bold text-[#2563EB] hover:text-[#1D4ED8] transition-colors py-1 group/btn cursor-pointer"
-            >
-              <span>Explorar Portugal</span>
-              <ArrowRight className="w-3.5 h-3.5 transform group-hover/btn:translate-x-1 transition-transform" />
-            </button>
+              <div className="flex items-center gap-1 shrink-0">
+                <span
+                  className={`text-[9.5px] font-bold px-2.5 py-0.5 rounded-lg uppercase tracking-wider ${
+                    selectedCountry.status === 'active'
+                      ? 'bg-[#E8FAF2] text-[#10B981]'
+                      : selectedCountry.status === 'with-activity'
+                      ? 'bg-[#EBF2FE] text-[#0055FE]'
+                      : 'bg-slate-100 text-slate-500'
+                  }`}
+                >
+                  {selectedCountry.status === 'active'
+                    ? 'PAÍS ATIVO'
+                    : selectedCountry.status === 'with-activity'
+                    ? 'COM ATIVIDADE'
+                    : 'INATIVO'}
+                </span>
+              </div>
+            </div>
+
+            {/* Stats List */}
+            <div className="relative space-y-2 text-[12.5px]">
+              <div className="flex items-center justify-between">
+                <span className="font-normal text-slate-500">Projetos ativos</span>
+                <span className="font-bold text-[#0D1E3A] text-[13px] tracking-tight font-['Outfit']">
+                  {selectedCountry.projectsCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
+                </span>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="font-normal text-slate-500">Comunidades</span>
+                <span className="font-bold text-[#0D1E3A] text-[13px] tracking-tight font-['Outfit']">
+                  {selectedCountry.communitiesCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
+                </span>
+              </div>
+            </div>
+
+            {/* Explore Action Button */}
+            <div className="relative pt-3">
+              <button
+                type="button"
+                onClick={() => onExploreCountry(selectedCountry)}
+                className="inline-flex items-center gap-1.5 text-[12.5px] font-bold text-[#0055FE] hover:text-[#0042CC] transition-colors py-0.5 group/btn cursor-pointer"
+              >
+                <span>Explorar {selectedCountry.name}</span>
+                <ArrowRight className="w-3.5 h-3.5 transform group-hover/btn:translate-x-1 transition-transform stroke-[2.2]" />
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
-      {/* Floating Map Controls (Right-aligned vertical stack matching screenshot) */}
+      {/* 2. Floating Map Controls (Zoom +/-, Localization - 3 icons total) */}
       <div
         id="map-floating-controls"
-        className="absolute right-4 sm:right-6 top-1/2 -translate-y-1/2 z-25 flex flex-col items-center bg-white/95 backdrop-blur-md rounded-2xl p-1.5 shadow-lg border border-[#E2E8F0] space-y-1"
+        className={`absolute z-25 flex flex-col items-center bg-white rounded-2xl p-1 shadow-[0_8px_24px_rgba(15,30,61,0.08),0_2px_6px_rgba(15,30,61,0.03)] border-0 space-y-0.5 select-none ${
+          controlsPosition === 'lateral-right'
+            ? 'right-4 sm:right-5 top-1/2 -translate-y-1/2'
+            : controlsPosition === 'bottom-right'
+            ? 'right-4 sm:right-5 bottom-4 sm:bottom-5'
+            : controlsPosition === 'bottom-left-stacked'
+            ? 'left-4 sm:left-5 bottom-[68px] sm:bottom-[76px]'
+            : 'left-4 sm:left-5 bottom-4 sm:bottom-5'
+        }`}
       >
         <button
           onClick={handleZoomIn}
-          title="Aumentar Zoom"
-          className="w-9 h-9 flex items-center justify-center rounded-xl text-[#0F1E3D] hover:bg-slate-100 hover:text-[#2563EB] transition-colors cursor-pointer"
+          title="Aumentar Zoom (+)"
+          type="button"
+          className="w-8.5 h-8.5 flex items-center justify-center rounded-xl text-[#0D1E3A] hover:bg-slate-50 hover:text-[#0055FE] transition-colors cursor-pointer"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-4 h-4 stroke-[2.2]" />
         </button>
 
         <button
           onClick={handleZoomOut}
-          title="Diminuir Zoom"
-          className="w-9 h-9 flex items-center justify-center rounded-xl text-[#0F1E3D] hover:bg-slate-100 hover:text-[#2563EB] transition-colors cursor-pointer"
+          title="Diminuir Zoom (-)"
+          type="button"
+          className="w-8.5 h-8.5 flex items-center justify-center rounded-xl text-[#0D1E3A] hover:bg-slate-50 hover:text-[#0055FE] transition-colors cursor-pointer"
         >
-          <Minus className="w-4 h-4" />
+          <Minus className="w-4 h-4 stroke-[2.2]" />
         </button>
-
-        <div className="w-5 h-px bg-slate-200 my-0.5" />
 
         <button
           onClick={handleReset}
-          title="Redefinir Visão"
-          className="w-9 h-9 flex items-center justify-center rounded-xl text-[#0F1E3D] hover:bg-slate-100 hover:text-[#2563EB] transition-colors cursor-pointer"
+          title="Localização / Redefinir Visão"
+          type="button"
+          className="w-8.5 h-8.5 flex items-center justify-center rounded-xl text-[#0D1E3A] hover:bg-slate-50 hover:text-[#0055FE] transition-colors cursor-pointer"
         >
-          <Compass className="w-4 h-4" />
-        </button>
-
-        <button
-          onClick={toggle3D}
-          title={is3DMode ? 'Visão 2D' : 'Visão 3D'}
-          className={`w-9 h-9 flex items-center justify-center rounded-xl transition-colors cursor-pointer ${
-            is3DMode
-              ? 'bg-[#2563EB] text-white shadow-sm'
-              : 'text-[#0F1E3D] hover:bg-slate-100 hover:text-[#2563EB]'
-          }`}
-        >
-          <Box className="w-4 h-4" />
+          <Crosshair className="w-4 h-4 stroke-[2.2]" />
         </button>
       </div>
     </div>
   );
 };
+

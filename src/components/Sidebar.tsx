@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Compass,
   Calendar,
@@ -10,7 +10,11 @@ import {
   ChevronDown,
   ArrowRight,
   Sun,
-  X
+  Globe,
+  X,
+  Check,
+  BarChart3,
+  Newspaper
 } from 'lucide-react';
 import { Logo } from './Logo';
 
@@ -34,50 +38,80 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const [isLightMode, setIsLightMode] = useState(true);
   const [selectedLang, setSelectedLang] = useState<'PT' | 'EN' | 'ES'>('PT');
   const [isLangOpen, setIsLangOpen] = useState(false);
+  const langDropdownRef = useRef<HTMLDivElement>(null);
 
-  // 10 navigation items matching exact reference design
+  // Close language dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (langDropdownRef.current && !langDropdownRef.current.contains(event.target as Node)) {
+        setIsLangOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // 11 navigation items matching exact reference design and prompt specifications
   const navItems = [
     {
       id: 'inicio',
       label: 'Início',
-      customIcon: (
-        <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
-          <path d="M2 12h20" />
-        </svg>
-      )
+      icon: <Globe className="w-4 h-4" strokeWidth={2.2} />
     },
-    { id: 'explorar', label: 'Explorar o Mundo', icon: Compass },
     {
-      id: 'movimento',
-      label: 'Mundo em Movimento',
-      customIcon: (
-        <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2" />
-          <path d="M18 14h-8" />
-          <path d="M15 18h-5" />
-          <path d="M10 6h8v4h-8V6Z" />
-        </svg>
-      ),
-      badge: 'NOVO'
+      id: 'explorar',
+      label: 'Explorar o Mundo',
+      icon: <Compass className="w-4 h-4" strokeWidth={2.2} />
     },
-    { id: 'eventos', label: 'Eventos Globais', icon: Calendar },
-    { id: 'comunidade', label: 'Comunidade Global', icon: Users },
-    { id: 'ia', label: 'VILA AI', icon: Sparkles },
+    {
+      id: 'noticias',
+      label: 'Notícias Globais',
+      icon: <Newspaper className="w-4 h-4" strokeWidth={2.2} />
+    },
+    {
+      id: 'eventos',
+      label: 'Eventos Globais',
+      icon: <Calendar className="w-4 h-4" strokeWidth={2.2} />
+    },
+    {
+      id: 'comunidade',
+      label: 'Comunidade Global',
+      icon: <Users className="w-4 h-4" strokeWidth={2.2} />
+    },
+    {
+      id: 'indicadores',
+      label: 'Indicadores Globais',
+      icon: <BarChart3 className="w-4 h-4" strokeWidth={2.2} />
+    },
+    {
+      id: 'parceiros',
+      label: 'Parceiros',
+      icon: <HeartHandshake className="w-4 h-4" strokeWidth={2.2} />
+    },
+    {
+      id: 'ia',
+      label: 'VILA AI',
+      icon: <Sparkles className="w-4 h-4" strokeWidth={2.2} />
+    },
     {
       id: 'impacto',
       label: 'Impacto Global',
-      customIcon: (
-        <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.5 1.9 9.2A7 7 0 0 1 11 20Z" />
-          <path d="m2 22 10-10" />
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
+          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
         </svg>
       )
     },
-    { id: 'parceiros', label: 'Parceiros Globais', icon: HeartHandshake },
-    { id: 'sobre', label: 'Sobre a VILA', icon: Info },
-    { id: 'definicoes', label: 'Definições', icon: Settings },
+    {
+      id: 'sobre',
+      label: 'Sobre a VILA',
+      icon: <Info className="w-4 h-4" strokeWidth={2.2} />
+    },
+    {
+      id: 'definicoes',
+      label: 'Definições',
+      icon: <Settings className="w-4 h-4" strokeWidth={2.2} />
+    },
   ];
 
   return (
@@ -85,234 +119,286 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Mobile Drawer Overlay */}
       {isMobileOpen && (
         <div
-          className="fixed inset-0 bg-black/40 backdrop-blur-xs z-40 lg:hidden"
+          className="fixed inset-0 bg-black/40 backdrop-blur-xs z-35 md:hidden"
           onClick={onCloseMobile}
         />
       )}
 
-      {/* Main Sidebar Container - Strict Fit-to-screen layout */}
+      {/* Main Sidebar Container - Fixed ~230px width, rendered cleanly on left */}
       <aside
         id="main-sidebar"
-        className={`fixed top-0 left-0 bottom-0 z-50 w-64 h-screen bg-white border-r border-slate-200 p-4 pb-4 flex flex-col justify-between overflow-hidden select-none transition-transform duration-300 ease-in-out lg:translate-x-0 ${
-          isMobileOpen ? 'translate-x-0' : '-translate-x-full'
-        } shadow-xs`}
+        className={`fixed top-0 left-0 bottom-0 z-40 w-[230px] h-screen max-h-[100dvh] bg-white border-r border-slate-200/90 px-3 py-2 sm:py-2.5 flex flex-col justify-between select-none overflow-y-auto no-scrollbar transition-transform duration-300 ease-in-out shadow-xs ${
+          isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+        }`}
       >
-        {/* Top Section: Logo + Navigation Links */}
-        <div className="flex flex-col gap-2 min-h-0">
-          {/* 1. Header da Logo */}
-          <div className="flex items-start justify-between px-1">
-            <Logo />
-            {isMobileOpen && (
-              <button
-                onClick={onCloseMobile}
-                className="lg:hidden p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
-                aria-label="Fechar menu"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            )}
-          </div>
-
-          {/* 2. Navegação Principal (10 itens) */}
-          <nav className="flex flex-col gap-0.5 overflow-y-auto no-scrollbar" aria-label="Navegação Principal">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              const isActive = currentTab === item.id;
-
-              return (
-                <button
-                  key={item.id}
-                  id={`nav-item-${item.id}`}
-                  onClick={() => {
-                    onSelectTab(item.id);
-                    if (onCloseMobile) onCloseMobile();
-                  }}
-                  className={`w-full flex items-center justify-between px-3 py-1.5 rounded-xl text-[13px] leading-tight transition-all duration-150 group cursor-pointer ${
-                    isActive
-                      ? 'bg-gradient-to-r from-[#2563EB] to-[#3B82F6] text-white font-semibold shadow-sm shadow-blue-500/25'
-                      : 'text-[#0F1E3D] hover:bg-slate-50 font-medium'
-                  }`}
-                >
-                  <div className="flex items-center gap-2.5 min-w-0">
-                    <span
-                      className={`shrink-0 transition-colors ${
-                        isActive ? 'text-white' : 'text-[#0F1E3D] group-hover:text-[#2563EB]'
-                      }`}
-                    >
-                      {item.customIcon ? item.customIcon : Icon ? <Icon className="w-4 h-4" /> : null}
-                    </span>
-                    <span className="truncate tracking-tight">{item.label}</span>
-                  </div>
-
-                  {item.badge && (
-                    <span
-                      className={`px-1.5 py-0.5 text-[8.5px] font-extrabold tracking-wider rounded uppercase shrink-0 ${
-                        isActive
-                          ? 'bg-white/20 text-white'
-                          : 'bg-[#DCFCE7] text-[#16A34A]'
-                      }`}
-                    >
-                      {item.badge}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
+        {/* 1. Header Fixo: Logotipo com Pin multicolorido + VILA + Tagline */}
+        <div className="shrink-0 flex items-start justify-between px-1.5 pb-2 pt-0.5 border-b border-slate-100">
+          <Logo size="sm" />
+          {isMobileOpen && (
+            <button
+              type="button"
+              onClick={onCloseMobile}
+              className="md:hidden p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
+              aria-label="Fechar menu"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          )}
         </div>
 
-        {/* Bottom Section: Promo Globe Card + Language/Theme + Auth Buttons */}
-        <div className="space-y-3 pt-2.5 border-t border-slate-100 shrink-0">
-          {/* 3. Card do Globo Terrestre com Esfera Pontilhada e Nós Azuis */}
+        {/* 2. Menu de Navegação Completo (11 Itens com fundo verde #10B981 no ativo) */}
+        <nav
+          className="flex-1 min-h-0 overflow-y-auto no-scrollbar py-1.5 flex flex-col justify-evenly gap-0.5 pr-0.5"
+          aria-label="Navegação Principal"
+          id="sidebar-nav-container"
+        >
+          {navItems.map((item) => {
+            const isActive = currentTab === item.id || (item.id === 'noticias' && currentTab === 'movimento');
+
+            return (
+              <button
+                key={item.id}
+                type="button"
+                id={`nav-item-${item.id}`}
+                onClick={() => {
+                  onSelectTab(item.id);
+                  if (onCloseMobile) onCloseMobile();
+                }}
+                className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[12px] leading-tight transition-all duration-200 group cursor-pointer ${
+                  isActive
+                    ? 'bg-gradient-to-r from-[#0055FE] to-[#0096C7] text-white font-bold shadow-xs'
+                    : 'text-[#122244] hover:bg-slate-50 font-bold'
+                }`}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <span
+                    className={`shrink-0 transition-colors ${
+                      isActive ? 'text-white' : 'text-[#122244] group-hover:text-[#0055FE]'
+                    }`}
+                  >
+                    {item.icon}
+                  </span>
+                  <span className="truncate tracking-tight">{item.label}</span>
+                </div>
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* 3. Bloco Inferior Fixo: Card do Globo + Seletor de Idioma + Tema + Autenticação */}
+        <div
+          id="sidebar-bottom-fixed-container"
+          className="shrink-0 pt-2 border-t border-slate-100/90 flex flex-col gap-2.5 bg-white"
+        >
+          {/* 1. Card do Globo Terrestre com Constelação e Nós de Conexão */}
           <div
             id="sidebar-promo-card"
-            className="p-3 rounded-2xl bg-[#F8FAFC] border border-slate-100/90 relative overflow-hidden flex flex-col items-center text-center shadow-2xs"
+            className="p-3 rounded-2xl bg-gradient-to-b from-[#F4F8FD] to-[#EDF4FD] border border-blue-100/60 relative overflow-hidden flex flex-col items-center text-center shadow-2xs"
           >
-            {/* Illustrated 3D Global Network Sphere matching screenshot */}
-            <div className="relative w-16 h-16 mb-2 flex items-center justify-center">
-              <svg viewBox="0 0 100 100" className="w-full h-full">
-                {/* Globe White Circular Sphere */}
-                <circle cx="50" cy="50" r="44" fill="#FFFFFF" stroke="#E2E8F0" strokeWidth="1" />
+            {/* 3D Earth Globe Graphic Proportional & Centered */}
+            <div className="relative w-11 h-11 mb-1.5 flex items-center justify-center">
+              <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xs">
+                <defs>
+                  {/* Outer atmospheric radial glow */}
+                  <radialGradient id="promo-atmos-glow" cx="50%" cy="50%" r="50%">
+                    <stop offset="60%" stopColor="#3B82F6" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#2563EB" stopOpacity="0" />
+                  </radialGradient>
 
-                {/* Delicate Dotted Longitude and Latitude Graticules */}
-                <ellipse cx="50" cy="50" rx="44" ry="16" fill="none" stroke="#CBD5E1" strokeWidth="0.8" strokeDasharray="2 2" />
-                <ellipse cx="50" cy="50" rx="20" ry="44" fill="none" stroke="#CBD5E1" strokeWidth="0.8" strokeDasharray="2 2" />
-                <line x1="50" y1="6" x2="50" y2="94" stroke="#CBD5E1" strokeWidth="0.8" strokeDasharray="2 2" />
-                <line x1="6" y1="50" x2="94" y2="50" stroke="#CBD5E1" strokeWidth="0.8" strokeDasharray="2 2" />
+                  {/* 3D Sphere Lighting Gradient */}
+                  <radialGradient id="promo-sphere-lighting" cx="35%" cy="30%" r="70%">
+                    <stop offset="0%" stopColor="#FFFFFF" />
+                    <stop offset="45%" stopColor="#E2E8F0" />
+                    <stop offset="80%" stopColor="#CBD5E1" />
+                    <stop offset="100%" stopColor="#94A3B8" />
+                  </radialGradient>
 
-                {/* Spherical Blue Data Nodes / Blobs matching exact positions */}
-                {/* Top-Left Big Node */}
-                <circle cx="45" cy="30" r="8" fill="#2563EB" />
-                {/* Top-Right Medium Node */}
-                <circle cx="68" cy="32" r="5.5" fill="#3B82F6" />
-                {/* Center Node */}
-                <circle cx="53" cy="46" r="7" fill="#2563EB" />
-                {/* Bottom-Left Node */}
-                <circle cx="38" cy="50" r="5" fill="#60A5FA" />
-                {/* Bottom-Right Node */}
-                <circle cx="68" cy="52" r="4" fill="#2563EB" />
-                {/* Top Accent Dot */}
-                <circle cx="48" cy="18" r="2" fill="#2563EB" />
-                {/* Far Left Dot */}
-                <circle cx="28" cy="38" r="1.5" fill="#3B82F6" />
-                {/* Far Right Dot */}
-                <circle cx="78" cy="42" r="1.8" fill="#2563EB" />
-                {/* Bottom Center Dot */}
-                <circle cx="54" cy="74" r="2.5" fill="#3B82F6" />
+                  {/* Ocean & Continent gradients */}
+                  <linearGradient id="promo-continent-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#3B82F6" />
+                    <stop offset="100%" stopColor="#1D4ED8" />
+                  </linearGradient>
+                  <linearGradient id="promo-continent-green" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#34D399" />
+                    <stop offset="100%" stopColor="#059669" />
+                  </linearGradient>
+                </defs>
+
+                {/* Atmospheric Glow */}
+                <circle cx="50" cy="50" r="48" fill="url(#promo-atmos-glow)" />
+
+                {/* Earth Sphere Base */}
+                <circle cx="50" cy="50" r="36" fill="url(#promo-sphere-lighting)" stroke="#E2E8F0" strokeWidth="0.8" />
+
+                {/* Curved Latitude/Longitude Wireframe */}
+                <ellipse cx="50" cy="50" rx="36" ry="12" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.4" />
+                <ellipse cx="50" cy="50" rx="14" ry="36" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.4" />
+                <path d="M14 50 Q 50 68 86 50" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.3" />
+                <path d="M14 50 Q 50 32 86 50" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.3" />
+
+                {/* Realistic Landmass Continents */}
+                {/* Europe & Africa */}
+                <path
+                  d="M44 26 C47 24 53 25 55 28 C56 31 52 34 50 36 C49 40 52 45 54 50 C55 56 50 63 46 68 C42 67 40 60 41 54 C42 48 39 42 41 36 C41 30 42 27 44 26 Z"
+                  fill="url(#promo-continent-blue)"
+                />
+                {/* Americas */}
+                <path
+                  d="M26 25 C29 23 33 26 31 31 C29 34 26 36 28 41 C29 44 32 47 30 53 C28 58 25 64 23 62 C21 57 23 50 22 44 C21 37 22 28 26 25 Z"
+                  fill="url(#promo-continent-green)"
+                  opacity="0.9"
+                />
+                {/* Asia & Pacific */}
+                <path
+                  d="M59 23 C66 22 74 26 76 32 C78 38 72 44 69 47 C66 49 63 44 60 40 C58 36 56 32 57 26 Z"
+                  fill="url(#promo-continent-blue)"
+                />
+                <path
+                  d="M66 54 C72 52 76 56 75 62 C72 65 67 64 65 60 C64 57 65 55 66 54 Z"
+                  fill="url(#promo-continent-green)"
+                />
+
+                {/* Constellation Connecting Mesh Lines */}
+                <path d="M28 32 Q 40 22 50 30" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.8" />
+                <path d="M50 30 Q 62 24 70 34" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.8" />
+                <path d="M50 30 Q 54 44 53 48" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.8" />
+                <path d="M28 32 Q 24 48 30 52" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.6" />
+                <path d="M70 34 Q 74 48 66 54" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.6" />
+
+                {/* Multi-colored Active Global Signal Nodes */}
+                <circle cx="48" cy="30" r="3" fill="#2563EB" stroke="#FFFFFF" strokeWidth="1" />
+                <circle cx="53" cy="48" r="2.8" fill="#10B981" stroke="#FFFFFF" strokeWidth="1" />
+                <circle cx="70" cy="34" r="2.4" fill="#2563EB" stroke="#FFFFFF" strokeWidth="1" />
+                <circle cx="28" cy="32" r="2.4" fill="#10B981" stroke="#FFFFFF" strokeWidth="1" />
+                <circle cx="46" cy="62" r="2" fill="#2563EB" stroke="#FFFFFF" strokeWidth="0.8" />
+                <circle cx="66" cy="54" r="2" fill="#F59E0B" stroke="#FFFFFF" strokeWidth="0.8" />
+
+                {/* Orbit Satellite Sparks */}
+                <circle cx="16" cy="38" r="1.4" fill="#10B981" />
+                <circle cx="84" cy="44" r="1.4" fill="#2563EB" />
+                <circle cx="48" cy="14" r="1.4" fill="#3B82F6" />
+                <circle cx="68" cy="74" r="1.2" fill="#F59E0B" />
               </svg>
             </div>
 
-            <p className="text-[13px] font-bold text-[#0F1E3D] leading-tight font-['Outfit']">
-              Juntos, construímos
+            <p className="text-[11.5px] font-bold text-[#1E293B] leading-[1.3] font-['Outfit']">
+              Juntos, construímos um mundo melhor.
             </p>
-            <p className="text-[13px] font-bold text-[#0F1E3D] leading-tight font-['Outfit']">
-              um mundo melhor.
+            <p className="text-[10.5px] font-semibold text-[#64748B] mt-0.5">
+              7.842.521 cidadãos ativos
             </p>
 
             <button
+              type="button"
               onClick={onOpenImpactModal}
-              className="mt-1.5 inline-flex items-center gap-1.5 text-xs font-bold text-[#2563EB] hover:text-[#1D4ED8] transition-colors cursor-pointer group/impact"
+              className="mt-1.5 inline-flex items-center gap-1.5 text-[11px] font-bold text-[#2563EB] hover:text-[#1D4ED8] transition-colors cursor-pointer group/impact"
             >
               <span>Ver impacto global</span>
-              <ArrowRight className="w-3.5 h-3.5 transform group-hover/impact:translate-x-0.5 transition-transform" />
+              <ArrowRight className="w-3 h-3 transform group-hover/impact:translate-x-0.5 transition-transform" />
             </button>
           </div>
 
-          {/* 4. Controls: Seletor de Idioma e Alternador de Tema */}
-          <div className="flex items-center justify-between px-1">
-            {/* Seletor de Idioma: Globe Icon + PT + Down Chevron */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setIsLangOpen(!isLangOpen)}
-                className="flex items-center gap-1.5 text-xs font-bold text-[#0F1E3D] hover:text-[#2563EB] transition-colors cursor-pointer py-1"
-                id="sidebar-lang-btn"
-              >
-                {/* Globe Icon */}
-                <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-[#334155]" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10" />
-                  <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
-                  <path d="M2 12h20" />
-                </svg>
-                <span className="font-['Outfit']">{selectedLang}</span>
-                <ChevronDown className="w-3 h-3 text-slate-400" />
-              </button>
+          {/* 2. Seletor de Idioma Retrátil Estilizado */}
+          <div className="relative w-full" ref={langDropdownRef}>
+            <button
+              type="button"
+              onClick={() => setIsLangOpen(!isLangOpen)}
+              id="sidebar-lang-btn"
+              className="flex items-center justify-between border border-slate-200/90 rounded-xl px-2.5 py-1.5 text-[12px] font-bold text-slate-700 bg-white hover:bg-slate-50/80 w-full shadow-2xs hover:border-slate-300 transition-all cursor-pointer"
+              aria-haspopup="menu"
+              aria-expanded={isLangOpen}
+            >
+              <div className="flex items-center gap-2">
+                <Globe className="w-3.5 h-3.5 text-slate-500" strokeWidth={2.2} />
+                <span className="font-bold text-slate-700">{selectedLang}</span>
+              </div>
+              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isLangOpen ? 'rotate-180' : ''}`} />
+            </button>
 
-              {isLangOpen && (
-                <div className="absolute bottom-full mb-1 left-0 w-28 bg-white border border-slate-200 rounded-xl shadow-lg py-1 z-30">
-                  <button
-                    onClick={() => { setSelectedLang('PT'); setIsLangOpen(false); }}
-                    className="w-full text-left px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
-                  >
-                    <span>🇵🇹</span> PT
-                  </button>
-                  <button
-                    onClick={() => { setSelectedLang('EN'); setIsLangOpen(false); }}
-                    className="w-full text-left px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
-                  >
-                    <span>🇬🇧</span> EN
-                  </button>
-                  <button
-                    onClick={() => { setSelectedLang('ES'); setIsLangOpen(false); }}
-                    className="w-full text-left px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer"
-                  >
-                    <span>🇪🇸</span> ES
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Alternador de Tema: Sun Icon + Tema Claro + Toggle Switch */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-[#0F1E3D] flex items-center gap-1.5">
-                {/* Sun with Rays Icon */}
-                <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-slate-600" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                  <circle cx="12" cy="12" r="4" />
-                  <path d="M12 2v2" />
-                  <path d="M12 20v2" />
-                  <path d="m4.93 4.93 1.41 1.41" />
-                  <path d="m17.66 17.66 1.41 1.41" />
-                  <path d="M2 12h2" />
-                  <path d="M20 12h2" />
-                  <path d="m6.34 17.66-1.41 1.41" />
-                  <path d="m19.07 4.93-1.41 1.41" />
-                </svg>
-                Tema Claro
-              </span>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={isLightMode}
-                onClick={() => setIsLightMode(!isLightMode)}
-                id="theme-toggle-switch"
-                className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                  isLightMode ? 'bg-[#2563EB]' : 'bg-slate-300'
-                }`}
+            {isLangOpen && (
+              <div
+                role="menu"
+                className="absolute bottom-full mb-1.5 left-0 right-0 bg-white border border-slate-200 rounded-xl shadow-xl p-1 z-30 animate-in fade-in slide-in-from-bottom-1 duration-150"
               >
-                <span
-                  className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
-                    isLightMode ? 'translate-x-4' : 'translate-x-0'
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => { setSelectedLang('PT'); setIsLangOpen(false); }}
+                  className={`w-full text-left px-3 py-1.5 text-xs font-bold rounded-lg flex items-center justify-between transition-colors cursor-pointer ${
+                    selectedLang === 'PT' ? 'text-[#2563EB] bg-blue-50' : 'text-slate-700 hover:bg-slate-50'
                   }`}
-                />
-              </button>
-            </div>
+                >
+                  <span className="flex items-center gap-2"><span>🇵🇹</span> Português</span>
+                  {selectedLang === 'PT' && <Check className="w-3.5 h-3.5 text-[#2563EB]" />}
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => { setSelectedLang('EN'); setIsLangOpen(false); }}
+                  className={`w-full text-left px-3 py-1.5 text-xs font-bold rounded-lg flex items-center justify-between transition-colors cursor-pointer ${
+                    selectedLang === 'EN' ? 'text-[#2563EB] bg-blue-50' : 'text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  <span className="flex items-center gap-2"><span>🇬🇧</span> English</span>
+                  {selectedLang === 'EN' && <Check className="w-3.5 h-3.5 text-[#2563EB]" />}
+                </button>
+                <button
+                  type="button"
+                  role="menuitem"
+                  onClick={() => { setSelectedLang('ES'); setIsLangOpen(false); }}
+                  className={`w-full text-left px-3 py-1.5 text-xs font-bold rounded-lg flex items-center justify-between transition-colors cursor-pointer ${
+                    selectedLang === 'ES' ? 'text-[#2563EB] bg-blue-50' : 'text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  <span className="flex items-center gap-2"><span>🇪🇸</span> Español</span>
+                  {selectedLang === 'ES' && <Check className="w-3.5 h-3.5 text-[#2563EB]" />}
+                </button>
+              </div>
+            )}
           </div>
 
-          {/* 5. Botões de Ação: "Entrar" e "Criar Conta" */}
-          <div className="grid grid-cols-2 gap-2.5 pt-0.5">
+          {/* 3. Controle de Tema (Tema Claro + Toggle Switch iOS) */}
+          <div className="flex items-center justify-between w-full text-[12px] font-bold text-slate-700 px-1">
+            <span className="flex items-center gap-1.5 text-slate-700">
+              <Sun className="w-3.5 h-3.5 text-slate-600" strokeWidth={2.2} />
+              Tema Claro
+            </span>
             <button
+              type="button"
+              role="switch"
+              aria-checked={isLightMode}
+              onClick={() => setIsLightMode(!isLightMode)}
+              id="theme-toggle-switch"
+              className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                isLightMode ? 'bg-[#1D63FF]' : 'bg-slate-300'
+              }`}
+            >
+              <span
+                className={`pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow-xs ring-0 transition duration-200 ease-in-out ${
+                  isLightMode ? 'translate-x-4' : 'translate-x-0'
+                }`}
+              />
+            </button>
+          </div>
+
+          {/* 4. Botões "Entrar" e "Criar Conta" (Azul) */}
+          <div className="grid grid-cols-2 gap-2 w-full pt-0.5">
+            <button
+              type="button"
               id="sidebar-btn-login"
               onClick={() => onOpenAuth('login')}
-              className="w-full py-2.5 px-3 rounded-2xl border border-[#E2E8F0] hover:bg-slate-50 font-bold text-xs sm:text-sm text-[#0F1E3D] transition-colors text-center cursor-pointer shadow-2xs font-['Outfit']"
+              className="bg-white border border-slate-200/90 shadow-2xs rounded-xl py-1.5 px-2 text-[11.5px] font-bold text-slate-800 hover:bg-slate-50 text-center transition-colors cursor-pointer"
             >
               Entrar
             </button>
             <button
+              type="button"
               id="sidebar-btn-register"
               onClick={() => onOpenAuth('register')}
-              className="w-full py-2.5 px-3 rounded-2xl bg-gradient-to-r from-[#2563EB] to-[#0D9488] hover:opacity-95 text-white font-bold text-xs sm:text-sm transition-all shadow-xs text-center cursor-pointer font-['Outfit']"
+              className="bg-[#0055FE] hover:bg-[#0040CC] text-white font-bold rounded-xl py-1.5 px-2 text-[11.5px] shadow-2xs text-center transition-all cursor-pointer"
             >
-              Criar Conta
+              Criar conta
             </button>
           </div>
         </div>

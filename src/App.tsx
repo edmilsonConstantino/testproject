@@ -3,6 +3,9 @@ import { Sidebar } from './components/Sidebar';
 import { Topbar } from './components/Topbar';
 import { MapHeroSection } from './components/MapHeroSection';
 import { FeaturedCountriesSection } from './components/FeaturedCountriesSection';
+import { ExploreWorldView } from './components/ExploreWorldView';
+import { GlobalNewsView } from './components/GlobalNewsView';
+import { GlobalEventsView } from './components/GlobalEventsView';
 import { CountryDetailModal } from './components/CountryDetailModal';
 import { VideoModal } from './components/VideoModal';
 import { SearchCommandModal } from './components/SearchCommandModal';
@@ -83,18 +86,33 @@ export default function App() {
       />
 
       {/* 2. Main Content Area (Right of Sidebar) */}
-      <div className="flex-1 lg:pl-64 flex flex-col min-w-0 transition-all duration-300">
-        {/* Topbar Navigation */}
-        <Topbar
-          onOpenSearchModal={() => setIsSearchModalOpen(true)}
-          onOpenMobileMenu={() => setIsMobileSidebarOpen(true)}
-          onOpenAuth={handleOpenAuth}
-        />
+      <div className="flex-1 md:pl-[230px] flex flex-col min-w-0 min-h-screen transition-all duration-300">
+        {/* Topbar Navigation - Presente nas páginas Início, Notícias Globais e Eventos Globais */}
+        {(currentTab === 'inicio' || currentTab === 'noticias' || currentTab === 'eventos') && (
+          <Topbar
+            searchPlaceholder={
+              currentTab === 'eventos'
+                ? 'Pesquisar eventos, temas, locais, organizações...'
+                : currentTab === 'noticias'
+                ? 'Pesquisar notícias, temas, fontes, autores...'
+                : 'Pesquisar países, regiões, cidades, projetos, comunidades...'
+            }
+            onOpenSearchModal={() => setIsSearchModalOpen(true)}
+            onOpenMobileMenu={() => setIsMobileSidebarOpen(true)}
+            onOpenAuth={handleOpenAuth}
+          />
+        )}
 
-        {/* Scrollable Main Body */}
-        <main className="flex-1 p-4 md:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
+        {/* Scrollable Dashboard Viewport */}
+        <main className={`flex-1 w-full overflow-y-auto ${
+          currentTab === 'noticias' || currentTab === 'eventos'
+            ? 'p-0'
+            : `px-3.5 sm:px-5 lg:px-6 pb-10 flex flex-col gap-6 lg:gap-8 max-w-[1600px] mx-auto ${
+                currentTab === 'inicio' ? 'pt-1' : 'pt-4 sm:pt-6'
+              }`
+        }`}>
           {currentTab === 'inicio' ? (
-            <>
+            <div className="flex flex-col gap-6 lg:gap-8">
               {/* Hero Section with Interactive Vector World Map */}
               <MapHeroSection
                 selectedCountry={selectedCountry}
@@ -109,6 +127,7 @@ export default function App() {
 
               {/* Featured Countries Section Carousel */}
               <FeaturedCountriesSection
+                selectedCountry={selectedCountry}
                 onSelectCountry={handleSelectCountry}
                 onExploreCountry={handleExploreCountry}
                 onViewAllCountries={() => {
@@ -117,21 +136,46 @@ export default function App() {
                 }}
                 onOpenAiAssistant={() => setIsAiModalOpen(true)}
               />
-            </>
+            </div>
+          ) : currentTab === 'explorar' ? (
+            /* Explorar o Mundo View with 3 Columns and Map */
+            <ExploreWorldView
+              selectedCountry={selectedCountry}
+              onSelectCountry={handleSelectCountry}
+              onExploreCountry={handleExploreCountry}
+              onBackToHome={() => {
+                setCurrentTab('inicio');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              onOpenAiAssistant={() => setIsAiModalOpen(true)}
+              onOpenMobileMenu={() => setIsMobileSidebarOpen(true)}
+            />
+          ) : currentTab === 'noticias' ? (
+            /* Notícias Globais View */
+            <GlobalNewsView onOpenAiAssistant={() => setIsAiModalOpen(true)} />
+          ) : currentTab === 'eventos' ? (
+            /* Eventos Globais View */
+            <GlobalEventsView 
+              onOpenAiAssistant={() => setIsAiModalOpen(true)}
+              onExploreMap={() => {
+                setCurrentTab('explorar');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+            />
           ) : (
             /* Subview Render for Other Sidebar Tabs */
-            <div className="space-y-6 animate-in fade-in duration-200">
+            <div className="space-y-6 animate-in fade-in duration-200 overflow-y-auto pr-1 pb-8">
               {/* Back to Home Breadcrumb */}
               <div className="flex items-center justify-between pb-2 border-b border-slate-200">
                 <div>
                   <h1 className="text-2xl font-extrabold text-[#0F1E3D] font-['Outfit'] capitalize">
-                    {currentTab === 'explorar' && 'Explorar o Mundo'}
-                    {currentTab === 'movimento' && 'Mundo em Movimento'}
+                    {currentTab === 'movimento' && 'Notícias Globais'}
                     {currentTab === 'eventos' && 'Eventos Globais'}
                     {currentTab === 'comunidade' && 'Comunidade Global'}
+                    {currentTab === 'indicadores' && 'Indicadores Globais'}
                     {currentTab === 'ia' && 'VILA AI'}
                     {currentTab === 'impacto' && 'Impacto Global'}
-                    {currentTab === 'parceiros' && 'Parceiros Globais'}
+                    {currentTab === 'parceiros' && 'Parceiros'}
                     {currentTab === 'sobre' && 'Sobre a VILA'}
                     {currentTab === 'definicoes' && 'Definições da Plataforma'}
                   </h1>
@@ -142,70 +186,13 @@ export default function App() {
 
                 <button
                   onClick={() => setCurrentTab('inicio')}
-                  className="px-4 py-2 text-xs font-bold text-[#2563EB] bg-white border border-[#E2E8F0] hover:bg-slate-50 rounded-xl transition-colors shadow-2xs"
+                  className="px-4 py-2 text-xs font-bold text-[#2563EB] bg-white border border-[#E2E8F0] hover:bg-slate-50 rounded-xl transition-colors shadow-2xs cursor-pointer"
                 >
                   ← Voltar ao Início
                 </button>
               </div>
 
               {/* Tab Specific Content */}
-              {currentTab === 'explorar' && (
-                <div className="space-y-6">
-                  {/* Grid of all countries */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                    {COUNTRIES_DATA.map((country) => (
-                      <div
-                        key={country.id}
-                        onClick={() => handleExploreCountry(country)}
-                        className="bg-white rounded-2xl border border-[#E2E8F0] p-4 hover:shadow-md transition-all hover:-translate-y-1 cursor-pointer group"
-                      >
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="flex items-center gap-2">
-                            <span className="text-2xl">{country.flag}</span>
-                            <div>
-                              <h3 className="text-sm font-bold text-[#0F1E3D] group-hover:text-[#2563EB]">
-                                {country.name}
-                              </h3>
-                              <span className="text-[10px] text-[#94A3B8]">{country.region}</span>
-                            </div>
-                          </div>
-                          <span
-                            className={`px-2 py-0.5 text-[9px] font-extrabold rounded-md uppercase ${
-                              country.status === 'active'
-                                ? 'bg-[#DCFCE7] text-[#16A34A]'
-                                : country.status === 'with-activity'
-                                ? 'bg-blue-50 text-[#2563EB]'
-                                : 'bg-slate-100 text-slate-500'
-                            }`}
-                          >
-                            {country.statusLabel || (country.status === 'active' ? 'ATIVO' : 'COM ATIVIDADE')}
-                          </span>
-                        </div>
-
-                        <p className="text-xs text-[#475569] line-clamp-2 mb-3">
-                          {country.description}
-                        </p>
-
-                        <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 text-[11px]">
-                          <div>
-                            <span className="text-[#94A3B8] block">Projetos:</span>
-                            <span className="font-bold text-[#0F1E3D]">
-                              {country.projectsCount.toLocaleString('pt-PT')}
-                            </span>
-                          </div>
-                          <div>
-                            <span className="text-[#94A3B8] block">Comunidades:</span>
-                            <span className="font-bold text-[#0F1E3D]">
-                              {country.communitiesCount.toLocaleString('pt-PT')}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
               {currentTab === 'movimento' && (
                 <div className="space-y-4">
                   <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-100 flex items-center justify-between">
