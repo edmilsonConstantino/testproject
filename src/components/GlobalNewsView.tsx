@@ -1,431 +1,728 @@
-import React, { useState, useRef } from 'react';
-import { 
-  ArrowRight, 
-  Clock, 
-  Globe, 
-  Landmark, 
-  TrendingUp, 
-  Cpu, 
-  Leaf, 
-  Users, 
-  HeartPulse, 
-  Palette, 
-  MoreHorizontal,
-  ChevronLeft,
-  ChevronRight,
+import React, { useState, useRef, useEffect } from 'react';
+import {
+  Globe,
+  Landmark,
+  TrendingUp,
+  Leaf,
+  Cpu,
+  HeartPulse,
+  Scale,
+  Shield,
+  Plus,
+  ChevronDown,
+  Check,
+  ArrowRight,
   Bookmark,
+  Share2,
+  Users,
+  Flame,
+  Radio,
+  Sparkles,
+  ArrowUp,
+  ArrowDown,
+  Building2,
+  Stethoscope,
+  Vote,
+  LifeBuoy,
   MapPin,
-  Sparkles
+  Eye,
+  Activity,
+  BarChart2,
 } from 'lucide-react';
-import { GlobalWorldMapHero } from './GlobalWorldMapHero';
-import { GlobalCalendarWidget } from './GlobalCalendarWidget';
 
-interface GlobalNewsViewProps {
+export interface GlobalNewsViewProps {
   onOpenAiAssistant?: () => void;
+  onExploreMap?: () => void;
 }
 
-const CATEGORIES = [
-  { name: 'Política', color: 'bg-[#3B82F6]' },
-  { name: 'Economia', color: 'bg-[#F59E0B]' },
-  { name: 'Tecnologia', color: 'bg-[#8B5CF6]' },
-  { name: 'Ambiente', color: 'bg-[#10B981]' },
-  { name: 'Sociedade', color: 'bg-[#EC4899]' },
-];
+interface FilterPillItem {
+  id: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  hasDropdown?: boolean;
+  subcategories?: string[];
+}
 
-const FILTER_PILLS = [
+const CATEGORY_PILLS: FilterPillItem[] = [
   { id: 'todas', label: 'Todas', icon: Globe },
-  { id: 'politica', label: 'Política', icon: Landmark },
+  { id: 'politica-global', label: 'Política Global', icon: Landmark },
   { id: 'economia', label: 'Economia', icon: TrendingUp },
-  { id: 'tecnologia', label: 'Tecnologia', icon: Cpu },
   { id: 'ambiente', label: 'Ambiente', icon: Leaf },
-  { id: 'sociedade', label: 'Sociedade', icon: Users },
-  { id: 'saude', label: 'Saúde', icon: HeartPulse },
-  { id: 'cultura', label: 'Cultura', icon: Palette },
+  { id: 'tecnologia', label: 'Tecnologia', icon: Cpu },
+  { id: 'saude-global', label: 'Saúde Global', icon: HeartPulse },
+  {
+    id: 'direitos-humanos',
+    label: 'Direitos Humanos',
+    icon: Scale,
+    hasDropdown: true,
+    subcategories: [
+      'Todos em Direitos Humanos',
+      'Liberdade de Expressão',
+      'Refugiados & Migrações',
+      'Igualdade & Diversidade',
+      'Justiça Social',
+    ],
+  },
+  { id: 'seguranca', label: 'Segurança', icon: Shield },
+  {
+    id: 'mais',
+    label: '+ Mais',
+    icon: Plus,
+    hasDropdown: true,
+    subcategories: [
+      'Cultura Global',
+      'Educação & Futuro',
+      'Inovação Social',
+      'Ciência & Espaço',
+    ],
+  },
 ];
 
-const RECOMMENDED_NEWS = [
+// 6 Cards da seção "Principais notícias" (exatamente como na imagem)
+interface MainNewsCard {
+  id: string;
+  category: string;
+  categoryColor: string;
+  categoryBg: string;
+  image: string;
+  time: string;
+  title: string;
+  countries: string;
+}
+
+const MAIN_NEWS_LIST: MainNewsCard[] = [
   {
-    id: 1,
-    category: 'TECNOLOGIA',
-    categoryBadgeClass: 'bg-purple-100 text-purple-700',
-    urgencyBadge: { text: 'ÚLTIMA HORA', badgeClass: 'bg-red-500 text-white' },
-    title: 'Nova arquitetura quântica atinge supremacia em simulações biológicas complexas',
-    summary: 'Investigadores internacionais confirmam marco que pode reduzir anos de pesquisa no desenvolvimento de novos medicamentos essenciais.',
-    imageUrl: 'https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=600&auto=format&fit=crop&q=80',
-    source: 'Tech Review',
-    time: 'Há 45 min',
-  },
-  {
-    id: 2,
-    category: 'AMBIENTE',
-    categoryBadgeClass: 'bg-emerald-100 text-emerald-700',
-    urgencyBadge: { text: 'EXCLUSIVO', badgeClass: 'bg-amber-500 text-white' },
-    title: 'Tratado dos Oceanos entra em vigor com adesão recorde de 82 nações',
-    summary: 'Acordo histórico estabelece as primeiras zonas marinhas de proteção integral e monitorização contínua em águas internacionais até 2030.',
-    imageUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=600&auto=format&fit=crop&q=80',
-    source: 'Reuters',
-    time: 'Há 2h',
-  },
-  {
-    id: 3,
+    id: 'main-1',
     category: 'ECONOMIA',
-    categoryBadgeClass: 'bg-amber-100 text-amber-700',
-    title: 'Bancos centrais aceleram implementação de corredores transfronteiriços digitais',
-    summary: 'Novo consórcio prevê liquidações instantâneas com redução substancial de custos e taxas operacionais para remessas e transações globais.',
-    imageUrl: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=600&auto=format&fit=crop&q=80',
-    source: 'Financial Times',
-    time: 'Há 3h',
+    categoryColor: 'text-blue-600',
+    categoryBg: 'bg-blue-50',
+    image: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=600&auto=format&fit=crop&q=80',
+    time: 'Há 2 horas',
+    title: 'Comércio global cresce 3,2% no primeiro trimestre de 2024',
+    countries: '195 países',
   },
   {
-    id: 4,
-    category: 'POLÍTICA',
-    categoryBadgeClass: 'bg-blue-100 text-blue-700',
-    title: 'Cimeira de Genebra firma pacto preliminar sobre governança ética de inteligência artificial',
-    summary: 'Delegações de cinco continentes acordam salvaguardas conjuntas para transparência algorítmica, mitigação de riscos e soberania de dados.',
-    imageUrl: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=600&auto=format&fit=crop&q=80',
-    source: 'BBC News',
-    time: 'Há 5h',
-  },
-];
-
-const REGIONS = [
-  {
-    id: 'america-do-norte',
-    name: 'América do Norte',
-    newsCount: '342 notícias',
-    imageUrl: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=500&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'america-do-sul',
-    name: 'América do Sul',
-    newsCount: '218 notícias',
-    imageUrl: 'https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=500&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'europa',
-    name: 'Europa',
-    newsCount: '489 notícias',
-    imageUrl: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=500&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'africa',
-    name: 'África',
-    newsCount: '194 notícias',
-    imageUrl: 'https://images.unsplash.com/photo-1516426122078-c23e76319801?w=500&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'asia',
-    name: 'Ásia',
-    newsCount: '425 notícias',
-    imageUrl: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?w=500&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 'oceania',
-    name: 'Oceania',
-    newsCount: '112 notícias',
-    imageUrl: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=500&auto=format&fit=crop&q=80',
-  },
-];
-
-const LATEST_UPDATES = [
-  {
-    id: 1,
-    time: 'Há 12 min',
-    title: 'Cimeira do Clima aprova novo fundo de transição ecológica',
-    dotColor: 'bg-[#10B981]',
-  },
-  {
-    id: 2,
-    time: 'Há 45 min',
-    title: 'Avanço quântico promete acelerar descoberta de materiais',
-    dotColor: 'bg-[#8B5CF6]',
-  },
-  {
-    id: 3,
-    time: 'Há 1h',
-    title: 'Conselho Europeu debate novas diretrizes para cooperação global',
-    dotColor: 'bg-[#3B82F6]',
-  },
-  {
-    id: 4,
-    time: 'Há 3h',
-    title: 'Relatório aponta estabilização nos mercados de capitais',
-    dotColor: 'bg-[#F59E0B]',
-  },
-  {
-    id: 5,
-    time: 'Há 5h',
-    title: 'Iniciativas de educação digital ganham escala em 40 países',
-    dotColor: 'bg-[#EC4899]',
-  },
-];
-
-const HIGHLIGHTED_NEWS = [
-  {
-    id: 1,
-    category: 'POLÍTICA',
-    categoryBadgeClass: 'bg-blue-100 text-blue-700',
-    title: 'Cimeira de Segurança Global reforça cooperação e tratados no Atlântico',
-    info: 'Genebra • Há 1h',
-    imageUrl: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=240&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 2,
+    id: 'main-2',
     category: 'TECNOLOGIA',
-    categoryBadgeClass: 'bg-purple-100 text-purple-700',
-    title: 'Algoritmo de rede neural atinge precisão pioneira em diagnóstico precoce',
-    info: 'Tóquio • Há 3h',
-    imageUrl: 'https://images.unsplash.com/photo-1507146426996-ef05306b995a?w=240&auto=format&fit=crop&q=80',
+    categoryColor: 'text-purple-600',
+    categoryBg: 'bg-purple-50',
+    image: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80',
+    time: 'Há 4 horas',
+    title: 'IA generativa revoluciona educação em países em desenvolvimento',
+    countries: '87 países',
   },
   {
-    id: 3,
-    category: 'ECONOMIA',
-    categoryBadgeClass: 'bg-amber-100 text-amber-700',
-    title: 'Pacto bilateral viabiliza incentivos para transição energética e renováveis',
-    info: 'Lisboa • Há 4h',
-    imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=240&auto=format&fit=crop&q=80',
-  },
-  {
-    id: 4,
+    id: 'main-3',
     category: 'AMBIENTE',
-    categoryBadgeClass: 'bg-emerald-100 text-emerald-700',
-    title: 'Monitorização orbital revela regeneração contínua de bacias fluviais',
-    info: 'Nairobi • Há 6h',
-    imageUrl: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=240&auto=format&fit=crop&q=80',
+    categoryColor: 'text-emerald-600',
+    categoryBg: 'bg-emerald-50',
+    image: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=600&auto=format&fit=crop&q=80',
+    time: 'Há 5 horas',
+    title: 'Investimentos em energias renováveis atingem recorde de $2,1 trilhões',
+    countries: '160 países',
+  },
+  {
+    id: 'main-4',
+    category: 'POLÍTICA GLOBAL',
+    categoryColor: 'text-rose-600',
+    categoryBg: 'bg-rose-50',
+    image: 'https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?w=600&auto=format&fit=crop&q=80',
+    time: 'Há 6 horas',
+    title: 'Conselho de Segurança da ONU aprova cessar-fogo global',
+    countries: '75 países',
+  },
+  {
+    id: 'main-5',
+    category: 'SAÚDE GLOBAL',
+    categoryColor: 'text-blue-600',
+    categoryBg: 'bg-blue-50',
+    image: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=600&auto=format&fit=crop&q=80',
+    time: 'Há 8 horas',
+    title: 'OMS declara fim da emergência internacional por nova cepa',
+    countries: '150 países',
+  },
+  {
+    id: 'main-6',
+    category: 'SEGURANÇA',
+    categoryColor: 'text-amber-600',
+    categoryBg: 'bg-amber-50',
+    image: 'https://images.unsplash.com/photo-1508847154043-be5407fcaa5a?w=600&auto=format&fit=crop&q=80',
+    time: 'Há 9 horas',
+    title: 'Esforços diplomáticos intensificam-se em regiões de conflito',
+    countries: '60 países',
   },
 ];
 
-const MOST_READ_NEWS = [
+// Itens da coluna lateral "Em destaque agora"
+interface HighlightItem {
+  id: string;
+  category: string;
+  categoryColor: string;
+  image: string;
+  title: string;
+  time: string;
+}
+
+const HIGHLIGHT_ITEMS: HighlightItem[] = [
   {
-    rank: 1,
-    title: 'Lançamento da primeira rede internacional de energia solar orbital',
-    readers: '54.8K leitores',
+    id: 'h-1',
+    category: 'AMBIENTE',
+    categoryColor: 'text-emerald-700 font-bold',
+    image: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?w=300&auto=format&fit=crop&q=80',
+    title: 'O planeta ultrapassa limite crítico de aquecimento em 2024',
+    time: 'Há 1 hora',
   },
   {
-    rank: 2,
-    title: 'Grandes capitais aprovam plano de descarbonização integral do transporte',
-    readers: '42.1K leitores',
+    id: 'h-2',
+    category: 'ECONOMIA',
+    categoryColor: 'text-blue-700 font-bold',
+    image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=300&auto=format&fit=crop&q=80',
+    title: 'Bancos centrais do mundo mantêm taxas de juros',
+    time: 'Há 3 horas',
   },
   {
-    rank: 3,
-    title: 'Revolução na agricultura vertical reduz em 90% o consumo de água doce',
-    readers: '31.6K leitores',
+    id: 'h-3',
+    category: 'SAÚDE GLOBAL',
+    categoryColor: 'text-purple-700 font-bold',
+    image: 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&auto=format&fit=crop&q=80',
+    title: 'Nova vacina mostra 95% de eficácia contra vírus emergente',
+    time: 'Há 5 horas',
+  },
+  {
+    id: 'h-4',
+    category: 'DIREITOS HUMANOS',
+    categoryColor: 'text-amber-700 font-bold',
+    image: 'https://images.unsplash.com/photo-1541872703-74c5e44368f9?w=300&auto=format&fit=crop&q=80',
+    title: 'ONU aprova resolução histórica sobre migrações climáticas',
+    time: 'Há 6 horas',
   },
 ];
 
-export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({ onOpenAiAssistant }) => {
-  const [activeFilter, setActiveFilter] = useState('todas');
-  const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
-  const carouselRef = useRef<HTMLDivElement>(null);
+// Lista de "Tendências globais"
+interface GlobalTrendItem {
+  rank: number;
+  label: string;
+  direction: 'up' | 'down';
+}
 
-  const scrollCarousel = (direction: 'left' | 'right') => {
-    if (carouselRef.current) {
-      const scrollAmount = direction === 'left' ? -320 : 320;
-      carouselRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+const GLOBAL_TRENDS: GlobalTrendItem[] = [
+  { rank: 1, label: 'IA Responsável', direction: 'up' },
+  { rank: 2, label: 'Ação Climática', direction: 'up' },
+  { rank: 3, label: 'Economia Global', direction: 'up' },
+  { rank: 4, label: 'Saúde Mental', direction: 'down' },
+  { rank: 5, label: 'Conflitos Regionais', direction: 'down' },
+];
+
+export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
+  onOpenAiAssistant,
+  onExploreMap,
+}) => {
+  const [activeFilter, setActiveFilter] = useState<string>('todas');
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [activeSlide, setActiveSlide] = useState<number>(0);
+  const [savedNewsIds, setSavedNewsIds] = useState<Set<string>>(new Set());
+  const [shareFeedback, setShareFeedback] = useState<boolean>(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const toggleSaveNews = (id: string) => {
+    setSavedNewsIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const handleShare = () => {
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(window.location.href);
+      setShareFeedback(true);
+      setTimeout(() => setShareFeedback(false), 2000);
     }
   };
 
-  const toggleBookmark = (id: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setBookmarkedIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
+  // Fecha dropdowns se clicar fora
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setOpenDropdownId(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handlePillClick = (pill: FilterPillItem) => {
+    if (pill.hasDropdown) {
+      setOpenDropdownId((prev) => (prev === pill.id ? null : pill.id));
+    } else {
+      setActiveFilter(pill.id);
+      setSelectedSubcategory(null);
+      setOpenDropdownId(null);
+    }
+  };
+
+  const handleSubcategorySelect = (pillId: string, subcategory: string) => {
+    setActiveFilter(pillId);
+    setSelectedSubcategory(subcategory);
+    setOpenDropdownId(null);
   };
 
   return (
-    <div className="w-full bg-[#F1F5F9] min-h-full">
-      <div className="px-6 lg:px-8 pt-6 lg:pt-8 pb-12 max-w-[1600px] mx-auto">
-        {/* Layout Geral em Duas Colunas: Principal (~66%) e Lateral Direita (~33%) com gap de ~24px */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Coluna Principal (~75% da largura em telas grandes para dar maior destaque ao mapa mundi) */}
-          <section className="lg:col-span-8 xl:col-span-9 flex flex-col gap-6" aria-label="Conteúdo Principal de Notícias">
-            {/* Cabeçalho da Página: Título e Subtítulo */}
-            <div>
-              <h1 className="text-[32px] font-extrabold text-[#0F172A] leading-tight tracking-tight font-['Outfit']">
-                Notícias Globais
-              </h1>
-              <p className="text-base text-[#64748B] max-w-[500px] mt-1.5 leading-relaxed font-normal">
-                Fique por dentro das notícias que moldam o mundo. Informação verificada, de qualquer lugar do planeta.
-              </p>
-            </div>
+    <div id="mundo-em-movimento-view" className="w-full bg-[#F1F5F9] min-h-full pb-14">
+      <div className="max-w-[1600px] mx-auto px-3.5 sm:px-5 lg:px-6 py-5 sm:py-6 flex flex-col gap-6">
+        {/* 1. Cabeçalho Principal da Página */}
+        <header className="flex flex-col gap-1.5">
+          <h1 className="text-[32px] sm:text-4xl font-extrabold text-[#0F172A] leading-tight tracking-tight font-['Outfit']">
+            Mundo em Movimento
+          </h1>
+          <p className="text-sm sm:text-base text-[#64748B] max-w-3xl leading-relaxed font-normal">
+            As notícias e acontecimentos que têm impacto global. <br className="hidden sm:inline" />
+            Essencial para entender o presente e construir o futuro.
+          </p>
+        </header>
 
-            {/* SEÇÃO HERO EM DUAS COLUNAS: MAPA EXPANDIDO (~70%-72%) E CALENDÁRIO COMPACTO (~28%-30%) */}
-            <div className="flex flex-col lg:flex-row gap-5 items-stretch">
-              {/* 1. Bloco Hero Ampliado com Mapa Mundi e Hotspots Luminosos */}
-              <GlobalWorldMapHero
-                className="lg:w-[70%] xl:w-[72%]"
-                title="O mundo está acontecendo agora."
-                subtitle="Explore eventos e notícias em todo o planeta em tempo real."
-              />
+        {/* 2. Pills de Filtro de Categoria */}
+        <nav
+          ref={containerRef}
+          id="category-filter-pills"
+          className="relative z-20 flex items-center gap-2 sm:gap-2.5 overflow-x-auto pb-1 pt-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden select-none"
+          aria-label="Filtro de Categorias"
+        >
+          {CATEGORY_PILLS.map((pill) => {
+            const Icon = pill.icon;
+            const isActive = activeFilter === pill.id;
+            const isDropdownOpen = openDropdownId === pill.id;
 
-              {/* 2. Widget Lateral Direito: Calendário Global Compacto */}
-              <GlobalCalendarWidget
-                className="lg:w-[30%] xl:w-[28%]"
-              />
-            </div>
-
-            {/* LINHA HORIZONTAL DE PILLS DE FILTRO DE CATEGORIA */}
-            <div 
-              id="news-category-filters"
-              className="flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden select-none"
-            >
-              {FILTER_PILLS.map((pill) => {
-                const Icon = pill.icon;
-                const isActive = activeFilter === pill.id;
-                return (
-                  <button
-                    key={pill.id}
-                    type="button"
-                    onClick={() => setActiveFilter(pill.id)}
-                    className={`inline-flex items-center gap-2 py-2 px-4 rounded-full text-xs sm:text-[13px] font-semibold transition-all whitespace-nowrap cursor-pointer shrink-0 ${
-                      isActive
-                        ? 'bg-[#0F172A] text-white shadow-sm border border-[#0F172A]'
-                        : 'bg-white border border-[#E2E8F0] text-[#334155] hover:bg-slate-50 hover:text-[#0F172A] shadow-xs'
+            return (
+              <div key={pill.id} className="relative shrink-0">
+                <button
+                  type="button"
+                  id={`filter-pill-${pill.id}`}
+                  onClick={() => handlePillClick(pill)}
+                  className={`inline-flex items-center gap-2 py-2 px-3.5 sm:px-4 rounded-full text-xs sm:text-[13px] font-semibold transition-all duration-150 whitespace-nowrap cursor-pointer shrink-0 ${
+                    isActive
+                      ? 'bg-[#2563EB] text-white border border-[#2563EB] shadow-xs hover:bg-[#1D4ED8]'
+                      : 'bg-white border border-[#E2E8F0] text-[#334155] hover:bg-slate-50 hover:text-[#0F172A] hover:border-slate-300 shadow-2xs'
+                  }`}
+                  aria-expanded={pill.hasDropdown ? isDropdownOpen : undefined}
+                  aria-current={isActive ? 'true' : undefined}
+                >
+                  <Icon
+                    className={`w-3.5 h-3.5 shrink-0 transition-colors ${
+                      isActive ? 'text-white' : 'text-slate-500'
                     }`}
+                    strokeWidth={2.2}
+                  />
+
+                  <span>
+                    {pill.id === activeFilter && selectedSubcategory && selectedSubcategory !== pill.subcategories?.[0]
+                      ? `${pill.label}: ${selectedSubcategory}`
+                      : pill.label}
+                  </span>
+
+                  {pill.hasDropdown && (
+                    <ChevronDown
+                      className={`w-3.5 h-3.5 transition-transform duration-200 stroke-[2.2] ${
+                        isDropdownOpen ? 'rotate-180' : ''
+                      } ${isActive ? 'text-white/90' : 'text-slate-400'}`}
+                    />
+                  )}
+                </button>
+
+                {/* Submenu Dropdown */}
+                {pill.hasDropdown && isDropdownOpen && pill.subcategories && (
+                  <div
+                    id={`dropdown-menu-${pill.id}`}
+                    className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl border border-slate-200/90 shadow-xl py-1.5 z-30 animate-in fade-in zoom-in-95 duration-150"
                   >
-                    <Icon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : 'text-slate-500'} stroke-[2.2]`} />
-                    <span>{pill.label}</span>
-                  </button>
-                );
-              })}
+                    <div className="px-3 py-1.5 border-b border-slate-100">
+                      <span className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider">
+                        {pill.label}
+                      </span>
+                    </div>
 
-              {/* Pill "Mais" */}
-              <button
-                type="button"
-                className="inline-flex items-center gap-1.5 py-2 px-4 rounded-full bg-white border border-[#E2E8F0] text-[#334155] hover:bg-slate-50 hover:text-[#0F172A] text-xs sm:text-[13px] font-semibold transition-all whitespace-nowrap cursor-pointer shadow-xs shrink-0"
-              >
-                <span>Mais</span>
-                <MoreHorizontal className="w-4 h-4 text-slate-500 stroke-[2.2]" />
-              </button>
-            </div>
-
-            {/* SEÇÃO: NOTÍCIAS RECOMENDADAS PARA SI */}
-            <div className="flex flex-col gap-4 pt-1">
-              {/* Cabeçalho da Seção */}
-              <div className="flex items-center justify-between gap-3">
-                <h3 className="text-lg font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
-                  Notícias recomendadas para si
-                </h3>
-
-                <div className="flex items-center gap-3">
-                  {/* Setas de navegação do Carousel */}
-                  <div className="hidden sm:flex items-center gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => scrollCarousel('left')}
-                      aria-label="Notícias anteriores"
-                      className="w-7 h-7 rounded-full bg-white border border-[#E2E8F0] text-slate-600 hover:text-[#0055FE] hover:border-[#0055FE] hover:bg-slate-50 flex items-center justify-center transition-all cursor-pointer shadow-xs"
-                    >
-                      <ChevronLeft className="w-4 h-4 stroke-[2.2]" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => scrollCarousel('right')}
-                      aria-label="Próximas notícias"
-                      className="w-7 h-7 rounded-full bg-white border border-[#E2E8F0] text-slate-600 hover:text-[#0055FE] hover:border-[#0055FE] hover:bg-slate-50 flex items-center justify-center transition-all cursor-pointer shadow-xs"
-                    >
-                      <ChevronRight className="w-4 h-4 stroke-[2.2]" />
-                    </button>
+                    <div className="py-1">
+                      {pill.subcategories.map((subcat) => {
+                        const isSelected = activeFilter === pill.id && selectedSubcategory === subcat;
+                        return (
+                          <button
+                            key={subcat}
+                            type="button"
+                            onClick={() => handleSubcategorySelect(pill.id, subcat)}
+                            className={`w-full flex items-center justify-between px-3.5 py-2 text-xs font-semibold transition-colors text-left cursor-pointer ${
+                              isSelected
+                                ? 'bg-blue-50 text-[#2563EB]'
+                                : 'text-[#334155] hover:bg-slate-50 hover:text-[#0F172A]'
+                            }`}
+                          >
+                            <span className="truncate">{subcat}</span>
+                            {isSelected && <Check className="w-3.5 h-3.5 text-[#2563EB] shrink-0" />}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
+                )}
+              </div>
+            );
+          })}
+        </nav>
 
-                  {/* Link Ver todas as notícias */}
+        {/* 3. Grade Principal em 2 Colunas: Área de Conteúdo à Esquerda + Barra Lateral à Direita */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start w-full">
+          {/* COLUNA ESQUERDA (xl:col-span-9 / ~75%) */}
+          <div className="xl:col-span-9 flex flex-col gap-8 w-full">
+            {/* Bloco Superior: Hero à esquerda + Impacto em números à direita */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch w-full">
+              {/* Card Hero (~65% da coluna esquerda / lg:col-span-8) */}
+              <article
+                id="hero-news-card"
+                className="lg:col-span-8 relative overflow-hidden rounded-[18px] min-h-[410px] lg:h-[430px] flex flex-col justify-between p-6 sm:p-8 text-white shadow-md group border border-slate-900/10"
+              >
+                {/* Imagem da Terra vista do espaço com iluminação noturna das cidades */}
+                <img
+                  src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1600&auto=format&fit=crop&q=80"
+                  alt="Terra vista do espaço à noite com cidades iluminadas"
+                  className="absolute inset-0 w-full h-full object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-105"
+                  referrerPolicy="no-referrer"
+                />
+
+                {/* Gradiente escuro para legibilidade perfeita */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-black/30 pointer-events-none" />
+
+                {/* Topo do Hero: Badge e Metadados */}
+                <div className="relative z-10 flex flex-wrap items-center gap-3">
+                  <span
+                    id="hero-badge-impacto"
+                    className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-[#E11D48] text-white shadow-xs"
+                  >
+                    IMPACTO MUNDIAL
+                  </span>
+                  <div className="text-xs text-slate-200/90 tracking-wide font-medium flex items-center gap-2">
+                    <strong className="font-bold text-white uppercase tracking-wider">POLÍTICA GLOBAL</strong>
+                    <span className="opacity-70">Há 2 horas</span>
+                  </div>
+                </div>
+
+                {/* Centro do Hero: Título, Resumo e Ações */}
+                <div className="relative z-10 flex flex-col gap-3 my-auto pt-4 pb-6 max-w-2xl">
+                  <h2 className="text-2xl sm:text-3xl lg:text-[28px] xl:text-[31px] font-extrabold text-white leading-tight font-['Outfit'] tracking-tight">
+                    Líderes mundiais chegam a acordo histórico sobre IA segura e responsável
+                  </h2>
+                  <p className="text-sm sm:text-[14.5px] text-slate-200 leading-relaxed font-normal">
+                    Mais de 120 países assinam o primeiro tratado global para regular o desenvolvimento e uso ético da inteligência artificial.
+                  </p>
+
+                  {/* Botões de Ação */}
+                  <div className="flex items-center gap-3 pt-2">
+                    <button
+                      type="button"
+                      id="btn-ler-noticia-completa"
+                      className="inline-flex items-center gap-2 px-5 py-2.5 sm:py-3 rounded-full bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-[13px] font-bold transition-all shadow-md hover:shadow-lg cursor-pointer group/btn"
+                    >
+                      <span>Ler notícia completa</span>
+                      <ArrowRight className="w-4 h-4 transform group-hover/btn:translate-x-0.5 transition-transform stroke-[2.2]" />
+                    </button>
+
+                    {/* Bookmark circular */}
+                    <button
+                      type="button"
+                      onClick={() => toggleSaveNews('hero')}
+                      aria-label="Salvar notícia"
+                      className={`w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition-all cursor-pointer border ${
+                        savedNewsIds.has('hero')
+                          ? 'bg-[#2563EB] text-white border-[#2563EB]'
+                          : 'bg-black/35 hover:bg-black/55 text-white/90 hover:text-white border-white/20'
+                      }`}
+                    >
+                      <Bookmark
+                        className={`w-4 h-4 ${savedNewsIds.has('hero') ? 'fill-current' : ''}`}
+                        strokeWidth={2}
+                      />
+                    </button>
+
+                    {/* Compartilhar circular */}
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={handleShare}
+                        aria-label="Compartilhar notícia"
+                        className="w-10 h-10 rounded-full bg-black/35 hover:bg-black/55 text-white/90 hover:text-white border border-white/20 flex items-center justify-center backdrop-blur-md transition-all cursor-pointer"
+                      >
+                        <Share2 className="w-4 h-4" strokeWidth={2} />
+                      </button>
+                      {shareFeedback && (
+                        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2.5 py-1 text-[11px] font-semibold bg-slate-900 text-white rounded-md whitespace-nowrap shadow-md z-30">
+                          Link copiado!
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Dots de paginação no rodapé do Hero */}
+                <div
+                  id="hero-carousel-dots"
+                  className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5"
+                  aria-label="Controles do Carrossel"
+                >
+                  {[0, 1, 2, 3, 4, 5].map((index) => {
+                    const isCurrent = activeSlide === index;
+                    return (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => setActiveSlide(index)}
+                        aria-label={`Ir para notícia ${index + 1}`}
+                        className={`transition-all duration-200 cursor-pointer ${
+                          isCurrent
+                            ? 'w-5 h-2 rounded-full bg-white shadow-sm'
+                            : 'w-2 h-2 rounded-full bg-white/40 hover:bg-white/70'
+                        }`}
+                      />
+                    );
+                  })}
+                </div>
+              </article>
+
+              {/* Card "Impacto em números" (~35% da coluna esquerda / lg:col-span-4) */}
+              <aside
+                id="impacto-em-numeros-card"
+                className="lg:col-span-4 bg-white rounded-[18px] border border-slate-200/80 shadow-xs min-h-[410px] lg:h-[430px] p-5 sm:p-6 flex flex-col justify-between"
+              >
+                {/* Header */}
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <h3 className="text-base sm:text-[17px] font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
+                    Impacto em números
+                  </h3>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1 text-sm font-bold text-[#0055FE] hover:text-[#0042CC] transition-colors cursor-pointer group/all"
+                    className="inline-flex items-center gap-1 text-xs font-bold text-[#0066FF] hover:text-[#0052cc] transition-colors cursor-pointer group"
                   >
-                    <span>Ver todas as notícias</span>
-                    <ArrowRight className="w-3.5 h-3.5 transform group-hover/all:translate-x-0.5 transition-transform stroke-[2.2]" />
+                    <span>Ver relatório completo</span>
+                    <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
                   </button>
                 </div>
+
+                {/* Grid 2x2 com os 4 Mini-Cards Estatísticos */}
+                <div className="grid grid-cols-2 gap-3.5 my-auto py-2">
+                  {/* Mini-Card 1: 195 Países afetados */}
+                  <div className="bg-slate-50/90 rounded-2xl p-3.5 sm:p-4 border border-slate-100/90 flex flex-col justify-between hover:border-slate-200 transition-colors">
+                    <div className="w-9 h-9 rounded-full bg-emerald-100/80 text-emerald-600 flex items-center justify-center mb-2">
+                      <Users className="w-4.5 h-4.5" strokeWidth={2.2} />
+                    </div>
+                    <div>
+                      <div className="text-2xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-1">
+                        195
+                      </div>
+                      <div className="text-xs font-medium text-[#64748B] mb-1.5 leading-tight">
+                        Países afetados
+                      </div>
+                      <div className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600">
+                        <span>+12 desde ontem</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Mini-Card 2: 28 Acontecimentos relevantes */}
+                  <div className="bg-slate-50/90 rounded-2xl p-3.5 sm:p-4 border border-slate-100/90 flex flex-col justify-between hover:border-slate-200 transition-colors">
+                    <div className="w-9 h-9 rounded-full bg-blue-100/80 text-blue-600 flex items-center justify-center mb-2">
+                      <Globe className="w-4.5 h-4.5" strokeWidth={2.2} />
+                    </div>
+                    <div>
+                      <div className="text-2xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-1">
+                        28
+                      </div>
+                      <div className="text-xs font-medium text-[#64748B] mb-1.5 leading-tight">
+                        Acontecimentos relevantes
+                      </div>
+                      <div className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600">
+                        <span>+5 desde ontem</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Mini-Card 3: 7,4B Pessoas impactadas */}
+                  <div className="bg-slate-50/90 rounded-2xl p-3.5 sm:p-4 border border-slate-100/90 flex flex-col justify-between hover:border-slate-200 transition-colors">
+                    <div className="w-9 h-9 rounded-full bg-purple-100/80 text-purple-600 flex items-center justify-center mb-2">
+                      <TrendingUp className="w-4.5 h-4.5" strokeWidth={2.2} />
+                    </div>
+                    <div>
+                      <div className="text-2xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-1">
+                        7,4B
+                      </div>
+                      <div className="text-xs font-medium text-[#64748B] mb-1.5 leading-tight">
+                        Pessoas impactadas
+                      </div>
+                      <div className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600">
+                        <span>+1,2B desde ontem</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Mini-Card 4: 12 Crises ativas */}
+                  <div className="bg-slate-50/90 rounded-2xl p-3.5 sm:p-4 border border-slate-100/90 flex flex-col justify-between hover:border-slate-200 transition-colors">
+                    <div className="w-9 h-9 rounded-full bg-orange-100/80 text-orange-600 flex items-center justify-center mb-2">
+                      <Flame className="w-4.5 h-4.5" strokeWidth={2.2} />
+                    </div>
+                    <div>
+                      <div className="text-2xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-1">
+                        12
+                      </div>
+                      <div className="text-xs font-medium text-[#64748B] mb-1.5 leading-tight">
+                        Crises ativas
+                      </div>
+                      <div className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-600">
+                        <span>-1 desde ontem</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </aside>
+            </div>
+
+            {/* Seção "Principais notícias" com 6 cards em grade horizontal */}
+            <section id="principais-noticias-section" className="flex flex-col gap-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl sm:text-[22px] font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
+                  Principais notícias
+                </h3>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1 text-xs sm:text-[13px] font-bold text-[#0066FF] hover:text-[#0052cc] transition-colors cursor-pointer group"
+                >
+                  <span>Ver todas</span>
+                  <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
+                </button>
               </div>
 
-              {/* Grid / Carousel Horizontal de 4 Cards Visíveis */}
-              <div
-                ref={carouselRef}
-                id="recommended-news-carousel"
-                className="flex items-stretch gap-4.5 overflow-x-auto pb-3 pt-1 scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden select-none"
-              >
-                {RECOMMENDED_NEWS.map((news) => {
-                  const isBookmarked = bookmarkedIds.includes(news.id);
-
+              {/* Grid dos 6 Cards (3 por linha em telas médias / 6 por linha em telas ultra-largas) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                {MAIN_NEWS_LIST.map((item) => {
+                  const isSaved = savedNewsIds.has(item.id);
                   return (
                     <article
-                      key={news.id}
-                      className="w-[285px] sm:w-[calc(50%-10px)] lg:w-[calc(25%-14px)] min-w-[250px] shrink-0 bg-white rounded-[12px] border border-slate-100/90 shadow-[0_3px_14px_rgba(15,23,42,0.05)] hover:-translate-y-1 hover:shadow-[0_10px_24px_rgba(15,23,42,0.09)] transition-all duration-200 flex flex-col justify-between overflow-hidden group cursor-pointer"
+                      key={item.id}
+                      className="bg-white rounded-[16px] border border-slate-200/80 overflow-hidden shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between group"
                     >
-                      {/* Top: Imagem com badges */}
-                      <div className="relative h-[180px] w-full overflow-hidden bg-slate-100">
-                        <img
-                          src={news.imageUrl}
-                          alt={news.title}
-                          className="w-full h-full object-cover rounded-t-[12px] group-hover:scale-105 transition-transform duration-300"
-                          referrerPolicy="no-referrer"
-                          loading="lazy"
-                        />
-
-                        {/* Badge de Categoria (Canto superior esquerdo) */}
-                        <div className="absolute top-3 left-3">
-                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold tracking-wider uppercase shadow-xs ${news.categoryBadgeClass}`}>
-                            {news.category}
+                      {/* Topo: Imagem com Badge da Categoria */}
+                      <div>
+                        <div className="relative h-32 w-full overflow-hidden bg-slate-100">
+                          <img
+                            src={item.image}
+                            alt={item.title}
+                            className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
+                            referrerPolicy="no-referrer"
+                          />
+                          <span
+                            className={`absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md text-[9.5px] font-extrabold uppercase tracking-wider ${item.categoryBg} ${item.categoryColor} shadow-2xs`}
+                          >
+                            {item.category}
                           </span>
                         </div>
 
-                        {/* Badge de Urgência (Canto superior direito, se aplicável) */}
-                        {news.urgencyBadge && (
-                          <div className="absolute top-3 right-3">
-                            <span className={`px-2 py-0.5 rounded-md text-[9.5px] font-extrabold tracking-wider uppercase shadow-xs ${news.urgencyBadge.badgeClass}`}>
-                              {news.urgencyBadge.text}
-                            </span>
-                          </div>
-                        )}
+                        {/* Conteúdo Central: Timestamp e Título */}
+                        <div className="p-3 flex flex-col gap-1.5">
+                          <span className="text-[11px] font-semibold text-slate-400">
+                            {item.time}
+                          </span>
+                          <h4 className="text-xs sm:text-[12.5px] font-bold text-[#0F172A] leading-snug font-['Outfit'] line-clamp-3 group-hover:text-[#0066FF] transition-colors">
+                            {item.title}
+                          </h4>
+                        </div>
                       </div>
 
-                      {/* Corpo do Card */}
-                      <div className="p-4 flex-1 flex flex-col justify-between">
-                        <div>
-                          {/* Título da Notícia em Bold (2 linhas max, truncar) */}
-                          <h4 
-                            className="text-sm sm:text-[14.5px] font-bold text-[#0F172A] leading-snug line-clamp-2 group-hover:text-[#0055FE] transition-colors font-['Outfit']"
-                            title={news.title}
-                          >
-                            {news.title}
-                          </h4>
+                      {/* Rodapé: Países e Ações (Bookmark / Share) */}
+                      <div className="px-3 pb-3 pt-1 border-t border-slate-100/80 flex items-center justify-between text-[11px] text-slate-500">
+                        <span className="inline-flex items-center gap-1 font-medium truncate text-slate-600">
+                          <Globe className="w-3 h-3 text-slate-400 shrink-0" />
+                          <span className="truncate">{item.countries}</span>
+                        </span>
 
-                          {/* Texto de Resumo em Cinza (2 linhas max) */}
-                          <p 
-                            className="text-xs text-[#64748B] leading-relaxed mt-2 line-clamp-2"
-                            title={news.summary}
-                          >
-                            {news.summary}
-                          </p>
-                        </div>
-
-                        {/* Rodapé do Card */}
-                        <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between">
-                          <div className="flex items-center gap-1.5 text-xs">
-                            <span className="font-semibold text-slate-700">
-                              {news.source}
-                            </span>
-                            <span className="text-slate-300">•</span>
-                            <span className="text-[11px] text-slate-400">
-                              {news.time}
-                            </span>
-                          </div>
-
-                          {/* Botão Bookmark */}
+                        <div className="flex items-center gap-1 shrink-0">
                           <button
                             type="button"
-                            onClick={(e) => toggleBookmark(news.id, e)}
-                            title={isBookmarked ? "Remover dos guardados" : "Guardar notícia"}
-                            className="p-1 -mr-1 rounded-md text-slate-400 hover:text-[#0055FE] transition-colors cursor-pointer"
+                            onClick={() => toggleSaveNews(item.id)}
+                            className="p-1 rounded-md text-slate-400 hover:text-[#0066FF] transition-colors cursor-pointer"
+                            aria-label="Salvar"
                           >
-                            <Bookmark 
-                              className={`w-4 h-4 transition-transform active:scale-90 stroke-[2] ${
-                                isBookmarked 
-                                  ? 'fill-[#0055FE] text-[#0055FE]' 
-                                  : 'hover:text-[#0055FE]'
-                              }`} 
+                            <Bookmark
+                              className={`w-3.5 h-3.5 ${isSaved ? 'text-[#0066FF] fill-current' : ''}`}
                             />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleShare}
+                            className="p-1 rounded-md text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                            aria-label="Compartilhar"
+                          >
+                            <Share2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          </div>
+
+          {/* COLUNA DIREITA (xl:col-span-3 / ~25%) */}
+          <div className="xl:col-span-3 flex flex-col gap-6 w-full">
+            {/* Card 1: Em destaque agora */}
+            <div
+              id="em-destaque-agora-card"
+              className="bg-white rounded-[18px] border border-slate-200/80 p-5 shadow-xs flex flex-col gap-4"
+            >
+              <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+                <h3 className="text-base font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
+                  Em destaque agora
+                </h3>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#0066FF] hover:text-[#0052cc] transition-colors cursor-pointer group"
+                >
+                  <span>Ver todos</span>
+                  <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
+                </button>
+              </div>
+
+              {/* Lista com as 4 notícias em destaque */}
+              <div className="flex flex-col divide-y divide-slate-100">
+                {HIGHLIGHT_ITEMS.map((item) => {
+                  const isSaved = savedNewsIds.has(item.id);
+                  return (
+                    <article key={item.id} className="py-3 first:pt-0 last:pb-0 flex items-center gap-3 group">
+                      <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-slate-100">
+                        <img
+                          src={item.image}
+                          alt={item.title}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          referrerPolicy="no-referrer"
+                        />
+                      </div>
+
+                      <div className="flex-1 min-w-0 flex flex-col justify-between h-16 py-0.5">
+                        <span className={`text-[9.5px] font-extrabold uppercase tracking-wider ${item.categoryColor}`}>
+                          {item.category}
+                        </span>
+                        <h4 className="text-[12px] font-bold text-[#0F172A] leading-snug line-clamp-2 group-hover:text-[#0066FF] transition-colors">
+                          {item.title}
+                        </h4>
+                        <div className="flex items-center justify-between text-[11px] text-slate-400">
+                          <span>{item.time}</span>
+                          <button
+                            type="button"
+                            onClick={() => toggleSaveNews(item.id)}
+                            className="text-slate-400 hover:text-[#0066FF] transition-colors cursor-pointer"
+                            aria-label="Salvar"
+                          >
+                            <Bookmark className={`w-3.5 h-3.5 ${isSaved ? 'text-[#0066FF] fill-current' : ''}`} />
                           </button>
                         </div>
                       </div>
@@ -435,213 +732,203 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({ onOpenAiAssistan
               </div>
             </div>
 
-            {/* SEÇÃO: EXPLORE POR REGIÃO */}
-            <div className="flex flex-col gap-4 pt-1">
-              {/* Cabeçalho da Seção */}
-              <div className="flex items-center justify-between gap-3">
-                <h3 className="text-lg font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
-                  Explore por região
+            {/* Card 2: Tendências globais */}
+            <div
+              id="tendencias-globais-card"
+              className="bg-white rounded-[18px] border border-slate-200/80 p-5 shadow-xs flex flex-col gap-4"
+            >
+              <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+                <h3 className="text-base font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
+                  Tendências globais
                 </h3>
-
                 <button
                   type="button"
-                  className="inline-flex items-center gap-1 text-sm font-bold text-[#0055FE] hover:text-[#0042CC] transition-colors cursor-pointer group/regions"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#0066FF] hover:text-[#0052cc] transition-colors cursor-pointer group"
                 >
-                  <span>Ver todas as regiões</span>
-                  <ArrowRight className="w-3.5 h-3.5 transform group-hover/regions:translate-x-0.5 transition-transform stroke-[2.2]" />
+                  <span>Ver todas</span>
+                  <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
                 </button>
               </div>
 
-              {/* Grid de 6 Colunas de Regiões */}
-              <div 
-                id="news-regions-grid"
-                className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4"
-              >
-                {REGIONS.map((region) => (
+              {/* Lista dos 5 tópicos em tendência */}
+              <div className="flex flex-col gap-2.5">
+                {GLOBAL_TRENDS.map((trend) => (
                   <div
-                    key={region.id}
-                    className="relative h-[120px] rounded-[12px] overflow-hidden group cursor-pointer shadow-[0_2px_10px_rgba(15,23,42,0.06)] hover:shadow-[0_6px_18px_rgba(15,23,42,0.12)] hover:-translate-y-0.5 transition-all duration-200 select-none"
+                    key={trend.rank}
+                    className="flex items-center justify-between py-1 px-1 rounded-lg hover:bg-slate-50 transition-colors"
                   >
-                    {/* Imagem de Fundo */}
-                    <img
-                      src={region.imageUrl}
-                      alt={region.name}
-                      className="absolute inset-0 w-full h-full object-cover group-hover:scale-108 transition-transform duration-300"
-                      referrerPolicy="no-referrer"
-                      loading="lazy"
-                    />
-
-                    {/* Overlay Escuro Gradiente na parte inferior */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10" />
-
-                    {/* Ícone no Canto Superior Esquerdo */}
-                    <div className="absolute top-2.5 left-2.5 z-10 w-6 h-6 rounded-full bg-black/40 backdrop-blur-xs flex items-center justify-center text-white/90">
-                      <MapPin className="w-3.5 h-3.5 stroke-[2.2]" />
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full bg-blue-50 text-[#0066FF] flex items-center justify-center text-xs font-bold font-['Outfit'] shrink-0">
+                        {trend.rank}
+                      </div>
+                      <span className="text-xs sm:text-[13px] font-bold text-[#0F172A] tracking-tight">
+                        {trend.label}
+                      </span>
                     </div>
 
-                    {/* Textos Sobrepostos na Parte Inferior */}
-                    <div className="absolute bottom-2.5 left-3 right-3 z-10">
-                      <h4 className="text-[13.5px] font-bold text-white leading-tight font-['Outfit'] truncate">
-                        {region.name}
-                      </h4>
-                      <p className="text-[11px] font-medium text-white/80 mt-0.5">
-                        {region.newsCount}
-                      </p>
+                    <div className="shrink-0">
+                      {trend.direction === 'up' ? (
+                        <ArrowUp className="w-4 h-4 text-emerald-600 stroke-[2.5]" />
+                      ) : (
+                        <ArrowDown className="w-4 h-4 text-rose-600 stroke-[2.5]" />
+                      )}
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-
-            {/* O conteúdo de cards de notícias será adicionado nas próximas etapas */}
-          </section>
-
-          {/* Coluna Lateral Direita (~33% da largura, sticky no scroll) */}
-          {/* Coluna Lateral Direita (~25% da largura em telas grandes, mais fina e elegante) */}
-          <aside 
-            className="lg:col-span-4 xl:col-span-3 flex flex-col gap-2.5 lg:sticky lg:top-6 self-start lg:pt-[56px]" 
-            aria-label="Sidebar de Destaques e Mais Lidas"
-          >
-            {/* Cabeçalho FORA do card: "Notícias em destaque" + "Ver todas →" */}
-            <div className="flex items-center justify-between pb-0.5">
-              <h3 className="text-[15px] font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
-                Notícias em destaque
-              </h3>
-              <button
-                type="button"
-                className="inline-flex items-center gap-1 text-xs font-bold text-[#0055FE] hover:text-[#0042CC] transition-colors cursor-pointer group"
-              >
-                <span>Ver todas</span>
-                <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2]" />
-              </button>
-            </div>
-
-            {/* Card 1 — "Notícias em destaque" afinado e compacto */}
-            <div 
-              id="featured-news-card"
-              className="bg-white rounded-[14px] border border-slate-100/90 shadow-[0_4px_16px_rgba(15,23,42,0.03)] p-3.5 sm:p-4 flex flex-col justify-between"
-            >
-              {/* Lista de 4 Itens com espaçamento refinado */}
-              <div className="divide-y divide-slate-100/80">
-                {HIGHLIGHTED_NEWS.map((item) => (
-                  <article
-                    key={item.id}
-                    className="py-2.5 first:pt-0 last:pb-0 flex items-start gap-2.5 group cursor-pointer"
-                  >
-                    {/* Thumbnail quadrada afinada (~56x56px) */}
-                    <div className="w-14 h-14 rounded-[8px] overflow-hidden shrink-0 bg-slate-100 shadow-xs">
-                      <img
-                        src={item.imageUrl}
-                        alt={item.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-                        referrerPolicy="no-referrer"
-                        loading="lazy"
-                      />
-                    </div>
-
-                    {/* Conteúdo à direita */}
-                    <div className="flex-1 min-w-0 flex flex-col justify-between min-h-[56px]">
-                      <div>
-                        {/* Badge de categoria pequena */}
-                        <span className={`inline-block px-1.5 py-0.5 rounded-full text-[8.5px] font-extrabold tracking-wider uppercase ${item.categoryBadgeClass}`}>
-                          {item.category}
-                        </span>
-
-                        {/* Título da notícia (2 linhas, bold, truncar) */}
-                        <h4
-                          className="text-xs sm:text-[12.5px] font-bold text-[#0F172A] leading-snug line-clamp-2 mt-0.5 group-hover:text-[#0055FE] transition-colors font-['Outfit']"
-                          title={item.title}
-                        >
-                          {item.title}
-                        </h4>
-                      </div>
-
-                      {/* Data/local ou fonte abaixo em cinza claro */}
-                      <p className="text-[10.5px] text-[#64748B] font-medium truncate mt-0.5">
-                        {item.info}
-                      </p>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
-
-            {/* Botão full-width no rodapé afinado */}
-            <button
-              type="button"
-              className="w-full py-2.5 px-3 rounded-xl bg-white border border-slate-200/90 hover:border-[#0055FE] hover:bg-slate-50 text-[#0055FE] text-xs font-bold transition-all flex items-center justify-center gap-2 shadow-xs cursor-pointer group"
-            >
-              <span>Ver todos os destaques</span>
-              <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2]" />
-            </button>
-
-            {/* Cabeçalho FORA do card: "Mais lidas" + "Ver todas →" */}
-            <div className="flex items-center justify-between pt-1 pb-0.5">
-              <h3 className="text-[15px] font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
-                Mais lidas
-              </h3>
-              <button
-                type="button"
-                className="inline-flex items-center gap-1 text-xs font-bold text-[#0055FE] hover:text-[#0042CC] transition-colors cursor-pointer group"
-              >
-                <span>Ver todas</span>
-                <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2]" />
-              </button>
-            </div>
-
-            {/* Card 2 — "Mais lidas" afinado */}
-            <div 
-              id="most-read-news-card"
-              className="bg-white rounded-[14px] border border-slate-100/90 shadow-[0_4px_16px_rgba(15,23,42,0.03)] p-3.5 sm:p-4 flex flex-col justify-between"
-            >
-              {/* Lista de 3 Itens */}
-              <div className="divide-y divide-slate-100/80">
-                {MOST_READ_NEWS.map((item) => (
-                  <article
-                    key={item.rank}
-                    className="py-2.5 first:pt-0 last:pb-0 flex items-start gap-3 group cursor-pointer"
-                  >
-                    {/* Número de ranking à esquerda */}
-                    <span className="text-xl sm:text-2xl font-black text-slate-300 group-hover:text-[#0055FE] transition-colors w-6 shrink-0 font-['Outfit'] select-none leading-none pt-0.5">
-                      {item.rank}
-                    </span>
-
-                    {/* Título da notícia + contagem de leitores */}
-                    <div className="flex-1 min-w-0">
-                      <h4
-                        className="text-xs sm:text-[12.5px] font-bold text-[#0F172A] leading-snug line-clamp-2 group-hover:text-[#0055FE] transition-colors font-['Outfit']"
-                        title={item.title}
-                      >
-                        {item.title}
-                      </h4>
-                      <p className="text-[10.5px] text-[#64748B] font-medium mt-0.5">
-                        {item.readers}
-                      </p>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </div>
-          </aside>
-        </div>
-      </div>
-
-      {/* Botão Flutuante "VILA AI" no Canto Inferior Direito da Tela */}
-      <div className="fixed bottom-6 right-6 z-40">
-        <button
-          type="button"
-          onClick={onOpenAiAssistant}
-          id="fab-vila-ai-news"
-          className="relative group flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-tr from-[#0055FE] to-[#3B82F6] text-white shadow-xl shadow-blue-500/35 hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
-          aria-label="Abrir Assistente VILA AI"
-          title="Assistente VILA AI"
-        >
-          <div className="flex flex-col items-center justify-center">
-            <Sparkles className="w-5 h-5 text-white animate-pulse" />
-            <span className="text-[8.5px] font-extrabold tracking-tight uppercase leading-none mt-0.5">VILA AI</span>
           </div>
-        </button>
+        </div>
+
+        {/* 4. Linha Inferior de Largura Total: "Acompanhe o mundo ao vivo" */}
+        <section
+          id="acompanhe-o-mundo-ao-vivo-section"
+          className="bg-white rounded-[20px] border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col gap-4 mt-2"
+        >
+          {/* Cabeçalho da Secção */}
+          <div className="flex flex-col gap-0.5">
+            <h3 className="text-base sm:text-lg font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
+              Acompanhe o mundo ao vivo
+            </h3>
+            <p className="text-xs sm:text-[13px] text-[#64748B]">
+              Monitore acontecimentos em tempo real que estão moldando o nosso futuro.
+            </p>
+          </div>
+
+          {/* Grade de Eventos ao Vivo + Card de Acesso ao Mapa */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3.5 items-stretch">
+            {/* Evento 1: Cúpula do Clima 2024 */}
+            <div className="bg-slate-50/90 rounded-2xl p-3.5 border border-slate-100/90 flex flex-col justify-between hover:border-slate-200 transition-colors">
+              <div className="flex items-center justify-between mb-2">
+                <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-rose-600 text-white">
+                  AO VIVO
+                </span>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+              </div>
+              <div className="flex items-start gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-white border border-slate-200/80 flex items-center justify-center shrink-0 text-slate-700 shadow-2xs">
+                  <Landmark className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-xs sm:text-[13px] font-bold text-[#0F172A] leading-tight truncate">
+                    Cúpula do Clima 2024
+                  </h4>
+                  <p className="text-[11px] text-slate-500 mt-0.5 truncate flex items-center gap-1">
+                    <span>📍 Dubai, Emirados Árabes</span>
+                  </p>
+                  <p className="text-[10.5px] text-slate-400 mt-0.5">
+                    • 2.4K assistindo
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Evento 2: Mercados Globais */}
+            <div className="bg-slate-50/90 rounded-2xl p-3.5 border border-slate-100/90 flex flex-col justify-between hover:border-slate-200 transition-colors">
+              <div className="flex items-center justify-between mb-2">
+                <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-rose-600 text-white">
+                  AO VIVO
+                </span>
+                <span className="w-2 h-2 rounded-full bg-amber-500" />
+              </div>
+              <div className="flex items-start gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-white border border-slate-200/80 flex items-center justify-center shrink-0 text-slate-700 shadow-2xs">
+                  <BarChart2 className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-xs sm:text-[13px] font-bold text-[#0F172A] leading-tight truncate">
+                    Mercados Globais
+                  </h4>
+                  <p className="text-[11px] text-slate-500 mt-0.5 truncate">
+                    Atualizações contínuas
+                  </p>
+                  <p className="text-[10.5px] text-slate-400 mt-0.5">
+                    • 1.8K assistindo
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Evento 3: Eleições na Índia */}
+            <div className="bg-slate-50/90 rounded-2xl p-3.5 border border-slate-100/90 flex flex-col justify-between hover:border-slate-200 transition-colors">
+              <div className="flex items-center justify-between mb-2">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-slate-800 text-white">
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-400" />
+                  EM DESENVOLVIMENTO
+                </span>
+                <span className="w-2 h-2 rounded-full bg-emerald-500" />
+              </div>
+              <div className="flex items-start gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-white border border-slate-200/80 flex items-center justify-center shrink-0 text-slate-700 shadow-2xs">
+                  <Vote className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-xs sm:text-[13px] font-bold text-[#0F172A] leading-tight truncate">
+                    Eleições na Índia
+                  </h4>
+                  <p className="text-[11px] text-slate-500 mt-0.5 truncate">
+                    Resultados parciais
+                  </p>
+                  <p className="text-[10.5px] text-slate-400 mt-0.5">
+                    • 856 assistindo
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Evento 4: Crise Humanitária */}
+            <div className="bg-slate-50/90 rounded-2xl p-3.5 border border-slate-100/90 flex flex-col justify-between hover:border-slate-200 transition-colors">
+              <div className="flex items-center justify-between mb-2">
+                <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-rose-600 text-white">
+                  AO VIVO
+                </span>
+                <span className="w-2 h-2 rounded-full bg-rose-500" />
+              </div>
+              <div className="flex items-start gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-white border border-slate-200/80 flex items-center justify-center shrink-0 text-slate-700 shadow-2xs">
+                  <LifeBuoy className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <h4 className="text-xs sm:text-[13px] font-bold text-[#0F172A] leading-tight truncate">
+                    Crise Humanitária
+                  </h4>
+                  <p className="text-[11px] text-slate-500 mt-0.5 truncate">
+                    Ajuda internacional
+                  </p>
+                  <p className="text-[10.5px] text-slate-400 mt-0.5">
+                    • 3.1K assistindo
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 5: Link para o Mapa de Crises e Acontecimentos */}
+            <div
+              onClick={onExploreMap}
+              className="bg-blue-50/50 hover:bg-blue-50/80 rounded-2xl p-3.5 border border-blue-100 flex items-center justify-center gap-3 transition-colors cursor-pointer group text-center"
+            >
+              <div className="w-10 h-10 rounded-full bg-white border border-blue-200 text-[#0066FF] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+                <Globe className="w-5 h-5" />
+              </div>
+              <span className="text-xs sm:text-[13px] font-bold text-[#0066FF] group-hover:underline text-left leading-snug">
+                Ver mapa de crises <br /> e acontecimentos
+              </span>
+            </div>
+          </div>
+        </section>
       </div>
+
+      {/* Botão Flutuante VILA AI (canto inferior direito) */}
+      <button
+        type="button"
+        onClick={onOpenAiAssistant}
+        id="floating-vila-ai-btn"
+        className="fixed bottom-6 right-6 z-40 w-16 h-16 rounded-full bg-gradient-to-tr from-[#0055FE] to-[#4338CA] text-white shadow-xl hover:shadow-2xl hover:scale-105 transition-all flex flex-col items-center justify-center gap-0.5 cursor-pointer border-2 border-white/20 group"
+        aria-label="Assistente VILA AI"
+      >
+        <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+        <span className="text-[9px] font-extrabold tracking-wider">VILA AI</span>
+      </button>
     </div>
   );
 };

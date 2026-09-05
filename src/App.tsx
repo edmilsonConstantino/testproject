@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { AppLayout } from './components/AppLayout';
 import { Sidebar } from './components/Sidebar';
 import { Topbar } from './components/Topbar';
 import { MapHeroSection } from './components/MapHeroSection';
@@ -6,6 +7,7 @@ import { FeaturedCountriesSection } from './components/FeaturedCountriesSection'
 import { ExploreWorldView } from './components/ExploreWorldView';
 import { GlobalNewsView } from './components/GlobalNewsView';
 import { GlobalEventsView } from './components/GlobalEventsView';
+import { GlobalCommunityView } from './components/GlobalCommunityView';
 import { CountryDetailModal } from './components/CountryDetailModal';
 import { VideoModal } from './components/VideoModal';
 import { SearchCommandModal } from './components/SearchCommandModal';
@@ -29,8 +31,36 @@ import {
   Flame,
 } from 'lucide-react';
 
+const getInitialTab = (): string => {
+  if (typeof window === 'undefined') return 'inicio';
+  const hash = window.location.hash.replace('#', '').toLowerCase();
+  const params = new URLSearchParams(window.location.search);
+  const tabParam = params.get('tab')?.toLowerCase();
+  const pathname = window.location.pathname.replace(/^\//, '').toLowerCase();
+  const target = tabParam || hash || pathname;
+
+  if (
+    target === 'noticias' ||
+    target === 'movimento' ||
+    target === 'mundo-em-movimento' ||
+    target.includes('movimento') ||
+    target.includes('noticia')
+  ) {
+    return 'noticias';
+  } else if (target === 'comunidade' || target === 'comunidade-global' || target.includes('comunidade')) {
+    return 'comunidade';
+  } else if (target === 'eventos' || target === 'eventos-globais') {
+    return 'eventos';
+  } else if (target === 'explorar' || target === 'explorar-o-mundo') {
+    return 'explorar';
+  } else if (target === 'inicio') {
+    return 'inicio';
+  }
+  return 'comunidade';
+};
+
 export default function App() {
-  const [currentTab, setCurrentTab] = useState('inicio');
+  const [currentTab, setCurrentTab] = useState(getInitialTab);
   const [selectedCountry, setSelectedCountry] = useState<CountryData>(COUNTRIES_DATA[0]); // Portugal by default
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
@@ -44,6 +74,43 @@ export default function App() {
     isOpen: false,
     mode: 'login',
   });
+
+  // URL hash, query parameter and pathname router sync
+  useEffect(() => {
+    const handleSyncRoute = () => {
+      const hash = window.location.hash.replace('#', '').toLowerCase();
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab')?.toLowerCase();
+      const pathname = window.location.pathname.replace(/^\//, '').toLowerCase();
+      const target = tabParam || hash || pathname;
+
+      if (
+        target === 'noticias' ||
+        target === 'movimento' ||
+        target === 'mundo-em-movimento' ||
+        target.includes('movimento') ||
+        target.includes('noticia')
+      ) {
+        setCurrentTab('noticias');
+      } else if (target === 'comunidade' || target === 'comunidade-global' || target.includes('comunidade')) {
+        setCurrentTab('comunidade');
+      } else if (target === 'eventos' || target === 'eventos-globais') {
+        setCurrentTab('eventos');
+      } else if (target === 'explorar' || target === 'explorar-o-mundo') {
+        setCurrentTab('explorar');
+      } else if (target === 'inicio' || target === 'home' || target === '') {
+        setCurrentTab('inicio');
+      }
+    };
+
+    handleSyncRoute();
+    window.addEventListener('hashchange', handleSyncRoute);
+    window.addEventListener('popstate', handleSyncRoute);
+    return () => {
+      window.removeEventListener('hashchange', handleSyncRoute);
+      window.removeEventListener('popstate', handleSyncRoute);
+    };
+  }, []);
 
   // Global keyboard shortcut for search (⌘K / Ctrl+K)
   useEffect(() => {
@@ -71,74 +138,66 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F1F5F9] text-[#475569] flex antialiased">
-      {/* 1. Left Fixed Sidebar */}
-      <Sidebar
+    <>
+      <AppLayout
         currentTab={currentTab}
         onSelectTab={(tabId) => {
           setCurrentTab(tabId);
+          window.location.hash = tabId;
           window.scrollTo({ top: 0, behavior: 'smooth' });
         }}
         onOpenAuth={handleOpenAuth}
         onOpenImpactModal={() => setIsImpactModalOpen(true)}
-        isMobileOpen={isMobileSidebarOpen}
-        onCloseMobile={() => setIsMobileSidebarOpen(false)}
-      />
+        isMobileSidebarOpen={isMobileSidebarOpen}
+        onCloseMobileSidebar={() => setIsMobileSidebarOpen(false)}
+        onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
+        onOpenSearchModal={() => setIsSearchModalOpen(true)}
+        searchPlaceholder={
+          currentTab === 'comunidade'
+            ? 'Pesquisar pessoas, comunidades, temas, organizações...'
+            : currentTab === 'eventos'
+            ? 'Pesquisar eventos, temas, locais, organizações...'
+            : currentTab === 'noticias' || currentTab === 'movimento'
+            ? 'Pesquisar notícias globais, temas, países...'
+            : 'Pesquisar países, regiões, cidades, projetos, comunidades...'
+        }
+        showTopbar={
+          currentTab === 'inicio' ||
+          currentTab === 'noticias' ||
+          currentTab === 'movimento' ||
+          currentTab === 'eventos' ||
+          currentTab === 'comunidade'
+        }
+      >
+        {currentTab === 'inicio' ? (
+          <div className="px-3.5 sm:px-5 lg:px-6 pt-1 pb-10 flex flex-col gap-6 lg:gap-8 max-w-[1600px] mx-auto">
+            {/* Hero Section with Interactive Vector World Map */}
+            <MapHeroSection
+              selectedCountry={selectedCountry}
+              onSelectCountry={handleSelectCountry}
+              onExploreWorld={() => {
+                setCurrentTab('explorar');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              onWatchTour={() => setIsVideoModalOpen(true)}
+              onExploreCountry={handleExploreCountry}
+            />
 
-      {/* 2. Main Content Area (Right of Sidebar) */}
-      <div className="flex-1 md:pl-[230px] flex flex-col min-w-0 min-h-screen transition-all duration-300">
-        {/* Topbar Navigation - Presente nas páginas Início, Notícias Globais e Eventos Globais */}
-        {(currentTab === 'inicio' || currentTab === 'noticias' || currentTab === 'eventos') && (
-          <Topbar
-            searchPlaceholder={
-              currentTab === 'eventos'
-                ? 'Pesquisar eventos, temas, locais, organizações...'
-                : currentTab === 'noticias'
-                ? 'Pesquisar notícias, temas, fontes, autores...'
-                : 'Pesquisar países, regiões, cidades, projetos, comunidades...'
-            }
-            onOpenSearchModal={() => setIsSearchModalOpen(true)}
-            onOpenMobileMenu={() => setIsMobileSidebarOpen(true)}
-            onOpenAuth={handleOpenAuth}
-          />
-        )}
-
-        {/* Scrollable Dashboard Viewport */}
-        <main className={`flex-1 w-full overflow-y-auto ${
-          currentTab === 'noticias' || currentTab === 'eventos'
-            ? 'p-0'
-            : `px-3.5 sm:px-5 lg:px-6 pb-10 flex flex-col gap-6 lg:gap-8 max-w-[1600px] mx-auto ${
-                currentTab === 'inicio' ? 'pt-1' : 'pt-4 sm:pt-6'
-              }`
-        }`}>
-          {currentTab === 'inicio' ? (
-            <div className="flex flex-col gap-6 lg:gap-8">
-              {/* Hero Section with Interactive Vector World Map */}
-              <MapHeroSection
-                selectedCountry={selectedCountry}
-                onSelectCountry={handleSelectCountry}
-                onExploreWorld={() => {
-                  setCurrentTab('explorar');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                onWatchTour={() => setIsVideoModalOpen(true)}
-                onExploreCountry={handleExploreCountry}
-              />
-
-              {/* Featured Countries Section Carousel */}
-              <FeaturedCountriesSection
-                selectedCountry={selectedCountry}
-                onSelectCountry={handleSelectCountry}
-                onExploreCountry={handleExploreCountry}
-                onViewAllCountries={() => {
-                  setCurrentTab('explorar');
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                }}
-                onOpenAiAssistant={() => setIsAiModalOpen(true)}
-              />
-            </div>
-          ) : currentTab === 'explorar' ? (
-            /* Explorar o Mundo View with 3 Columns and Map */
+            {/* Featured Countries Section Carousel */}
+            <FeaturedCountriesSection
+              selectedCountry={selectedCountry}
+              onSelectCountry={handleSelectCountry}
+              onExploreCountry={handleExploreCountry}
+              onViewAllCountries={() => {
+                setCurrentTab('explorar');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              onOpenAiAssistant={() => setIsAiModalOpen(true)}
+            />
+          </div>
+        ) : currentTab === 'explorar' ? (
+          <div className="px-3.5 sm:px-5 lg:px-6 pt-4 sm:pt-6 pb-10 flex flex-col gap-6 lg:gap-8 max-w-[1600px] mx-auto">
+            {/* Explorar o Mundo View with 3 Columns and Map */}
             <ExploreWorldView
               selectedCountry={selectedCountry}
               onSelectCountry={handleSelectCountry}
@@ -150,173 +209,119 @@ export default function App() {
               onOpenAiAssistant={() => setIsAiModalOpen(true)}
               onOpenMobileMenu={() => setIsMobileSidebarOpen(true)}
             />
-          ) : currentTab === 'noticias' ? (
-            /* Notícias Globais View */
-            <GlobalNewsView onOpenAiAssistant={() => setIsAiModalOpen(true)} />
-          ) : currentTab === 'eventos' ? (
-            /* Eventos Globais View */
-            <GlobalEventsView 
-              onOpenAiAssistant={() => setIsAiModalOpen(true)}
-              onExploreMap={() => {
-                setCurrentTab('explorar');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-            />
-          ) : (
-            /* Subview Render for Other Sidebar Tabs */
-            <div className="space-y-6 animate-in fade-in duration-200 overflow-y-auto pr-1 pb-8">
-              {/* Back to Home Breadcrumb */}
-              <div className="flex items-center justify-between pb-2 border-b border-slate-200">
-                <div>
-                  <h1 className="text-2xl font-extrabold text-[#0F1E3D] font-['Outfit'] capitalize">
-                    {currentTab === 'movimento' && 'Notícias Globais'}
-                    {currentTab === 'eventos' && 'Eventos Globais'}
-                    {currentTab === 'comunidade' && 'Comunidade Global'}
-                    {currentTab === 'indicadores' && 'Indicadores Globais'}
-                    {currentTab === 'ia' && 'VILA AI'}
-                    {currentTab === 'impacto' && 'Impacto Global'}
-                    {currentTab === 'parceiros' && 'Parceiros'}
-                    {currentTab === 'sobre' && 'Sobre a VILA'}
-                    {currentTab === 'definicoes' && 'Definições da Plataforma'}
-                  </h1>
-                  <p className="text-xs text-[#64748B] mt-0.5">
-                    Painel de gestão e monitorização contínua do ecossistema VILA.
-                  </p>
-                </div>
-
-                <button
-                  onClick={() => setCurrentTab('inicio')}
-                  className="px-4 py-2 text-xs font-bold text-[#2563EB] bg-white border border-[#E2E8F0] hover:bg-slate-50 rounded-xl transition-colors shadow-2xs cursor-pointer"
-                >
-                  ← Voltar ao Início
-                </button>
+          </div>
+        ) : (currentTab === 'noticias' || currentTab === 'movimento' || currentTab === 'mundo-em-movimento') ? (
+          /* Notícias Globais / Mundo em Movimento View */
+          <GlobalNewsView
+            onOpenAiAssistant={() => setIsAiModalOpen(true)}
+            onExploreMap={() => {
+              setCurrentTab('explorar');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        ) : currentTab === 'eventos' ? (
+          /* Eventos Globais View */
+          <GlobalEventsView 
+            onOpenAiAssistant={() => setIsAiModalOpen(true)}
+            onExploreMap={() => {
+              setCurrentTab('explorar');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        ) : (currentTab === 'comunidade' || currentTab === 'comunidade-global') ? (
+          /* Comunidade Global View */
+          <GlobalCommunityView
+            onOpenAiAssistant={() => setIsAiModalOpen(true)}
+            onExploreMap={() => {
+              setCurrentTab('explorar');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onOpenCreateCommunityModal={() => {
+              setAuthModal({ isOpen: true, mode: 'register' });
+            }}
+          />
+        ) : (
+          /* Subview Render for Other Sidebar Tabs */
+          <div className="px-3.5 sm:px-5 lg:px-6 pt-4 sm:pt-6 pb-10 max-w-[1600px] mx-auto space-y-6 animate-in fade-in duration-200 overflow-y-auto pr-1">
+            {/* Back to Home Breadcrumb */}
+            <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+              <div>
+                <h1 className="text-2xl font-extrabold text-[#0F1E3D] font-['Outfit'] capitalize">
+                  {currentTab === 'comunidade' && 'Comunidade Global'}
+                  {currentTab === 'indicadores' && 'Indicadores Globais'}
+                  {currentTab === 'ia' && 'VILA AI'}
+                  {currentTab === 'impacto' && 'Impacto Global'}
+                  {currentTab === 'parceiros' && 'Parceiros'}
+                  {currentTab === 'sobre' && 'Sobre a VILA'}
+                  {currentTab === 'definicoes' && 'Definições da Plataforma'}
+                </h1>
+                <p className="text-xs text-[#64748B] mt-0.5">
+                  Painel de gestão e monitorização contínua do ecossistema VILA.
+                </p>
               </div>
 
-              {/* Tab Specific Content */}
-              {currentTab === 'movimento' && (
-                <div className="space-y-4">
-                  <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-50 to-blue-50 border border-emerald-100 flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-[#10B981] text-white flex items-center justify-center">
-                        <Flame className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-bold text-[#0F1E3D]">Atividade em Tempo Real</h3>
-                        <p className="text-xs text-[#64748B]">
-                          Atualizações ao vivo enviadas por líderes de projetos ao redor do mundo.
-                        </p>
-                      </div>
-                    </div>
-                    <span className="px-3 py-1 bg-emerald-600 text-white font-bold text-xs rounded-full animate-pulse">
-                      Ao Vivo
-                    </span>
-                  </div>
-
-                  <div className="bg-white rounded-2xl border border-[#E2E8F0] divide-y divide-slate-100 overflow-hidden">
-                    <div className="p-4 flex items-start gap-4">
-                      <span className="text-2xl">🇵🇹</span>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-xs font-bold text-[#0F1E3D]">
-                            Vila de Monsanto • Portugal
-                          </h4>
-                          <span className="text-[10px] text-[#94A3B8]">Há 4 min</span>
-                        </div>
-                        <p className="text-xs text-[#475569] mt-0.5">
-                          Conclusão da primeira fase da rede comunitária de energia solar em telhados de granito.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="p-4 flex items-start gap-4">
-                      <span className="text-2xl">🇧🇷</span>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-xs font-bold text-[#0F1E3D]">
-                            Santarém, Pará • Brasil
-                          </h4>
-                          <span className="text-[10px] text-[#94A3B8]">Há 18 min</span>
-                        </div>
-                        <p className="text-xs text-[#475569] mt-0.5">
-                          Inauguração da casa de sementes nativas com 45 famílias ribeirinhas cadastradas.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="p-4 flex items-start gap-4">
-                      <span className="text-2xl">🇰🇪</span>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between">
-                          <h4 className="text-xs font-bold text-[#0F1E3D]">
-                            Narok • Quénia
-                          </h4>
-                          <span className="text-[10px] text-[#94A3B8]">Há 42 min</span>
-                        </div>
-                        <p className="text-xs text-[#475569] mt-0.5">
-                          Novo poço com bomba alimentada por energia solar entrega água potável para 3 vilarejos Maasai.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {currentTab === 'ia' && (
-                <div className="bg-white rounded-3xl border border-[#E2E8F0] p-8 text-center max-w-xl mx-auto space-y-4 shadow-sm">
-                  <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#2563EB] to-[#10B981] mx-auto flex items-center justify-center shadow-lg shadow-blue-500/20 text-white">
-                    <Sparkles className="w-8 h-8" />
-                  </div>
-                  <h2 className="text-2xl font-extrabold text-[#0F1E3D] font-['Outfit']">
-                    VILA AI Assistant
-                  </h2>
-                  <p className="text-xs sm:text-sm text-[#64748B]">
-                    Converse com a nossa inteligência coletiva para encontrar oportunidades de voluntariado, parceiros de projetos e financiamento de impacto.
-                  </p>
-                  <button
-                    onClick={() => setIsAiModalOpen(true)}
-                    className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#2563EB] to-[#10B981] text-white font-bold text-xs shadow-md hover:opacity-95 transition-all"
-                  >
-                    Iniciar Conversa com VILA AI
-                  </button>
-                </div>
-              )}
-
-              {['eventos', 'comunidade', 'impacto', 'parceiros', 'sobre', 'definicoes'].includes(
-                currentTab
-              ) &&
-                currentTab !== 'ia' &&
-                currentTab !== 'movimento' &&
-                currentTab !== 'explorar' && (
-                  <div className="bg-white rounded-3xl border border-[#E2E8F0] p-6 space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center">
-                        <CheckCircle2 className="w-5 h-5" />
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-bold text-[#0F1E3D]">Módulo Sincronizado</h3>
-                        <p className="text-xs text-[#64748B]">
-                          Todos os dados desta secção são atualizados em tempo real pelos servidores da VILA.
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
-                      <span className="text-xs text-[#475569]">
-                        Pretende aceder ao relatório completo e interativo de impacto global?
-                      </span>
-                      <button
-                        onClick={() => setIsImpactModalOpen(true)}
-                        className="px-4 py-2 bg-[#2563EB] text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors"
-                      >
-                        Abrir Relatório
-                      </button>
-                    </div>
-                  </div>
-                )}
+              <button
+                onClick={() => setCurrentTab('inicio')}
+                className="px-4 py-2 text-xs font-bold text-[#2563EB] bg-white border border-[#E2E8F0] hover:bg-slate-50 rounded-xl transition-colors shadow-2xs cursor-pointer"
+              >
+                ← Voltar ao Início
+              </button>
             </div>
-          )}
-        </main>
-      </div>
+
+            {currentTab === 'ia' && (
+              <div className="bg-white rounded-3xl border border-[#E2E8F0] p-8 text-center max-w-xl mx-auto space-y-4 shadow-sm">
+                <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#2563EB] to-[#10B981] mx-auto flex items-center justify-center shadow-lg shadow-blue-500/20 text-white">
+                  <Sparkles className="w-8 h-8" />
+                </div>
+                <h2 className="text-2xl font-extrabold text-[#0F1E3D] font-['Outfit']">
+                  VILA AI Assistant
+                </h2>
+                <p className="text-xs sm:text-sm text-[#64748B]">
+                  Converse com a nossa inteligência coletiva para encontrar oportunidades de voluntariado, parceiros de projetos e financiamento de impacto.
+                </p>
+                <button
+                  onClick={() => setIsAiModalOpen(true)}
+                  className="px-6 py-3 rounded-2xl bg-gradient-to-r from-[#2563EB] to-[#10B981] text-white font-bold text-xs shadow-md hover:opacity-95 transition-all"
+                >
+                  Iniciar Conversa com VILA AI
+                </button>
+              </div>
+            )}
+
+            {['comunidade', 'impacto', 'parceiros', 'sobre', 'definicoes'].includes(
+              currentTab
+            ) &&
+              currentTab !== 'ia' &&
+              currentTab !== 'explorar' && (
+                <div className="bg-white rounded-3xl border border-[#E2E8F0] p-6 space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center">
+                      <CheckCircle2 className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-bold text-[#0F1E3D]">Módulo Sincronizado</h3>
+                      <p className="text-xs text-[#64748B]">
+                        Todos os dados desta secção são atualizados em tempo real pelos servidores da VILA.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+                    <span className="text-xs text-[#475569]">
+                      Pretende aceder ao relatório completo e interativo de impacto global?
+                    </span>
+                    <button
+                      onClick={() => setIsImpactModalOpen(true)}
+                      className="px-4 py-2 bg-[#2563EB] text-white rounded-xl text-xs font-bold hover:bg-blue-700 transition-colors"
+                    >
+                      Abrir Relatório
+                    </button>
+                  </div>
+                </div>
+              )}
+          </div>
+        )}
+      </AppLayout>
 
       {/* 3. Interactive Modals */}
       <CountryDetailModal
@@ -335,6 +340,13 @@ export default function App() {
 
       <SearchCommandModal
         isOpen={isSearchModalOpen}
+        placeholder={
+          currentTab === 'noticias'
+            ? 'Pesquisar temas, países, pessoas, organizações...'
+            : currentTab === 'eventos'
+            ? 'Pesquisar eventos, temas, locais, organizações...'
+            : 'Pesquisar países, regiões, projetos ou iniciativas...'
+        }
         onClose={() => setIsSearchModalOpen(false)}
         onSelectCountry={(country) => {
           setSelectedCountry(country);
@@ -357,6 +369,6 @@ export default function App() {
         isOpen={isImpactModalOpen}
         onClose={() => setIsImpactModalOpen(false)}
       />
-    </div>
+    </>
   );
 }

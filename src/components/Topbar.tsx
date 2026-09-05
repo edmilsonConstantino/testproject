@@ -111,7 +111,7 @@ export const Topbar: React.FC<TopbarProps> = ({
   return (
     <header
       id="topbar"
-      className="h-14 shrink-0 w-full bg-transparent px-3.5 sm:px-5 lg:px-6 flex items-center justify-between gap-4 sticky top-0 z-30 transition-all select-none pt-1"
+      className="h-14 shrink-0 w-full bg-[#F1F5F9]/95 backdrop-blur-md border-b border-slate-200/80 px-3.5 sm:px-5 lg:px-6 flex items-center justify-between gap-4 sticky top-0 z-30 transition-all select-none"
     >
       {/* Mobile Menu Toggle & Brand (visible on screens < lg) */}
       <div className="flex items-center gap-2 lg:hidden">

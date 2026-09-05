@@ -65,8 +65,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       id: 'noticias',
-      label: 'Notícias Globais',
-      icon: <Newspaper className="w-4 h-4" strokeWidth={2.2} />
+      label: 'Mundo em Movimento',
+      icon: <Newspaper className="w-4 h-4" strokeWidth={2.2} />,
+      badge: 'NOVO',
     },
     {
       id: 'eventos',
@@ -79,21 +80,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
       icon: <Users className="w-4 h-4" strokeWidth={2.2} />
     },
     {
-      id: 'indicadores',
-      label: 'Indicadores Globais',
-      icon: <BarChart3 className="w-4 h-4" strokeWidth={2.2} />
-    },
-    {
-      id: 'parceiros',
-      label: 'Parceiros',
-      icon: <HeartHandshake className="w-4 h-4" strokeWidth={2.2} />
-    },
-    {
-      id: 'ia',
-      label: 'VILA AI',
-      icon: <Sparkles className="w-4 h-4" strokeWidth={2.2} />
-    },
-    {
       id: 'impacto',
       label: 'Impacto Global',
       icon: (
@@ -101,6 +87,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
         </svg>
       )
+    },
+    {
+      id: 'ia',
+      label: 'VILA AI',
+      icon: <Sparkles className="w-4 h-4" strokeWidth={2.2} />
+    },
+    {
+      id: 'parceiros',
+      label: 'Parceiros Globais',
+      icon: <HeartHandshake className="w-4 h-4" strokeWidth={2.2} />
     },
     {
       id: 'sobre',
@@ -153,7 +149,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           id="sidebar-nav-container"
         >
           {navItems.map((item) => {
-            const isActive = currentTab === item.id || (item.id === 'noticias' && currentTab === 'movimento');
+            const isActive =
+              currentTab === item.id ||
+              ((item.id === 'noticias' || item.id === 'movimento') &&
+                (currentTab === 'noticias' || currentTab === 'movimento' || currentTab === 'mundo-em-movimento'));
 
             return (
               <button
@@ -166,12 +165,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 }}
                 className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[12px] leading-tight transition-all duration-200 group cursor-pointer ${
                   isActive
-                    ? 'bg-gradient-to-r from-[#0055FE] to-[#0096C7] text-white font-bold shadow-xs'
+                    ? item.id === 'noticias' || item.id === 'movimento'
+                      ? 'bg-[#00A86B] text-white font-bold shadow-xs'
+                      : 'bg-gradient-to-r from-[#0055FE] to-[#0096C7] text-white font-bold shadow-xs'
                     : 'text-[#122244] hover:bg-slate-50 font-bold'
                 }`}
                 aria-current={isActive ? 'page' : undefined}
               >
-                <div className="flex items-center gap-2.5 min-w-0">
+                <div className="flex items-center gap-2 min-w-0">
                   <span
                     className={`shrink-0 transition-colors ${
                       isActive ? 'text-white' : 'text-[#122244] group-hover:text-[#0055FE]'
@@ -181,6 +182,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   </span>
                   <span className="truncate tracking-tight">{item.label}</span>
                 </div>
+                {item.badge && (
+                  <span
+                    className={`ml-1 px-1.5 py-0.5 rounded-full text-[8.5px] font-extrabold tracking-wider uppercase shrink-0 transition-colors ${
+                      item.id === 'noticias' || item.id === 'movimento'
+                        ? 'bg-[#0055FE] text-white'
+                        : isActive
+                        ? 'bg-white/25 text-white'
+                        : 'bg-[#D1FAE5] text-[#047857] border border-[#A7F3D0]'
+                    }`}
+                  >
+                    {item.badge}
+                  </span>
+                )}
               </button>
             );
           })}

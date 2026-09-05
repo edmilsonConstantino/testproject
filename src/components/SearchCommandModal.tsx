@@ -7,12 +7,14 @@ interface SearchCommandModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectCountry: (country: CountryData) => void;
+  placeholder?: string;
 }
 
 export const SearchCommandModal: React.FC<SearchCommandModalProps> = ({
   isOpen,
   onClose,
   onSelectCountry,
+  placeholder,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -54,7 +56,7 @@ export const SearchCommandModal: React.FC<SearchCommandModalProps> = ({
           <Search className="w-5 h-5 text-slate-400" />
           <input
             type="text"
-            placeholder="Pesquisar países, regiões, projetos ou iniciativas..."
+            placeholder={placeholder || "Pesquisar países, regiões, projetos ou iniciativas..."}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             autoFocus
