@@ -528,7 +528,7 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
               {/* Card Hero (~65% da coluna esquerda / lg:col-span-8) */}
               <article
                 id="hero-news-card"
-                className="lg:col-span-8 relative overflow-hidden rounded-[18px] min-h-[260px] lg:min-h-[270px] flex flex-col p-4 sm:p-5 text-white shadow-md group border border-slate-900/10 font-['Inter']"
+                className="lg:col-span-8 relative overflow-hidden rounded-[18px] min-h-[260px] lg:min-h-[270px] flex flex-col justify-center p-4 sm:p-5 text-white shadow-md group border border-slate-900/10 font-['Inter']"
               >
                 {/* Imagem da Terra vista do espaço com iluminação noturna das cidades */}
                 <img
@@ -649,33 +649,33 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
               {/* Card "Impacto em números" (~35% da coluna esquerda / lg:col-span-4) */}
                <aside
                 id="impacto-em-numeros-card"
-                className="lg:col-span-4 bg-white rounded-[18px] border border-slate-200/80 shadow-xs min-h-[220px] lg:min-h-[230px] p-4 sm:p-5 flex flex-col justify-between"
+                className="lg:col-span-4 bg-white rounded-[18px] border border-slate-200/80 shadow-xs min-h-[260px] lg:min-h-[270px] p-5 flex flex-col justify-between"
               >
                 {/* Header */}
                 <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-sm sm:text-[15px] font-bold text-[#0F172A] font-['Outfit'] tracking-tight leading-snug shrink-0">
+                  <h3 className="text-sm sm:text-[15px] font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-snug shrink-0">
                     Impacto em números
                   </h3>
                   <button
                     type="button"
                     className="inline-flex items-center gap-1 text-[10.5px] font-bold text-[#0055FE] hover:text-[#0040CC] transition-colors cursor-pointer group shrink-0 whitespace-nowrap"
                   >
-                    <span>Ver relatório completo</span>
+                    <span>Ver mais</span>
                     <ArrowRight className="w-3 h-3 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
                   </button>
                 </div>
                 {/* Grid 2x2 com os 4 Indicadores Estatísticos (cada um em seu próprio cartão) */}
                 <div className="grid grid-cols-2 gap-2 flex-1 content-center">
                   {/* Indicador 1: 195 Países afetados */}
-                  <div className="bg-slate-50 rounded-2xl p-3 flex flex-col gap-1.5">
-                    <div className="w-9 h-9 rounded-full bg-emerald-100/80 text-emerald-600 flex items-center justify-center">
+                  <div className="bg-slate-50 rounded-2xl p-3 flex flex-col">
+                    <div className="w-9 h-9 rounded-full bg-emerald-100/80 text-emerald-600 flex items-center justify-center mb-1.5">
                       <Users className="w-4.5 h-4.5" strokeWidth={2.2} />
                     </div>
                     <div>
-                      <div className="text-xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-0.5">
+                      <div className="text-xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-1">
                         195
                       </div>
-                      <div className="text-[11.5px] font-medium text-[#64748B] leading-snug mb-0.5">
+                      <div className="text-[11.5px] font-medium text-[#64748B] leading-snug mb-1.5">
                         Países afetados
                       </div>
                       <div className="text-xs font-bold text-emerald-600">
@@ -685,15 +685,15 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                   </div>
 
                   {/* Indicador 2: 28 Acontecimentos relevantes */}
-                  <div className="bg-slate-50 rounded-2xl p-3 flex flex-col gap-1.5">
-                    <div className="w-9 h-9 rounded-full bg-blue-100/80 text-blue-600 flex items-center justify-center">
+                  <div className="bg-slate-50 rounded-2xl p-3 flex flex-col">
+                    <div className="w-9 h-9 rounded-full bg-blue-100/80 text-blue-600 flex items-center justify-center mb-1.5">
                       <Globe className="w-4.5 h-4.5" strokeWidth={2.2} />
                     </div>
                     <div>
-                      <div className="text-xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-0.5">
+                      <div className="text-xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-1">
                         28
                       </div>
-                      <div className="text-[11.5px] font-medium text-[#64748B] leading-snug mb-0.5">
+                      <div className="text-[11.5px] font-medium text-[#64748B] leading-snug mb-1.5">
                         Acontecimentos relevantes
                       </div>
                       <div className="text-xs font-bold text-emerald-600">
@@ -703,15 +703,15 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                   </div>
 
                   {/* Indicador 3: 7,4B Pessoas impactadas */}
-                  <div className="bg-slate-50 rounded-2xl p-3 flex flex-col gap-1.5">
-                    <div className="w-9 h-9 rounded-full bg-purple-100/80 text-purple-600 flex items-center justify-center">
+                  <div className="bg-slate-50 rounded-2xl p-3 flex flex-col">
+                    <div className="w-9 h-9 rounded-full bg-purple-100/80 text-purple-600 flex items-center justify-center mb-1.5">
                       <TrendingUp className="w-4.5 h-4.5" strokeWidth={2.2} />
                     </div>
                     <div>
-                      <div className="text-xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-0.5">
+                      <div className="text-xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-1">
                         7,4B
                       </div>
-                      <div className="text-[11.5px] font-medium text-[#64748B] leading-snug mb-0.5">
+                      <div className="text-[11.5px] font-medium text-[#64748B] leading-snug mb-1.5">
                         Pessoas impactadas
                       </div>
                       <div className="text-xs font-bold text-emerald-600">
@@ -721,15 +721,15 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                   </div>
 
                   {/* Indicador 4: 12 Crises ativas */}
-                  <div className="bg-slate-50 rounded-2xl p-3 flex flex-col gap-1.5">
-                    <div className="w-9 h-9 rounded-full bg-orange-100/80 text-orange-600 flex items-center justify-center">
+                  <div className="bg-slate-50 rounded-2xl p-3 flex flex-col">
+                    <div className="w-9 h-9 rounded-full bg-orange-100/80 text-orange-600 flex items-center justify-center mb-1.5">
                       <Flame className="w-4.5 h-4.5" strokeWidth={2.2} />
                     </div>
                     <div>
-                      <div className="text-xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-0.5">
+                      <div className="text-xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-1">
                         12
                       </div>
-                      <div className="text-[11.5px] font-medium text-[#64748B] leading-snug mb-0.5">
+                      <div className="text-[11.5px] font-medium text-[#64748B] leading-snug mb-1.5">
                         Crises ativas
                       </div>
                       <div className="text-xs font-bold text-rose-600">
@@ -757,7 +757,7 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
               </div>
 
               {/* Grid dos 6 Cards (3 por linha em telas médias / 6 por linha em telas ultra-largas) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
                 {MAIN_NEWS_LIST.map((item) => {
                   const isSaved = savedNewsIds.has(item.id);
                   return (
@@ -767,7 +767,7 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                     >
                       {/* Topo: Imagem com Badge da Categoria */}
                       <div>
-                        <div className="relative h-32 w-full overflow-hidden bg-slate-100">
+                        <div className="relative h-28 w-full overflow-hidden bg-slate-100">
                           <img
                             src={item.image}
                             alt={item.title}
@@ -852,8 +852,8 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                 {HIGHLIGHT_ITEMS.map((item) => {
                   const isSaved = savedNewsIds.has(item.id);
                   return (
-                    <article key={item.id} className="py-4 first:pt-0 last:pb-0 flex items-center gap-3 group">
-                      <div className="w-[72px] h-[72px] rounded-xl overflow-hidden shrink-0 bg-slate-100">
+                               <article key={item.id} className="py-3 first:pt-0 last:pb-0 flex items-center gap-3 group">
+                      <div className="w-[70px] h-[70px] rounded-xl overflow-hidden shrink-0 bg-slate-100">
                         <img
                           src={item.image}
                           alt={item.title}
