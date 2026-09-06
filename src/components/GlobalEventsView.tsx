@@ -290,10 +290,10 @@ export const GlobalEventsView: React.FC<GlobalEventsViewProps> = ({
           {/* Coluna Principal (~72% da largura em telas grandes) */}
           <section className="lg:col-span-8 xl:col-span-9 flex flex-col gap-6" aria-label="Conteúdo Principal de Eventos">
             {/* SEÇÃO HERO EM DUAS COLUNAS: MAPA MUNDI AMPLIADO (~70%-72%) E CALENDÁRIO COMPACTO (~28%-30%) */}
-            <div className="flex flex-col lg:flex-row gap-5 items-stretch">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-stretch">
               {/* 1. Bloco Hero Ampliado com Mapa Mundi Noturno e Hotspots */}
               <GlobalWorldMapHero
-                className="lg:w-[70%] xl:w-[72%]"
+                className="lg:col-span-8"
                 onExploreMap={onExploreMap}
                 title="O mundo está acontecendo agora."
                 subtitle="Explore eventos em todo o planeta em tempo real."
@@ -301,7 +301,7 @@ export const GlobalEventsView: React.FC<GlobalEventsViewProps> = ({
 
               {/* 2. Widget Lateral Direito: Calendário Global Compacto */}
               <GlobalCalendarWidget
-                className="lg:w-[30%] xl:w-[28%]"
+                className="lg:col-span-4"
                 onSelectDay={(day) => setSelectedDay(day)}
               />
             </div>

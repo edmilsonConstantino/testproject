@@ -50,9 +50,9 @@ export const GlobalWorldMapHero: React.FC<GlobalWorldMapHeroProps> = ({
     >
       {/* 1. Imagem de Alta Resolução do Mapa Mundi Noturno com Luzes das Cidades */}
       <div
-        className="absolute inset-0 bg-cover bg-[position:55%_42%] opacity-85 mix-blend-screen pointer-events-none scale-100 group-hover:scale-[1.01] transition-transform duration-1000 ease-out"
+        className="absolute inset-0 bg-cover bg-center pointer-events-none scale-100 group-hover:scale-[1.01] transition-transform duration-1000 ease-out"
         style={{
-          backgroundImage: `url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/The_earth_at_night.jpg/1920px-The_earth_at_night.jpg')`,
+          backgroundImage: `url('/eventos-globais.png')`,
         }}
       />
 
@@ -61,48 +61,6 @@ export const GlobalWorldMapHero: React.FC<GlobalWorldMapHeroProps> = ({
 
       {/* Brilho atmosférico sutil no topo */}
       <div className="absolute top-0 right-1/4 w-96 h-48 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
-
-      {/* 2. Pontos Geográficos Brilhantes (Hotspots) idênticos à Imagem de Referência */}
-      {/* América do Norte (Califórnia / Oeste) - Âmbar */}
-      <div className="absolute top-[26%] left-[36%] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10 hidden sm:block">
-        <span className="absolute w-5 h-5 -top-1.5 -left-1.5 rounded-full bg-amber-400/35 animate-ping" />
-        <span className="relative block w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_12px_#fbbf24]" />
-      </div>
-
-      {/* América do Norte (Nova York / Costa Leste) - Lavanda com Aura Suave */}
-      <div className="absolute top-[34%] left-[40.5%] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10 hidden sm:block">
-        <span className="absolute w-8 h-8 -top-3 -left-3 rounded-full bg-indigo-400/25 blur-sm" />
-        <span className="relative block w-2.5 h-2.5 rounded-full bg-indigo-200 shadow-[0_0_14px_#a5b4fc]" />
-      </div>
-
-      {/* América do Sul (Brasil / Brasília-SP) - Ponto Destaque Laranja/Âmbar Radiante */}
-      <div className="absolute top-[58%] left-[48%] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10 hidden sm:block">
-        <span className="absolute w-9 h-9 -top-3 -left-3 rounded-full bg-amber-500/35 blur-sm animate-pulse" />
-        <span className="relative block w-3 h-3 rounded-full bg-amber-400 shadow-[0_0_16px_#f59e0b]" />
-      </div>
-
-      {/* Europa Ocidental (Londres/Paris) - Ponto Destaque Ciano Brilhante */}
-      <div className="absolute top-[25%] left-[64%] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10 hidden sm:block">
-        <span className="absolute w-9 h-9 -top-3 -left-3 rounded-full bg-cyan-400/35 blur-sm" />
-        <span className="relative block w-3 h-3 rounded-full bg-cyan-300 shadow-[0_0_16px_#38bdf8]" />
-      </div>
-
-      {/* Eurásia / Moscou-Oriente - Âmbar */}
-      <div className="absolute top-[32%] left-[76%] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10 hidden sm:block">
-        <span className="absolute w-7 h-7 -top-2.5 -left-2.5 rounded-full bg-amber-500/30 blur-xs" />
-        <span className="relative block w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_12px_#f59e0b]" />
-      </div>
-
-      {/* Ásia Oriental (China / Pequim) - Âmbar Laranja */}
-      <div className="absolute top-[38%] left-[85.5%] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10 hidden sm:block">
-        <span className="relative block w-2.5 h-2.5 rounded-full bg-amber-400 shadow-[0_0_10px_#f59e0b]" />
-      </div>
-
-      {/* Oceania (Austrália / Sydney) - Ponto Violeta/Púrpura */}
-      <div className="absolute top-[62%] left-[90%] -translate-x-1/2 -translate-y-1/2 pointer-events-none z-10 hidden sm:block">
-        <span className="absolute w-8 h-8 -top-2.5 -left-2.5 rounded-full bg-purple-500/35 blur-sm" />
-        <span className="relative block w-2.5 h-2.5 rounded-full bg-purple-300 shadow-[0_0_14px_#c084fc]" />
-      </div>
 
       {/* 3. Conteúdo Textual Superior */}
       <div className="relative z-10 max-w-sm sm:max-w-md lg:max-w-lg">
