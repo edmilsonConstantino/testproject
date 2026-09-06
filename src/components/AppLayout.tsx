@@ -30,7 +30,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   children,
 }) => {
   return (
-    <div className="min-h-screen bg-[#F1F5F9] text-[#475569] flex antialiased">
+    <div className="min-h-screen bg-[#f5f7fb] text-[#475569] flex antialiased">
       {/* 1. Sidebar de navegação fixa à esquerda (Logo VILA, menu, widget de impacto, idioma, tema, login) */}
       <Sidebar
         currentTab={currentTab}
@@ -42,7 +42,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       />
 
       {/* 2. Área principal de conteúdo à direita da Sidebar */}
-      <div className="flex-1 md:pl-[230px] flex flex-col min-w-0 min-h-screen transition-all duration-300">
+      <div className="flex-1 md:pl-[258px] flex flex-col min-w-0 min-h-screen transition-all duration-300">
         {/* Barra superior Topbar */}
         {showTopbar && (
           <Topbar

@@ -123,7 +123,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Main Sidebar Container - Fixed ~230px width, rendered cleanly on left */}
       <aside
         id="main-sidebar"
-        className={`fixed top-0 left-0 bottom-0 z-40 w-[230px] h-screen max-h-[100dvh] bg-white border-r border-slate-200/90 px-3 py-2 sm:py-2.5 flex flex-col justify-between select-none overflow-y-auto no-scrollbar transition-transform duration-300 ease-in-out shadow-xs ${
+        className={`fixed top-0 left-0 bottom-0 z-40 w-[258px] h-screen max-h-[100dvh] bg-white border-r border-slate-200/90 px-4 py-4 flex flex-col justify-between select-none overflow-y-auto no-scrollbar transition-transform duration-300 ease-in-out shadow-xs ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
@@ -144,7 +144,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* 2. Menu de Navegação Completo (11 Itens com fundo verde #10B981 no ativo) */}
         <nav
-          className="flex-1 min-h-0 overflow-y-auto no-scrollbar py-1.5 flex flex-col justify-evenly gap-0.5 pr-0.5"
+          className="flex-1 min-h-0 overflow-y-auto no-scrollbar py-4 flex flex-col justify-evenly gap-1 pr-0.5"
           aria-label="Navegação Principal"
           id="sidebar-nav-container"
         >
