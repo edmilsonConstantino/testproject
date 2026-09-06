@@ -472,11 +472,11 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
   };
 
   return (
-    <div id="comunidade-global-view" className="w-full bg-[#F1F5F9] min-h-full pb-16">
-      <div className="max-w-[1600px] mx-auto px-3.5 sm:px-5 lg:px-6 py-5 sm:py-6 flex flex-col gap-6">
+    <div id="comunidade-global-view" className="w-full bg-[#f5f7fb] min-h-full pb-12">
+      <div className="max-w-[1360px] mx-auto px-4 sm:px-6 lg:px-7 py-5 sm:py-6 flex flex-col gap-4">
         {/* 1. Cabeçalho Principal */}
         <header className="flex flex-col gap-1.5">
-          <h1 className="text-[32px] sm:text-4xl font-extrabold text-[#0F172A] leading-tight tracking-tight font-['Outfit']">
+          <h1 className="text-[30px] sm:text-[34px] font-extrabold text-[#14265f] leading-tight tracking-tight font-['Outfit']">
             Comunidade Global
           </h1>
           <p className="text-sm sm:text-base text-[#64748B] max-w-3xl leading-relaxed font-normal">
@@ -486,13 +486,13 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
         </header>
 
         {/* 2. Quatro Indicadores Estatísticos Principais */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {TOP_METRICS.map((metric) => {
             const Icon = metric.icon;
             return (
               <div
                 key={metric.id}
-                className="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-2xs flex items-center gap-4 hover:border-slate-300 transition-colors"
+                className="bg-white rounded-[15px] border border-[#e6ebf4] p-4 shadow-[0_5px_18px_rgba(26,55,100,0.05)] flex items-center gap-3 hover:border-slate-300 transition-colors"
               >
                 <div
                   className={`w-12 h-12 rounded-2xl ${metric.iconBg} ${metric.iconColor} flex items-center justify-center shrink-0`}
@@ -518,7 +518,7 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
         {/* 3. Hero Banner: "Um mundo de pessoas com um propósito." */}
         <section
           id="hero-community-banner"
-          className="relative rounded-[22px] overflow-hidden min-h-[260px] sm:min-h-[290px] flex items-center p-6 sm:p-10 text-white shadow-md border border-slate-900/10 bg-[#030718]"
+          className="relative rounded-[15px] overflow-hidden min-h-[245px] sm:min-h-[270px] flex items-center p-5 sm:p-7 text-white shadow-md border border-slate-900/10 bg-[#030718]"
         >
           {/* Imagem de fundo: Terra curva azul no espaço com conexões douradas e digitais */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -590,17 +590,17 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
 
           {/* Grid horizontal de 4 cards (com seta de navegação à direita) */}
           <div className="relative">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {FEATURED_COMMUNITIES.map((comm) => {
                 const CommIcon = comm.icon;
                 return (
                   <article
                     key={comm.id}
-                    className="bg-white rounded-[18px] border border-slate-200/80 overflow-hidden shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col group"
+                    className="bg-white rounded-[15px] border border-[#e6ebf4] overflow-hidden shadow-[0_5px_18px_rgba(26,55,100,0.05)] hover:shadow-md transition-all duration-200 flex flex-col group"
                   >
                     {/* Imagem de Topo com Badge de Categoria e Ícone Circular Sobreposto */}
                     <div className="relative">
-                      <div className="h-32 sm:h-36 w-full overflow-hidden bg-slate-100">
+                      <div className="h-28 sm:h-32 w-full overflow-hidden bg-slate-100">
                         <img
                           src={comm.image}
                           alt={comm.name}
@@ -657,9 +657,9 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
         </section>
 
         {/* 3. Área de Feed e Widgets da Sidebar Direita */}
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start w-full">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start w-full">
           {/* COLUNA ESQUERDA: Feed de Posts (xl:col-span-8) */}
-          <div className="xl:col-span-8 flex flex-col gap-4 w-full">
+          <div className="xl:col-span-8 flex flex-col gap-3 w-full">
             {/* 3. Linha de tabs/pills de filtro do feed */}
             <div className="flex items-center justify-between gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               <div className="flex items-center gap-2 shrink-0">
@@ -703,7 +703,7 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
                   <article
                     key={post.id}
                     id={`feed-post-${post.id}`}
-                    className="bg-white rounded-[20px] border border-slate-200/80 p-5 sm:p-6 shadow-xs hover:border-slate-300 transition-colors flex flex-col gap-4"
+                    className="bg-white rounded-[15px] border border-[#e6ebf4] p-4 sm:p-5 shadow-[0_5px_18px_rgba(26,55,100,0.05)] hover:border-slate-300 transition-colors flex flex-col gap-3"
                   >
                     {/* Cabeçalho do Post: Avatar, Nome, Verificado, Cargo/Comunidade, Tempo */}
                     <div className="flex items-center justify-between">
@@ -816,11 +816,11 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
           </div>
 
           {/* COLUNA DIREITA (xl:col-span-4): Sidebar de Widgets (Ordenação estrita) */}
-          <div className="xl:col-span-4 flex flex-col gap-6 w-full">
+          <div className="xl:col-span-4 flex flex-col gap-4 w-full">
             {/* 1. Card: Comunidades em tendência */}
             <div
               id="comunidades-em-tendencia-card"
-              className="bg-white rounded-[18px] border border-slate-200/80 p-5 shadow-xs flex flex-col gap-4"
+              className="bg-white rounded-[15px] border border-[#e6ebf4] p-4 shadow-[0_5px_18px_rgba(26,55,100,0.05)] flex flex-col gap-3"
             >
               <div className="flex items-center justify-between pb-1 border-b border-slate-100">
                 <h3 className="text-base font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
@@ -869,7 +869,7 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
             {/* 2. Card: Membros em destaque */}
             <div
               id="membros-em-destaque-card"
-              className="bg-white rounded-[18px] border border-slate-200/80 p-5 shadow-xs flex flex-col gap-4"
+              className="bg-white rounded-[15px] border border-[#e6ebf4] p-4 shadow-[0_5px_18px_rgba(26,55,100,0.05)] flex flex-col gap-3"
             >
               <div className="flex items-center justify-between pb-1 border-b border-slate-100">
                 <h3 className="text-base font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
@@ -933,7 +933,7 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
             {/* 3. Card: Próximos eventos da comunidade (ABAIXO dos dois anteriores) */}
             <div
               id="proximos-eventos-card"
-              className="bg-white rounded-[18px] border border-slate-200/80 p-5 shadow-xs flex flex-col gap-4"
+              className="bg-white rounded-[15px] border border-[#e6ebf4] p-4 shadow-[0_5px_18px_rgba(26,55,100,0.05)] flex flex-col gap-3"
             >
               <div className="flex items-center justify-between pb-1 border-b border-slate-100">
                 <h3 className="text-base font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
