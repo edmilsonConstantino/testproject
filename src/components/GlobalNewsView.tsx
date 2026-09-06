@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import {
   Globe,
   Landmark,
@@ -39,21 +39,23 @@ interface FilterPillItem {
   id: string;
   label: string;
   icon: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+  iconColor?: string;
   hasDropdown?: boolean;
   subcategories?: string[];
 }
 
 const CATEGORY_PILLS: FilterPillItem[] = [
   { id: 'todas', label: 'Todas', icon: Globe },
-  { id: 'politica-global', label: 'Política Global', icon: Landmark },
-  { id: 'economia', label: 'Economia', icon: TrendingUp },
-  { id: 'ambiente', label: 'Ambiente', icon: Leaf },
-  { id: 'tecnologia', label: 'Tecnologia', icon: Cpu },
-  { id: 'saude-global', label: 'Saúde Global', icon: HeartPulse },
-  {
+  { id: 'politica-global', label: 'Política Global', icon: Landmark, iconColor: 'text-slate-700' },
+  { id: 'economia', label: 'Economia', icon: TrendingUp, iconColor: 'text-emerald-600' },
+  { id: 'ambiente', label: 'Ambiente', icon: Leaf, iconColor: 'text-emerald-600' },
+  { id: 'tecnologia', label: 'Tecnologia', icon: Cpu, iconColor: 'text-blue-600' },
+  { id: 'saude-global', label: 'Saúde Global', icon: HeartPulse, iconColor: 'text-pink-500' },
+ {
     id: 'direitos-humanos',
     label: 'Direitos Humanos',
     icon: Scale,
+    iconColor: 'text-orange-500',
     hasDropdown: true,
     subcategories: [
       'Todos em Direitos Humanos',
@@ -63,11 +65,12 @@ const CATEGORY_PILLS: FilterPillItem[] = [
       'Justiça Social',
     ],
   },
-  { id: 'seguranca', label: 'Segurança', icon: Shield },
+  { id: 'seguranca', label: 'Segurança', icon: Shield, iconColor: 'text-rose-500' },
   {
     id: 'mais',
-    label: '+ Mais',
+    label: 'Mais',
     icon: Plus,
+    iconColor: 'text-slate-500',
     hasDropdown: true,
     subcategories: [
       'Cultura Global',
@@ -225,6 +228,60 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
   const [shareFeedback, setShareFeedback] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Pills de categoria: todas menos "+ Mais" (que fica sempre fixo por último)
+  const regularPills = CATEGORY_PILLS.slice(0, -1);
+  const morePill = CATEGORY_PILLS[CATEGORY_PILLS.length - 1];
+
+  // Quais pills "regulares" cabem numa única linha antes do "+ Mais" — recalculado por medição real.
+  // Guarda os IDs (não apenas uma contagem) porque um pill mais estreito mais à frente pode caber
+  // no espaço restante mesmo que um pill mais largo antes dele não tenha coubido.
+  const [visiblePillIds, setVisiblePillIds] = useState<string[]>(() => regularPills.map((p) => p.id));
+  const measureRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const moreMeasureRef = useRef<HTMLButtonElement | null>(null);
+
+  // Mede a largura real de cada pill (numa camada invisível) e encaixa (first-fit) o máximo
+  // possível na largura disponível da nav, sem deixar espaço desperdiçado. O que não couber
+  // vai para dentro do dropdown "+ Mais", que fica sempre reservado no final.
+  useLayoutEffect(() => {
+    const navEl = containerRef.current;
+    if (!navEl) return;
+
+    const recalcVisiblePills = () => {
+      const containerWidth = navEl.clientWidth;
+      const gap = 6; // gap-1.5
+      const moreWidth = moreMeasureRef.current?.offsetWidth ?? 96;
+
+      let used = 0;
+      const fittingIds: string[] = [];
+
+      for (let i = 0; i < regularPills.length; i++) {
+        const width = measureRefs.current[i]?.offsetWidth ?? 0;
+        const gapBefore = fittingIds.length > 0 ? gap : 0;
+        const prospectiveUsed = used + gapBefore + width;
+        // só encaixa este pill se ainda sobrar espaço pro "+ Mais" depois dele
+        const totalWithMore = prospectiveUsed + gap + moreWidth;
+
+        if (totalWithMore <= containerWidth) {
+          used = prospectiveUsed;
+          fittingIds.push(regularPills[i].id);
+        }
+      }
+
+      setVisiblePillIds(fittingIds);
+    };
+
+    recalcVisiblePills();
+    const observer = new ResizeObserver(recalcVisiblePills);
+    observer.observe(navEl);
+    return () => observer.disconnect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [regularPills.length]);
+
+  const visiblePillIdSet = new Set(visiblePillIds);
+  const visiblePills = regularPills.filter((p) => visiblePillIdSet.has(p.id));
+  const overflowPills = regularPills.filter((p) => !visiblePillIdSet.has(p.id));
+  const activeOverflowPill = overflowPills.find((p) => p.id === activeFilter);
+
   const toggleSaveNews = (id: string) => {
     setSavedNewsIds((prev) => {
       const next = new Set(prev);
@@ -272,158 +329,257 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
     setOpenDropdownId(null);
   };
 
+  const handleOverflowPillSelect = (pill: FilterPillItem) => {
+    setActiveFilter(pill.id);
+    setSelectedSubcategory(null);
+    setOpenDropdownId(null);
+  };
+
+  const renderPillButton = (pill: FilterPillItem) => {
+    const Icon = pill.icon;
+    const isMore = pill.id === morePill.id;
+    const isDropdownOpen = openDropdownId === pill.id;
+    const isActive = isMore ? activeFilter === pill.id || !!activeOverflowPill : activeFilter === pill.id;
+
+    const displayLabel =
+      isMore && activeOverflowPill
+        ? `${pill.label}: ${activeOverflowPill.label}`
+        : pill.id === activeFilter && selectedSubcategory && selectedSubcategory !== pill.subcategories?.[0]
+        ? `${pill.label}: ${selectedSubcategory}`
+        : pill.label;
+
+    return (
+      <div key={pill.id} className="relative shrink-0">
+        <button
+          type="button"
+          id={`filter-pill-${pill.id}`}
+          onClick={() => handlePillClick(pill)}
+          className={`inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-[11px] sm:text-xs font-semibold transition-all duration-150 whitespace-nowrap cursor-pointer shrink-0 ${
+            isActive
+              ? 'bg-[#0055FE] text-white border border-[#0055FE] shadow-xs hover:bg-[#0040CC]'
+              : 'bg-white border border-[#E2E8F0] text-[#334155] hover:bg-slate-50 hover:text-[#0F172A] hover:border-slate-300 shadow-2xs'
+          }`}
+          aria-expanded={pill.hasDropdown ? isDropdownOpen : undefined}
+          aria-current={isActive ? 'true' : undefined}
+        >
+          <Icon
+            className={`w-3 h-3 shrink-0 transition-colors ${
+              isActive ? 'text-white' : pill.iconColor || 'text-slate-500'
+            }`}
+            strokeWidth={2.2}
+          />
+
+          <span>{displayLabel}</span>
+
+          {pill.hasDropdown && (
+            <ChevronDown
+              className={`w-3 h-3 transition-transform duration-200 stroke-[2.2] ${
+                isDropdownOpen ? 'rotate-180' : ''
+              } ${isActive ? 'text-white/90' : 'text-slate-400'}`}
+            />
+          )}
+        </button>
+
+        {/* Submenu Dropdown */}
+        {pill.hasDropdown && isDropdownOpen && (
+          <div
+            id={`dropdown-menu-${pill.id}`}
+            className="absolute top-full right-0 sm:right-auto sm:left-0 mt-2 w-60 bg-white rounded-2xl border border-slate-200/90 shadow-xl py-1.5 z-30 animate-in fade-in zoom-in-95 duration-150"
+          >
+            {/* Categorias que não couberam numa linha só ficam aqui dentro do "+ Mais" */}
+            {isMore && overflowPills.length > 0 && (
+              <>
+                <div className="px-3 py-1.5 border-b border-slate-100">
+                  <span className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider">
+                    Mais categorias
+                  </span>
+                </div>
+                <div className="py-1">
+                  {overflowPills.map((hiddenPill) => {
+                    const HiddenIcon = hiddenPill.icon;
+                    const isSelected = activeFilter === hiddenPill.id;
+                    return (
+                      <button
+                        key={hiddenPill.id}
+                        type="button"
+                        onClick={() => handleOverflowPillSelect(hiddenPill)}
+                        className={`w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold transition-colors text-left cursor-pointer ${
+                          isSelected
+                            ? 'bg-blue-50 text-[#0055FE]'
+                            : 'text-[#334155] hover:bg-slate-50 hover:text-[#0F172A]'
+                        }`}
+                      >
+                        <HiddenIcon
+                          className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-[#0055FE]' : hiddenPill.iconColor || 'text-slate-400'}`}
+                          strokeWidth={2.2}
+                        />
+                        <span className="truncate flex-1">{hiddenPill.label}</span>
+                        {isSelected && <Check className="w-3.5 h-3.5 text-[#0055FE] shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+
+            {pill.subcategories && (
+              <>
+                <div className="px-3 py-1.5 border-b border-slate-100">
+                  <span className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider">
+                    {pill.label}
+                  </span>
+                </div>
+
+                <div className="py-1">
+                  {pill.subcategories.map((subcat) => {
+                    const isSelected = activeFilter === pill.id && selectedSubcategory === subcat;
+                    return (
+                      <button
+                        key={subcat}
+                        type="button"
+                        onClick={() => handleSubcategorySelect(pill.id, subcat)}
+                        className={`w-full flex items-center justify-between px-3.5 py-2 text-xs font-semibold transition-colors text-left cursor-pointer ${
+                          isSelected
+                            ? 'bg-blue-50 text-[#0055FE]'
+                            : 'text-[#334155] hover:bg-slate-50 hover:text-[#0F172A]'
+                        }`}
+                      >
+                        <span className="truncate">{subcat}</span>
+                        {isSelected && <Check className="w-3.5 h-3.5 text-[#0055FE] shrink-0" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div id="mundo-em-movimento-view" className="w-full bg-[#F1F5F9] min-h-full pb-14">
       <div className="max-w-[1600px] mx-auto px-3.5 sm:px-5 lg:px-6 py-5 sm:py-6 flex flex-col gap-6">
         {/* 1. Cabeçalho Principal da Página */}
-        <header className="flex flex-col gap-1.5">
-          <h1 className="text-[32px] sm:text-4xl font-extrabold text-[#0F172A] leading-tight tracking-tight font-['Outfit']">
+        <header className="flex flex-col gap-1">
+          <h1 className="text-2xl sm:text-[28px] font-extrabold text-[#0F172A] leading-tight tracking-tight font-['Outfit']">
             Mundo em Movimento
           </h1>
-          <p className="text-sm sm:text-base text-[#64748B] max-w-3xl leading-relaxed font-normal">
+          <p className="text-xs sm:text-sm text-[#64748B] max-w-3xl leading-relaxed font-normal">
             As notícias e acontecimentos que têm impacto global. <br className="hidden sm:inline" />
             Essencial para entender o presente e construir o futuro.
           </p>
         </header>
 
-        {/* 2. Pills de Filtro de Categoria */}
-        <nav
-          ref={containerRef}
-          id="category-filter-pills"
-          className="relative z-20 flex items-center gap-2 sm:gap-2.5 overflow-x-auto pb-1 pt-0.5 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden select-none"
-          aria-label="Filtro de Categorias"
-        >
-          {CATEGORY_PILLS.map((pill) => {
-            const Icon = pill.icon;
-            const isActive = activeFilter === pill.id;
-            const isDropdownOpen = openDropdownId === pill.id;
-
-            return (
-              <div key={pill.id} className="relative shrink-0">
-                <button
-                  type="button"
-                  id={`filter-pill-${pill.id}`}
-                  onClick={() => handlePillClick(pill)}
-                  className={`inline-flex items-center gap-2 py-2 px-3.5 sm:px-4 rounded-full text-xs sm:text-[13px] font-semibold transition-all duration-150 whitespace-nowrap cursor-pointer shrink-0 ${
-                    isActive
-                      ? 'bg-[#2563EB] text-white border border-[#2563EB] shadow-xs hover:bg-[#1D4ED8]'
-                      : 'bg-white border border-[#E2E8F0] text-[#334155] hover:bg-slate-50 hover:text-[#0F172A] hover:border-slate-300 shadow-2xs'
-                  }`}
-                  aria-expanded={pill.hasDropdown ? isDropdownOpen : undefined}
-                  aria-current={isActive ? 'true' : undefined}
-                >
-                  <Icon
-                    className={`w-3.5 h-3.5 shrink-0 transition-colors ${
-                      isActive ? 'text-white' : 'text-slate-500'
-                    }`}
-                    strokeWidth={2.2}
-                  />
-
-                  <span>
-                    {pill.id === activeFilter && selectedSubcategory && selectedSubcategory !== pill.subcategories?.[0]
-                      ? `${pill.label}: ${selectedSubcategory}`
-                      : pill.label}
-                  </span>
-
-                  {pill.hasDropdown && (
-                    <ChevronDown
-                      className={`w-3.5 h-3.5 transition-transform duration-200 stroke-[2.2] ${
-                        isDropdownOpen ? 'rotate-180' : ''
-                      } ${isActive ? 'text-white/90' : 'text-slate-400'}`}
-                    />
-                  )}
-                </button>
-
-                {/* Submenu Dropdown */}
-                {pill.hasDropdown && isDropdownOpen && pill.subcategories && (
-                  <div
-                    id={`dropdown-menu-${pill.id}`}
-                    className="absolute top-full left-0 mt-2 w-56 bg-white rounded-2xl border border-slate-200/90 shadow-xl py-1.5 z-30 animate-in fade-in zoom-in-95 duration-150"
-                  >
-                    <div className="px-3 py-1.5 border-b border-slate-100">
-                      <span className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider">
-                        {pill.label}
-                      </span>
-                    </div>
-
-                    <div className="py-1">
-                      {pill.subcategories.map((subcat) => {
-                        const isSelected = activeFilter === pill.id && selectedSubcategory === subcat;
-                        return (
-                          <button
-                            key={subcat}
-                            type="button"
-                            onClick={() => handleSubcategorySelect(pill.id, subcat)}
-                            className={`w-full flex items-center justify-between px-3.5 py-2 text-xs font-semibold transition-colors text-left cursor-pointer ${
-                              isSelected
-                                ? 'bg-blue-50 text-[#2563EB]'
-                                : 'text-[#334155] hover:bg-slate-50 hover:text-[#0F172A]'
-                            }`}
-                          >
-                            <span className="truncate">{subcat}</span>
-                            {isSelected && <Check className="w-3.5 h-3.5 text-[#2563EB] shrink-0" />}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </nav>
-
         {/* 3. Grade Principal em 2 Colunas: Área de Conteúdo à Esquerda + Barra Lateral à Direita */}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start w-full">
           {/* COLUNA ESQUERDA (xl:col-span-9 / ~75%) */}
-          <div className="xl:col-span-9 flex flex-col gap-8 w-full">
+          <div className="xl:col-span-9 flex flex-col gap-6 w-full">
+            {/* 2. Pills de Filtro de Categoria (restrita à largura da coluna principal) */}
+            <nav
+              ref={containerRef}
+              id="category-filter-pills"
+              className="relative z-20 flex items-center gap-1.5 pt-0.5 select-none"
+              aria-label="Filtro de Categorias"
+            >
+              {/* Camada invisível só para medir a largura real de cada pill (não afeta o layout) */}
+              <div
+                aria-hidden="true"
+                className="absolute left-0 top-0 flex items-center gap-1.5"
+                style={{ visibility: 'hidden', height: 0, overflow: 'hidden', whiteSpace: 'nowrap' }}
+              >
+                {regularPills.map((pill, index) => {
+                  const Icon = pill.icon;
+                  return (
+                    <button
+                      key={`measure-${pill.id}`}
+                      ref={(el) => {
+                        measureRefs.current[index] = el;
+                      }}
+                      type="button"
+                      tabIndex={-1}
+                      className="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-[11px] sm:text-xs font-semibold border border-transparent"
+                    >
+                      <Icon className="w-3 h-3 shrink-0" strokeWidth={2.2} />
+                      <span>{pill.label}</span>
+                      {pill.hasDropdown && <ChevronDown className="w-3 h-3" />}
+                    </button>
+                  );
+                })}
+                <button
+                  ref={moreMeasureRef}
+                  type="button"
+                  tabIndex={-1}
+                  className="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-[11px] sm:text-xs font-semibold border border-transparent"
+                >
+                  <Plus className="w-3 h-3 shrink-0" strokeWidth={2.2} />
+                  <span>{morePill.label}</span>
+                  <ChevronDown className="w-3 h-3" />
+                </button>
+              </div>
+
+              {/* Pills visíveis que cabem numa única linha + "+ Mais" sempre fixo por último */}
+              {visiblePills.map((pill) => renderPillButton(pill))}
+              {renderPillButton(morePill)}
+            </nav>
             {/* Bloco Superior: Hero à esquerda + Impacto em números à direita */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 items-stretch w-full">
               {/* Card Hero (~65% da coluna esquerda / lg:col-span-8) */}
               <article
                 id="hero-news-card"
-                className="lg:col-span-8 relative overflow-hidden rounded-[18px] min-h-[410px] lg:h-[430px] flex flex-col justify-between p-6 sm:p-8 text-white shadow-md group border border-slate-900/10"
+                className="lg:col-span-8 relative overflow-hidden rounded-[18px] min-h-[260px] lg:min-h-[270px] flex flex-col p-4 sm:p-5 text-white shadow-md group border border-slate-900/10 font-['Inter']"
               >
                 {/* Imagem da Terra vista do espaço com iluminação noturna das cidades */}
                 <img
-                  src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1600&auto=format&fit=crop&q=80"
+                  src="/mundo.png"
                   alt="Terra vista do espaço à noite com cidades iluminadas"
                   className="absolute inset-0 w-full h-full object-cover object-center transform transition-transform duration-700 ease-out group-hover:scale-105"
-                  referrerPolicy="no-referrer"
                 />
 
-                {/* Gradiente escuro para legibilidade perfeita */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/60 to-black/30 pointer-events-none" />
+                {/* Overlay: escuro à esquerda para legibilidade, transparente à direita pra revelar a Terra */}
+                <div
+                  className="absolute inset-0 pointer-events-none"
+                  style={{
+                    backgroundImage:
+                      'linear-gradient(90deg, rgba(2,8,23,0.92) 0%, rgba(2,8,23,0.72) 38%, rgba(2,8,23,0.25) 72%, rgba(2,8,23,0.05) 100%)',
+                  }}
+                />
+                {/* Leve gradiente inferior de apoio */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent pointer-events-none" />
 
-                {/* Topo do Hero: Badge e Metadados */}
-                <div className="relative z-10 flex flex-wrap items-center gap-3">
+                {/* Conteúdo agrupado e compacto no topo-esquerda (sem distribuição uniforme no eixo vertical) */}
+                <div className="relative z-10 flex flex-col">
+                  {/* 1. Badge sozinho na primeira linha */}
                   <span
                     id="hero-badge-impacto"
-                    className="inline-flex items-center px-3 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider bg-[#E11D48] text-white shadow-xs"
+                    className="self-start inline-flex items-center px-2.5 py-[5px] rounded-full text-[10px] font-bold uppercase tracking-wide bg-[#E11D48] text-white shadow-xs"
                   >
                     IMPACTO MUNDIAL
                   </span>
-                  <div className="text-xs text-slate-200/90 tracking-wide font-medium flex items-center gap-2">
-                    <strong className="font-bold text-white uppercase tracking-wider">POLÍTICA GLOBAL</strong>
+
+                  {/* 2. Metadados logo abaixo do badge */}
+                  <div className="mt-2 text-[11px] text-slate-200/90 tracking-wide font-medium flex items-center gap-2">
+                    <span className="font-medium text-white/85 uppercase tracking-wide">POLÍTICA GLOBAL</span>
                     <span className="opacity-70">Há 2 horas</span>
                   </div>
-                </div>
 
-                {/* Centro do Hero: Título, Resumo e Ações */}
-                <div className="relative z-10 flex flex-col gap-3 my-auto pt-4 pb-6 max-w-2xl">
-                  <h2 className="text-2xl sm:text-3xl lg:text-[28px] xl:text-[31px] font-extrabold text-white leading-tight font-['Outfit'] tracking-tight">
+                  {/* 3. Título, pouco espaço abaixo dos metadados */}
+                  <h2 className="mt-3 max-w-[440px] text-xl lg:text-2xl font-bold text-white leading-[1.35] tracking-tight">
                     Líderes mundiais chegam a acordo histórico sobre IA segura e responsável
                   </h2>
-                  <p className="text-sm sm:text-[14.5px] text-slate-200 leading-relaxed font-normal">
+
+                  {/* 4. Descrição */}
+                  <p className="mt-4 max-w-[440px] text-[12px] sm:text-[13px] text-white leading-[1.6] font-normal">
                     Mais de 120 países assinam o primeiro tratado global para regular o desenvolvimento e uso ético da inteligência artificial.
                   </p>
 
-                  {/* Botões de Ação */}
-                  <div className="flex items-center gap-3 pt-2">
+                  {/* 5. CTA + Ações, tudo na mesma linha, mais espaço abaixo da descrição */}
+                  <div className="mt-5 flex items-center gap-2.5">
                     <button
                       type="button"
                       id="btn-ler-noticia-completa"
-                      className="inline-flex items-center gap-2 px-5 py-2.5 sm:py-3 rounded-full bg-[#0066FF] hover:bg-[#0052cc] text-white text-xs sm:text-[13px] font-bold transition-all shadow-md hover:shadow-lg cursor-pointer group/btn"
+                      className="inline-flex items-center gap-2 h-9 px-4 rounded-xl bg-gradient-to-r from-[#0052FE] via-[#007AFE] to-[#00C99E] hover:from-[#0042CC] hover:via-[#006CE0] hover:to-[#00A885] text-white text-[11px] sm:text-xs font-semibold transition-all shadow-md hover:shadow-lg cursor-pointer group/btn"
                     >
                       <span>Ler notícia completa</span>
                       <ArrowRight className="w-4 h-4 transform group-hover/btn:translate-x-0.5 transition-transform stroke-[2.2]" />
@@ -434,9 +590,9 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                       type="button"
                       onClick={() => toggleSaveNews('hero')}
                       aria-label="Salvar notícia"
-                      className={`w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md transition-all cursor-pointer border ${
+                      className={`w-9 h-9 rounded-full flex items-center justify-center backdrop-blur-md transition-all cursor-pointer border ${
                         savedNewsIds.has('hero')
-                          ? 'bg-[#2563EB] text-white border-[#2563EB]'
+                          ? 'bg-[#0055FE] text-white border-[#0055FE]'
                           : 'bg-black/35 hover:bg-black/55 text-white/90 hover:text-white border-white/20'
                       }`}
                     >
@@ -452,7 +608,7 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                         type="button"
                         onClick={handleShare}
                         aria-label="Compartilhar notícia"
-                        className="w-10 h-10 rounded-full bg-black/35 hover:bg-black/55 text-white/90 hover:text-white border border-white/20 flex items-center justify-center backdrop-blur-md transition-all cursor-pointer"
+                        className="w-9 h-9 rounded-full bg-black/35 hover:bg-black/55 text-white/90 hover:text-white border border-white/20 flex items-center justify-center backdrop-blur-md transition-all cursor-pointer"
                       >
                         <Share2 className="w-4 h-4" strokeWidth={2} />
                       </button>
@@ -491,94 +647,93 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
               </article>
 
               {/* Card "Impacto em números" (~35% da coluna esquerda / lg:col-span-4) */}
-              <aside
+               <aside
                 id="impacto-em-numeros-card"
-                className="lg:col-span-4 bg-white rounded-[18px] border border-slate-200/80 shadow-xs min-h-[410px] lg:h-[430px] p-5 sm:p-6 flex flex-col justify-between"
+                className="lg:col-span-4 bg-white rounded-[18px] border border-slate-200/80 shadow-xs min-h-[220px] lg:min-h-[230px] p-4 sm:p-5 flex flex-col justify-between"
               >
                 {/* Header */}
-                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-                  <h3 className="text-base sm:text-[17px] font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="text-sm sm:text-[15px] font-bold text-[#0F172A] font-['Outfit'] tracking-tight leading-snug shrink-0">
                     Impacto em números
                   </h3>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1 text-xs font-bold text-[#0066FF] hover:text-[#0052cc] transition-colors cursor-pointer group"
+                    className="inline-flex items-center gap-1 text-[10.5px] font-bold text-[#0055FE] hover:text-[#0040CC] transition-colors cursor-pointer group shrink-0 whitespace-nowrap"
                   >
                     <span>Ver relatório completo</span>
-                    <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
+                    <ArrowRight className="w-3 h-3 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
                   </button>
                 </div>
-
-                {/* Grid 2x2 com os 4 Mini-Cards Estatísticos */}
-                <div className="grid grid-cols-2 gap-3.5 my-auto py-2">
-                  {/* Mini-Card 1: 195 Países afetados */}
-                  <div className="bg-slate-50/90 rounded-2xl p-3.5 sm:p-4 border border-slate-100/90 flex flex-col justify-between hover:border-slate-200 transition-colors">
-                    <div className="w-9 h-9 rounded-full bg-emerald-100/80 text-emerald-600 flex items-center justify-center mb-2">
+                {/* Grid 2x2 com os 4 Indicadores Estatísticos (cada um em seu próprio cartão) */}
+                <div className="grid grid-cols-2 gap-2 flex-1 content-center">
+                  {/* Indicador 1: 195 Países afetados */}
+                  <div className="bg-slate-50 rounded-2xl p-3 flex flex-col gap-1.5">
+                    <div className="w-9 h-9 rounded-full bg-emerald-100/80 text-emerald-600 flex items-center justify-center">
                       <Users className="w-4.5 h-4.5" strokeWidth={2.2} />
                     </div>
                     <div>
-                      <div className="text-2xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-1">
+                      <div className="text-xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-0.5">
                         195
                       </div>
-                      <div className="text-xs font-medium text-[#64748B] mb-1.5 leading-tight">
+                      <div className="text-[11.5px] font-medium text-[#64748B] leading-snug mb-0.5">
                         Países afetados
                       </div>
-                      <div className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600">
-                        <span>+12 desde ontem</span>
+                      <div className="text-xs font-bold text-emerald-600">
+                        +12 desde ontem
                       </div>
                     </div>
                   </div>
 
-                  {/* Mini-Card 2: 28 Acontecimentos relevantes */}
-                  <div className="bg-slate-50/90 rounded-2xl p-3.5 sm:p-4 border border-slate-100/90 flex flex-col justify-between hover:border-slate-200 transition-colors">
-                    <div className="w-9 h-9 rounded-full bg-blue-100/80 text-blue-600 flex items-center justify-center mb-2">
+                  {/* Indicador 2: 28 Acontecimentos relevantes */}
+                  <div className="bg-slate-50 rounded-2xl p-3 flex flex-col gap-1.5">
+                    <div className="w-9 h-9 rounded-full bg-blue-100/80 text-blue-600 flex items-center justify-center">
                       <Globe className="w-4.5 h-4.5" strokeWidth={2.2} />
                     </div>
                     <div>
-                      <div className="text-2xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-1">
+                      <div className="text-xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-0.5">
                         28
                       </div>
-                      <div className="text-xs font-medium text-[#64748B] mb-1.5 leading-tight">
+                      <div className="text-[11.5px] font-medium text-[#64748B] leading-snug mb-0.5">
                         Acontecimentos relevantes
                       </div>
-                      <div className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600">
-                        <span>+5 desde ontem</span>
+                      <div className="text-xs font-bold text-emerald-600">
+                        +5 desde ontem
                       </div>
                     </div>
                   </div>
 
-                  {/* Mini-Card 3: 7,4B Pessoas impactadas */}
-                  <div className="bg-slate-50/90 rounded-2xl p-3.5 sm:p-4 border border-slate-100/90 flex flex-col justify-between hover:border-slate-200 transition-colors">
-                    <div className="w-9 h-9 rounded-full bg-purple-100/80 text-purple-600 flex items-center justify-center mb-2">
+                  {/* Indicador 3: 7,4B Pessoas impactadas */}
+                  <div className="bg-slate-50 rounded-2xl p-3 flex flex-col gap-1.5">
+                    <div className="w-9 h-9 rounded-full bg-purple-100/80 text-purple-600 flex items-center justify-center">
                       <TrendingUp className="w-4.5 h-4.5" strokeWidth={2.2} />
                     </div>
                     <div>
-                      <div className="text-2xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-1">
+                      <div className="text-xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-0.5">
                         7,4B
                       </div>
-                      <div className="text-xs font-medium text-[#64748B] mb-1.5 leading-tight">
+                      <div className="text-[11.5px] font-medium text-[#64748B] leading-snug mb-0.5">
                         Pessoas impactadas
                       </div>
-                      <div className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-600">
-                        <span>+1,2B desde ontem</span>
+                      <div className="text-xs font-bold text-emerald-600">
+                        +1,2B desde ontem
                       </div>
                     </div>
                   </div>
 
-                  {/* Mini-Card 4: 12 Crises ativas */}
-                  <div className="bg-slate-50/90 rounded-2xl p-3.5 sm:p-4 border border-slate-100/90 flex flex-col justify-between hover:border-slate-200 transition-colors">
-                    <div className="w-9 h-9 rounded-full bg-orange-100/80 text-orange-600 flex items-center justify-center mb-2">
+                  {/* Indicador 4: 12 Crises ativas */}
+                  <div className="bg-slate-50 rounded-2xl p-3 flex flex-col gap-1.5">
+                    <div className="w-9 h-9 rounded-full bg-orange-100/80 text-orange-600 flex items-center justify-center">
                       <Flame className="w-4.5 h-4.5" strokeWidth={2.2} />
                     </div>
                     <div>
-                      <div className="text-2xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-1">
+                      <div className="text-xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-0.5">
                         12
                       </div>
-                      <div className="text-xs font-medium text-[#64748B] mb-1.5 leading-tight">
+                      <div className="text-[11.5px] font-medium text-[#64748B] leading-snug mb-0.5">
                         Crises ativas
                       </div>
-                      <div className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-600">
-                        <span>-1 desde ontem</span>
+                      <div className="text-xs font-bold text-rose-600">
+                        -1 desde ontem
                       </div>
                     </div>
                   </div>
@@ -594,7 +749,7 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                 </h3>
                 <button
                   type="button"
-                  className="inline-flex items-center gap-1 text-xs sm:text-[13px] font-bold text-[#0066FF] hover:text-[#0052cc] transition-colors cursor-pointer group"
+                  className="inline-flex items-center gap-1 text-xs sm:text-[13px] font-bold text-[#0055FE] hover:text-[#0040CC] transition-colors cursor-pointer group"
                 >
                   <span>Ver todas</span>
                   <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
@@ -631,7 +786,7 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                           <span className="text-[11px] font-semibold text-slate-400">
                             {item.time}
                           </span>
-                          <h4 className="text-xs sm:text-[12.5px] font-bold text-[#0F172A] leading-snug font-['Outfit'] line-clamp-3 group-hover:text-[#0066FF] transition-colors">
+                          <h4 className="text-xs sm:text-[12.5px] font-bold text-[#0F172A] leading-snug font-['Outfit'] line-clamp-3 group-hover:text-[#0055FE] transition-colors">
                             {item.title}
                           </h4>
                         </div>
@@ -648,11 +803,11 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                           <button
                             type="button"
                             onClick={() => toggleSaveNews(item.id)}
-                            className="p-1 rounded-md text-slate-400 hover:text-[#0066FF] transition-colors cursor-pointer"
+                            className="p-1 rounded-md text-slate-400 hover:text-[#0055FE] transition-colors cursor-pointer"
                             aria-label="Salvar"
                           >
                             <Bookmark
-                              className={`w-3.5 h-3.5 ${isSaved ? 'text-[#0066FF] fill-current' : ''}`}
+                              className={`w-3.5 h-3.5 ${isSaved ? 'text-[#0055FE] fill-current' : ''}`}
                             />
                           </button>
                           <button
@@ -685,7 +840,7 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                 </h3>
                 <button
                   type="button"
-                  className="inline-flex items-center gap-1 text-xs font-bold text-[#0066FF] hover:text-[#0052cc] transition-colors cursor-pointer group"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#0055FE] hover:text-[#0040CC] transition-colors cursor-pointer group"
                 >
                   <span>Ver todos</span>
                   <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
@@ -697,8 +852,8 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                 {HIGHLIGHT_ITEMS.map((item) => {
                   const isSaved = savedNewsIds.has(item.id);
                   return (
-                    <article key={item.id} className="py-3 first:pt-0 last:pb-0 flex items-center gap-3 group">
-                      <div className="w-16 h-16 rounded-xl overflow-hidden shrink-0 bg-slate-100">
+                    <article key={item.id} className="py-4 first:pt-0 last:pb-0 flex items-center gap-3 group">
+                      <div className="w-[72px] h-[72px] rounded-xl overflow-hidden shrink-0 bg-slate-100">
                         <img
                           src={item.image}
                           alt={item.title}
@@ -707,11 +862,11 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                         />
                       </div>
 
-                      <div className="flex-1 min-w-0 flex flex-col justify-between h-16 py-0.5">
+                      <div className="flex-1 min-w-0 flex flex-col justify-between h-[72px] py-0.5">
                         <span className={`text-[9.5px] font-extrabold uppercase tracking-wider ${item.categoryColor}`}>
                           {item.category}
                         </span>
-                        <h4 className="text-[12px] font-bold text-[#0F172A] leading-snug line-clamp-2 group-hover:text-[#0066FF] transition-colors">
+                        <h4 className="text-[12px] font-bold text-[#0F172A] leading-snug line-clamp-2 group-hover:text-[#0055FE] transition-colors">
                           {item.title}
                         </h4>
                         <div className="flex items-center justify-between text-[11px] text-slate-400">
@@ -719,10 +874,10 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                           <button
                             type="button"
                             onClick={() => toggleSaveNews(item.id)}
-                            className="text-slate-400 hover:text-[#0066FF] transition-colors cursor-pointer"
+                            className="text-slate-400 hover:text-[#0055FE] transition-colors cursor-pointer"
                             aria-label="Salvar"
                           >
-                            <Bookmark className={`w-3.5 h-3.5 ${isSaved ? 'text-[#0066FF] fill-current' : ''}`} />
+                            <Bookmark className={`w-3.5 h-3.5 ${isSaved ? 'text-[#0055FE] fill-current' : ''}`} />
                           </button>
                         </div>
                       </div>
@@ -743,7 +898,7 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                 </h3>
                 <button
                   type="button"
-                  className="inline-flex items-center gap-1 text-xs font-bold text-[#0066FF] hover:text-[#0052cc] transition-colors cursor-pointer group"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#0055FE] hover:text-[#0040CC] transition-colors cursor-pointer group"
                 >
                   <span>Ver todas</span>
                   <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
@@ -758,7 +913,7 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                     className="flex items-center justify-between py-1 px-1 rounded-lg hover:bg-slate-50 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-6 h-6 rounded-full bg-blue-50 text-[#0066FF] flex items-center justify-center text-xs font-bold font-['Outfit'] shrink-0">
+                      <div className="w-6 h-6 rounded-full bg-blue-50 text-[#0055FE] flex items-center justify-center text-xs font-bold font-['Outfit'] shrink-0">
                         {trend.rank}
                       </div>
                       <span className="text-xs sm:text-[13px] font-bold text-[#0F172A] tracking-tight">
@@ -907,10 +1062,10 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
               onClick={onExploreMap}
               className="bg-blue-50/50 hover:bg-blue-50/80 rounded-2xl p-3.5 border border-blue-100 flex items-center justify-center gap-3 transition-colors cursor-pointer group text-center"
             >
-              <div className="w-10 h-10 rounded-full bg-white border border-blue-200 text-[#0066FF] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
+              <div className="w-10 h-10 rounded-full bg-white border border-blue-200 text-[#0055FE] flex items-center justify-center shrink-0 shadow-2xs group-hover:scale-105 transition-transform">
                 <Globe className="w-5 h-5" />
               </div>
-              <span className="text-xs sm:text-[13px] font-bold text-[#0066FF] group-hover:underline text-left leading-snug">
+              <span className="text-xs sm:text-[13px] font-bold text-[#0055FE] group-hover:underline text-left leading-snug">
                 Ver mapa de crises <br /> e acontecimentos
               </span>
             </div>

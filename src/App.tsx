@@ -158,7 +158,7 @@ export default function App() {
             : currentTab === 'eventos'
             ? 'Pesquisar eventos, temas, locais, organizações...'
             : currentTab === 'noticias' || currentTab === 'movimento'
-            ? 'Pesquisar notícias globais, temas, países...'
+            ? 'Pesquisar temas, países, pessoas, organizações...'
             : 'Pesquisar países, regiões, cidades, projetos, comunidades...'
         }
         showTopbar={

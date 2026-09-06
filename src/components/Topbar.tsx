@@ -19,7 +19,7 @@ export interface TopbarProps {
 
 export const Topbar: React.FC<TopbarProps> = ({
   userName = 'Ana Silva',
-  userAvatarUrl,
+  userAvatarUrl = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80',
   notificationCount,
   currentLanguage = 'PT',
   searchPlaceholder = 'Pesquisar países, regiões, cidades, projetos, comunidades...',
