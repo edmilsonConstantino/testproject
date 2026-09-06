@@ -46,7 +46,7 @@ export const GlobalWorldMapHero: React.FC<GlobalWorldMapHeroProps> = ({
   return (
     <div
       id="global-world-map-hero"
-      className={`rounded-[20px] bg-[#050B1A] p-6 sm:p-8 lg:p-9 min-h-[340px] sm:min-h-[370px] lg:min-h-[400px] flex flex-col justify-between text-white shadow-[0_12px_40px_rgba(5,11,26,0.35)] border border-slate-800/80 relative overflow-hidden group ${className}`}
+      className={`rounded-[20px] bg-[#050B1A] p-5 sm:p-6 lg:p-7 min-h-[280px] lg:min-h-[300px] flex flex-col text-white shadow-[0_12px_40px_rgba(5,11,26,0.35)] border border-slate-800/80 relative overflow-hidden group ${className}`}
     >
       {/* 1. Imagem de Alta Resolução do Mapa Mundi Noturno com Luzes das Cidades */}
       <div
@@ -62,54 +62,55 @@ export const GlobalWorldMapHero: React.FC<GlobalWorldMapHeroProps> = ({
       {/* Brilho atmosférico sutil no topo */}
       <div className="absolute top-0 right-1/4 w-96 h-48 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
 
-      {/* 3. Conteúdo Textual Superior */}
-      <div className="relative z-10 max-w-sm sm:max-w-md lg:max-w-lg">
-        <h2 className="text-2xl sm:text-3xl lg:text-[32px] font-extrabold text-white leading-[1.2] font-['Outfit'] tracking-tight">
-          {title}
-        </h2>
-        <p className="text-slate-300 text-xs sm:text-[13.5px] lg:text-sm mt-2.5 leading-relaxed font-normal max-w-sm">
-          {subtitle}
-        </p>
-
-        {/* Botão Pill Gradiente Azul/Esmeralda */}
-        <div className="mt-6">
-          <button
-            type="button"
-            onClick={handleAction}
-            className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-gradient-to-r from-[#0052FE] via-[#007AFE] to-[#00C99E] hover:from-[#0042CC] hover:via-[#006CE0] hover:to-[#00A885] text-white text-xs sm:text-[13.5px] font-bold transition-all shadow-[0_4px_20px_rgba(0,201,158,0.35)] hover:shadow-[0_6px_24px_rgba(0,201,158,0.5)] hover:scale-[1.02] active:scale-[0.98] cursor-pointer group"
-          >
-            <span>{buttonText}</span>
-            <ArrowRight className="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
-          </button>
+      {/* Coluna única de conteúdo: título/subtítulo descem um pouco do topo, e a legenda + botão
+          ficam agrupados e "empurrados" para o rodapé do card via mt-auto */}
+      <div className="relative z-10 flex flex-col flex-1 max-w-sm sm:max-w-md lg:max-w-lg">
+        {/* 3. Conteúdo Textual Superior */}
+        <div className="mt-3 sm:mt-5">
+          <h2 className="text-xl sm:text-2xl lg:text-[26px] font-extrabold text-white leading-tight font-['Outfit'] tracking-tight">
+            {title === 'O mundo está acontecendo agora.' ? (
+              <>
+                O mundo está
+                <br />
+                acontecendo agora.
+              </>
+            ) : (
+              title
+            )}
+          </h2>
+          <p className="text-slate-200 text-xs sm:text-[13.5px] lg:text-sm mt-2 leading-relaxed font-normal max-w-[210px]">
+            {subtitle}
+          </p>
         </div>
-      </div>
 
-      {/* 4. Rodapé: Cápsulas Translúcidas com as categorias */}
-      {categories && categories.length > 0 && (
-        <div className="relative z-10 pt-6 mt-4 flex flex-wrap items-center gap-3">
-          {/* Cápsula Principal de Categorias */}
-          <div className="bg-[#0A1325]/85 border border-slate-700/60 rounded-full px-4 sm:px-6 py-2.5 flex flex-wrap items-center gap-4 sm:gap-6 text-xs backdrop-blur-md shadow-inner">
-            {categories.map((item) => (
-              <div key={item.name} className="flex items-center gap-2">
-                <span className={`w-2.5 h-2.5 rounded-full ${item.color} ${item.glow || ''} shrink-0`} />
-                <span className="font-medium text-slate-200 text-[11px] sm:text-[12px] whitespace-nowrap">
-                  {item.name}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          {/* Cápsula Secundária Opcional (ex.: Outros em eventos) */}
-          {secondaryCategory && (
-            <div className="bg-[#0A1325]/85 border border-slate-700/60 rounded-full px-5 py-2.5 flex items-center gap-2 text-xs backdrop-blur-md shadow-inner">
-              <span className={`w-2.5 h-2.5 rounded-full ${secondaryCategory.color} ${secondaryCategory.glow || ''} shrink-0`} />
-              <span className="font-medium text-slate-200 text-[11px] sm:text-[12px] whitespace-nowrap">
-                {secondaryCategory.name}
-              </span>
+        {/* 4. Rodapé agrupado: Legenda de categorias + Botão logo abaixo dela */}
+        <div className="mt-auto pt-6">
+          {((categories && categories.length > 0) || secondaryCategory) && (
+            <div className="inline-flex flex-wrap items-center gap-x-5 gap-y-2 sm:gap-x-6 bg-[#0A1325]/85 border border-slate-700/60 rounded-full px-4 sm:px-6 py-2.5 text-xs backdrop-blur-md shadow-inner max-w-full">
+              {[...(categories || []), ...(secondaryCategory ? [secondaryCategory] : [])].map((item) => (
+                <div key={item.name} className="flex items-center gap-2">
+                  <span className={`w-2.5 h-2.5 rounded-full ${item.color} ${item.glow || ''} shrink-0`} />
+                  <span className="font-medium text-slate-200 text-[11px] sm:text-[12px] whitespace-nowrap">
+                    {item.name}
+                  </span>
+                </div>
+              ))}
             </div>
           )}
+
+          {/* Botão Pill Gradiente Azul/Esmeralda — agora logo abaixo da legenda */}
+          <div className="mt-4">
+            <button
+              type="button"
+              onClick={handleAction}
+              className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-gradient-to-r from-[#0052FE] via-[#007AFE] to-[#00C99E] hover:from-[#0042CC] hover:via-[#006CE0] hover:to-[#00A885] text-white text-xs sm:text-[13.5px] font-bold transition-all shadow-[0_4px_20px_rgba(0,201,158,0.35)] hover:shadow-[0_6px_24px_rgba(0,201,158,0.5)] hover:scale-[1.02] active:scale-[0.98] cursor-pointer group"
+            >
+              <span>{buttonText}</span>
+              <ArrowRight className="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
+            </button>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

@@ -1,8 +1,10 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
 import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
+  Check,
   Bookmark,
   MapPin,
   Sparkles,
@@ -19,7 +21,11 @@ import {
   Trophy,
   MoreHorizontal,
   Clock,
-  Radio
+  Radio,
+  Atom,
+  Music,
+  Shirt,
+  UtensilsCrossed,
 } from 'lucide-react';
 import { GlobalWorldMapHero } from './GlobalWorldMapHero';
 import { GlobalCalendarWidget } from './GlobalCalendarWidget';
@@ -48,13 +54,21 @@ const FILTER_PILLS = [
   { id: 'desporto', label: 'Desporto', icon: Trophy },
 ];
 
+// Categorias adicionais reveladas pelo dropdown "+ Mais" (não cabem na linha principal)
+const EXTRA_FILTER_PILLS = [
+  { id: 'ciencia', label: 'Ciência', icon: Atom },
+  { id: 'musica', label: 'Música', icon: Music },
+  { id: 'moda', label: 'Moda', icon: Shirt },
+  { id: 'gastronomia', label: 'Gastronomia', icon: UtensilsCrossed },
+];
+
 const RECOMMENDED_EVENTS = [
   {
     id: 1,
     category: 'TECNOLOGIA',
     categoryBadgeClass: 'bg-indigo-100 text-indigo-700',
     modality: 'ONLINE',
-    modalityClass: 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/40',
+    modalityClass: 'bg-white text-emerald-600 border border-emerald-300',
     date: '21 – 23 Mai 2024',
     title: 'Web Summit Rio 2024',
     location: 'Rio de Janeiro, Brasil',
@@ -67,33 +81,33 @@ const RECOMMENDED_EVENTS = [
     category: 'AMBIENTE',
     categoryBadgeClass: 'bg-emerald-100 text-emerald-700',
     modality: 'PRESENCIAL',
-    modalityClass: 'bg-amber-950/80 text-amber-300 border border-amber-500/40',
+    modalityClass: 'bg-white text-orange-600 border border-orange-300',
     date: '30 Mai – 5 Jun 2024',
     title: 'UN Climate Change Conference (SB60)',
     location: 'Bonn, Alemanha',
     description: 'Negociações globais para ações climáticas e sustentabilidade.',
     interested: '12.7K interessados',
-    imageUrl: 'https://images.unsplash.com/photo-1511497584788-87676104235f?w=600&auto=format&fit=crop&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1466611653911-95081537e5b7?w=600&auto=format&fit=crop&q=80',
   },
   {
     id: 3,
     category: 'CULTURA',
     categoryBadgeClass: 'bg-purple-100 text-purple-700',
     modality: 'PRESENCIAL',
-    modalityClass: 'bg-amber-950/80 text-amber-300 border border-amber-500/40',
+    modalityClass: 'bg-white text-orange-600 border border-orange-300',
     date: '18 – 26 Mai 2024',
     title: 'Nuit des Musées 2024',
     location: 'Paris, França',
     description: 'Uma noite mágica de arte, cultura e património mundial.',
     interested: '8.9K interessados',
-    imageUrl: 'https://images.unsplash.com/photo-1543349689-9a4d426bee8e?w=600&auto=format&fit=crop&q=80',
+    imageUrl: 'https://images.unsplash.com/photo-1554907984-15263bfd63bd?w=600&auto=format&fit=crop&q=80',
   },
   {
     id: 4,
     category: 'NEGÓCIOS',
     categoryBadgeClass: 'bg-amber-100 text-amber-700',
     modality: 'ONLINE',
-    modalityClass: 'bg-emerald-950/80 text-emerald-300 border border-emerald-500/40',
+    modalityClass: 'bg-white text-emerald-600 border border-emerald-300',
     date: '3 – 6 Jun 2024',
     title: 'Global Business Forum 2024',
     location: 'Virtual',
@@ -254,7 +268,65 @@ export const GlobalEventsView: React.FC<GlobalEventsViewProps> = ({
   const [activeFilter, setActiveFilter] = useState('todas');
   const [bookmarkedIds, setBookmarkedIds] = useState<number[]>([]);
   const [selectedDay, setSelectedDay] = useState<number>(16);
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
   const carouselRef = useRef<HTMLDivElement>(null);
+  const moreDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Fecha o dropdown "+ Mais" ao clicar fora dele
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (moreDropdownRef.current && !moreDropdownRef.current.contains(event.target as Node)) {
+        setIsMoreOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Pills de categoria que cabem numa única linha antes do "+ Mais" — recalculado por medição real,
+  // igual ao sistema usado em "Mundo em Movimento": o que não couber entra no dropdown do "+ Mais".
+  const [visibleFilterIds, setVisibleFilterIds] = useState<string[]>(() => FILTER_PILLS.map((p) => p.id));
+  const filterNavRef = useRef<HTMLDivElement>(null);
+  const filterMeasureRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const moreMeasureRef = useRef<HTMLButtonElement | null>(null);
+
+  useLayoutEffect(() => {
+    const navEl = filterNavRef.current;
+    if (!navEl) return;
+
+    const recalcVisiblePills = () => {
+      const containerWidth = navEl.clientWidth;
+      const gap = 8; // gap-2
+      const moreWidth = moreMeasureRef.current?.offsetWidth ?? 100;
+
+      let used = 0;
+      const fittingIds: string[] = [];
+
+      for (let i = 0; i < FILTER_PILLS.length; i++) {
+        const width = filterMeasureRefs.current[i]?.offsetWidth ?? 0;
+        const gapBefore = fittingIds.length > 0 ? gap : 0;
+        const prospectiveUsed = used + gapBefore + width;
+        const totalWithMore = prospectiveUsed + gap + moreWidth;
+
+        if (totalWithMore <= containerWidth) {
+          used = prospectiveUsed;
+          fittingIds.push(FILTER_PILLS[i].id);
+        }
+      }
+
+      setVisibleFilterIds(fittingIds);
+    };
+
+    recalcVisiblePills();
+    const observer = new ResizeObserver(recalcVisiblePills);
+    observer.observe(navEl);
+    return () => observer.disconnect();
+  }, []);
+
+  const visibleFilterIdSet = new Set(visibleFilterIds);
+  const visibleFilterPills = FILTER_PILLS.filter((p) => visibleFilterIdSet.has(p.id));
+  const overflowFilterPills = FILTER_PILLS.filter((p) => !visibleFilterIdSet.has(p.id));
+  const activeExtraPill = [...overflowFilterPills, ...EXTRA_FILTER_PILLS].find((p) => p.id === activeFilter);
 
   const scrollCarousel = (direction: 'left' | 'right') => {
     if (carouselRef.current) {
@@ -309,9 +381,45 @@ export const GlobalEventsView: React.FC<GlobalEventsViewProps> = ({
             {/* LINHA HORIZONTAL DE PILLS DE FILTRO DE CATEGORIA */}
             <div
               id="events-category-filters"
-              className="flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden select-none"
+              ref={filterNavRef}
+              className="relative flex items-center gap-2 select-none"
             >
-              {FILTER_PILLS.map((pill) => {
+              {/* Camada invisível só para medir a largura real de cada pill (não afeta o layout) */}
+              <div
+                aria-hidden="true"
+                className="absolute left-0 top-0 flex items-center gap-2"
+                style={{ visibility: 'hidden', height: 0, overflow: 'hidden', whiteSpace: 'nowrap' }}
+              >
+                {FILTER_PILLS.map((pill, index) => {
+                  const Icon = pill.icon;
+                  return (
+                    <button
+                      key={`measure-${pill.id}`}
+                      ref={(el) => {
+                        filterMeasureRefs.current[index] = el;
+                      }}
+                      type="button"
+                      tabIndex={-1}
+                      className="inline-flex items-center gap-2 py-2 px-3.5 rounded-full text-xs sm:text-[13px] font-semibold border border-transparent"
+                    >
+                      <Icon className="w-3.5 h-3.5 shrink-0" strokeWidth={2.2} />
+                      <span>{pill.label}</span>
+                    </button>
+                  );
+                })}
+                <button
+                  ref={moreMeasureRef}
+                  type="button"
+                  tabIndex={-1}
+                  className="inline-flex items-center gap-1.5 py-2 px-3.5 rounded-full text-xs sm:text-[13px] font-semibold border border-transparent"
+                >
+                  <MoreHorizontal className="w-4 h-4" strokeWidth={2.2} />
+                  <span>Mais</span>
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {visibleFilterPills.map((pill) => {
                 const Icon = pill.icon;
                 const isActive = activeFilter === pill.id;
                 return (
@@ -319,7 +427,7 @@ export const GlobalEventsView: React.FC<GlobalEventsViewProps> = ({
                     key={pill.id}
                     type="button"
                     onClick={() => setActiveFilter(pill.id)}
-                    className={`inline-flex items-center gap-2 py-2 px-4 rounded-full text-xs sm:text-[13px] font-semibold transition-all whitespace-nowrap cursor-pointer shrink-0 ${
+                    className={`inline-flex items-center gap-2 py-2 px-3.5 rounded-full text-xs sm:text-[13px] font-semibold transition-all whitespace-nowrap cursor-pointer shrink-0 ${
                       isActive
                         ? 'bg-[#0055FE] text-white shadow-sm border border-[#0055FE]'
                         : 'bg-white border border-[#E2E8F0] text-[#334155] hover:bg-slate-50 hover:text-[#0F172A] shadow-xs'
@@ -331,18 +439,108 @@ export const GlobalEventsView: React.FC<GlobalEventsViewProps> = ({
                 );
               })}
 
-              {/* Pill "Mais" */}
-              <button
-                type="button"
-                className="inline-flex items-center gap-1.5 py-2 px-4 rounded-full bg-white border border-[#E2E8F0] text-[#334155] hover:bg-slate-50 hover:text-[#0F172A] text-xs sm:text-[13px] font-semibold transition-all whitespace-nowrap cursor-pointer shadow-xs shrink-0"
-              >
-                <MoreHorizontal className="w-4 h-4 text-slate-500 stroke-[2.2]" />
-                <span>Mais</span>
-              </button>
+              {/* Pill "Mais" com dropdown de categorias adicionais */}
+              <div className="relative shrink-0" ref={moreDropdownRef}>
+                <button
+                  type="button"
+                  onClick={() => setIsMoreOpen((prev) => !prev)}
+                  aria-expanded={isMoreOpen}
+                  aria-haspopup="menu"
+                  className={`inline-flex items-center gap-1.5 py-2 px-3.5 rounded-full text-xs sm:text-[13px] font-semibold transition-all whitespace-nowrap cursor-pointer shadow-xs shrink-0 ${
+                    activeExtraPill
+                      ? 'bg-[#0055FE] text-white border border-[#0055FE]'
+                      : 'bg-white border border-[#E2E8F0] text-[#334155] hover:bg-slate-50 hover:text-[#0F172A]'
+                  }`}
+                >
+                  <MoreHorizontal className={`w-4 h-4 ${activeExtraPill ? 'text-white' : 'text-slate-500'} stroke-[2.2]`} />
+                  <span>{activeExtraPill ? activeExtraPill.label : 'Mais'}</span>
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 transition-transform duration-200 stroke-[2.2] ${
+                      isMoreOpen ? 'rotate-180' : ''
+                    } ${activeExtraPill ? 'text-white/90' : 'text-slate-400'}`}
+                  />
+                </button>
+
+                {isMoreOpen && (
+                  <div
+                    id="events-more-categories-dropdown"
+                    role="menu"
+                    className="absolute top-full right-0 mt-2 w-52 bg-white rounded-2xl border border-slate-200/90 shadow-xl py-1.5 z-30 animate-in fade-in zoom-in-95 duration-150"
+                  >
+                    {overflowFilterPills.length > 0 && (
+                      <>
+                        <div className="px-3 py-1.5 border-b border-slate-100">
+                          <span className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider">
+                            Não couberam na linha
+                          </span>
+                        </div>
+                        <div className="py-1">
+                          {overflowFilterPills.map((pill) => {
+                            const Icon = pill.icon;
+                            const isSelected = activeFilter === pill.id;
+                            return (
+                              <button
+                                key={pill.id}
+                                type="button"
+                                role="menuitem"
+                                onClick={() => {
+                                  setActiveFilter(pill.id);
+                                  setIsMoreOpen(false);
+                                }}
+                                className={`w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold transition-colors text-left cursor-pointer ${
+                                  isSelected
+                                    ? 'bg-blue-50 text-[#0055FE]'
+                                    : 'text-[#334155] hover:bg-slate-50 hover:text-[#0F172A]'
+                                }`}
+                              >
+                                <Icon className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-[#0055FE]' : 'text-slate-400'}`} />
+                                <span className="truncate flex-1">{pill.label}</span>
+                                {isSelected && <Check className="w-3.5 h-3.5 text-[#0055FE] shrink-0" />}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </>
+                    )}
+
+                    <div className="px-3 py-1.5 border-b border-slate-100">
+                      <span className="text-[10.5px] font-bold text-slate-400 uppercase tracking-wider">
+                        Mais categorias
+                      </span>
+                    </div>
+                    <div className="py-1">
+                      {EXTRA_FILTER_PILLS.map((pill) => {
+                        const Icon = pill.icon;
+                        const isSelected = activeFilter === pill.id;
+                        return (
+                          <button
+                            key={pill.id}
+                            type="button"
+                            role="menuitem"
+                            onClick={() => {
+                              setActiveFilter(pill.id);
+                              setIsMoreOpen(false);
+                            }}
+                            className={`w-full flex items-center gap-2 px-3.5 py-2 text-xs font-semibold transition-colors text-left cursor-pointer ${
+                              isSelected
+                                ? 'bg-blue-50 text-[#0055FE]'
+                                : 'text-[#334155] hover:bg-slate-50 hover:text-[#0F172A]'
+                            }`}
+                          >
+                            <Icon className={`w-3.5 h-3.5 shrink-0 ${isSelected ? 'text-[#0055FE]' : 'text-slate-400'}`} />
+                            <span className="truncate flex-1">{pill.label}</span>
+                            {isSelected && <Check className="w-3.5 h-3.5 text-[#0055FE] shrink-0" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* SEÇÃO: EVENTOS RECOMENDADOS PARA SI */}
-            <div className="flex flex-col gap-4 pt-1">
+            <div className="bg-white rounded-[20px] border border-slate-200/80 shadow-xs p-5 sm:p-6 flex flex-col gap-4">
               {/* Cabeçalho da Seção */}
               <div className="flex items-center justify-between gap-3">
                 <h3 className="text-lg font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
@@ -396,13 +594,18 @@ export const GlobalEventsView: React.FC<GlobalEventsViewProps> = ({
                       className="w-[285px] sm:w-[calc(50%-10px)] lg:w-[calc(25%-14px)] min-w-[250px] shrink-0 bg-white rounded-[12px] border border-slate-100/90 shadow-[0_3px_14px_rgba(15,23,42,0.05)] hover:-translate-y-1 hover:shadow-[0_10px_24px_rgba(15,23,42,0.09)] transition-all duration-200 flex flex-col justify-between overflow-hidden group cursor-pointer"
                     >
                       {/* Top: Imagem com badges */}
-                      <div className="relative h-[170px] w-full overflow-hidden bg-slate-100">
+                      <div className="relative h-[140px] w-full overflow-hidden bg-slate-100">
                         <img
                           src={event.imageUrl}
                           alt={event.title}
                           className="w-full h-full object-cover rounded-t-[12px] group-hover:scale-105 transition-transform duration-300"
                           referrerPolicy="no-referrer"
                           loading="lazy"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src =
+                              'https://images.unsplash.com/photo-1557804506-669a67965ba0?w=600&auto=format&fit=crop&q=80';
+                          }}
                         />
 
                         {/* Badge de Categoria (Canto superior esquerdo) */}
@@ -421,16 +624,16 @@ export const GlobalEventsView: React.FC<GlobalEventsViewProps> = ({
                       </div>
 
                       {/* Corpo do Card */}
-                      <div className="p-4 flex-1 flex flex-col justify-between">
+                      <div className="p-3.5 flex-1 flex flex-col justify-between">
                         <div>
                           {/* Data do Evento */}
-                          <span className="text-[11px] font-semibold text-slate-500 block mb-1">
+                          <span className="text-[11px] font-semibold text-slate-500 block mb-0.5">
                             {event.date}
                           </span>
 
                           {/* Título do Evento */}
                           <h4
-                            className="text-sm sm:text-[14.5px] font-bold text-[#0F172A] leading-snug line-clamp-1 group-hover:text-[#0055FE] transition-colors font-['Outfit']"
+                            className="text-sm sm:text-[14.5px] font-bold text-[#0055FE] leading-snug line-clamp-1 group-hover:text-[#0042CC] transition-colors font-['Outfit']"
                             title={event.title}
                           >
                             {event.title}
@@ -444,7 +647,7 @@ export const GlobalEventsView: React.FC<GlobalEventsViewProps> = ({
 
                           {/* Descrição em Cinza (2 linhas) */}
                           <p
-                            className="text-xs text-[#64748B] leading-relaxed mt-2 line-clamp-2"
+                            className="text-xs text-[#64748B] leading-relaxed mt-1.5 line-clamp-2"
                             title={event.description}
                           >
                             {event.description}
@@ -452,7 +655,7 @@ export const GlobalEventsView: React.FC<GlobalEventsViewProps> = ({
                         </div>
 
                         {/* Rodapé do Card */}
-                        <div className="pt-3 mt-3 border-t border-slate-100 flex items-center justify-between">
+                        <div className="pt-2.5 mt-2.5 border-t border-slate-100 flex items-center justify-between">
                           <div className="flex items-center gap-1.5 text-xs text-slate-500">
                             <Users className="w-3.5 h-3.5 text-slate-400" />
                             <span className="text-[11px] font-medium">
@@ -484,7 +687,7 @@ export const GlobalEventsView: React.FC<GlobalEventsViewProps> = ({
             </div>
 
             {/* SEÇÃO: EXPLORE POR REGIÃO */}
-            <div className="flex flex-col gap-4 pt-1">
+            <div className="bg-white rounded-[20px] border border-slate-200/80 shadow-xs p-5 sm:p-6 flex flex-col gap-4">
               {/* Cabeçalho da Seção */}
               <div className="flex items-center justify-between gap-3">
                 <h3 className="text-lg font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
@@ -542,15 +745,15 @@ export const GlobalEventsView: React.FC<GlobalEventsViewProps> = ({
             </div>
           </section>
 
-          {/* Coluna Lateral Direita: Card "Eventos em destaque" idêntico à referência visual */}
+          {/* Coluna Lateral Direita: Cards "Eventos em destaque" e "Próximos a começar" */}
           <aside
-            className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-6 self-start"
+            className="lg:col-span-4 xl:col-span-3 lg:sticky lg:top-6 self-start flex flex-col gap-6"
             aria-label="Sidebar de Eventos em Destaque"
           >
             {/* Card Unificado Branco com bordas arredondadas e sombra suave */}
             <div
               id="featured-events-card"
-              className="bg-white rounded-[24px] border border-slate-100/90 shadow-[0_4px_24px_rgba(15,23,42,0.04)] p-5 sm:p-6 flex flex-col justify-between"
+              className="bg-white rounded-[24px] border border-slate-100/90 shadow-[0_4px_24px_rgba(15,23,42,0.04)] p-4 flex flex-col justify-between"
             >
               {/* Cabeçalho Interno do Card: "Eventos em destaque" + "Ver todos →" */}
               <div className="flex items-center justify-between pb-4">
@@ -567,14 +770,14 @@ export const GlobalEventsView: React.FC<GlobalEventsViewProps> = ({
               </div>
 
               {/* Lista dos 4 Itens em Destaque */}
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {FEATURED_EVENTS.map((item) => (
                   <article
                     key={item.id}
                     className="flex items-start gap-3.5 group cursor-pointer"
                   >
-                    {/* Thumbnail quadrada arredondada (~68x68px) */}
-                    <div className={`w-[66px] h-[66px] sm:w-[70px] sm:h-[70px] rounded-[14px] overflow-hidden shrink-0 ${item.bgTone || 'bg-slate-900'} shadow-xs flex items-center justify-center relative p-0.5`}>
+                    {/* Thumbnail quadrada arredondada */}
+                    <div className={`w-14 h-14 rounded-[14px] overflow-hidden shrink-0 ${item.bgTone || 'bg-slate-900'} shadow-xs flex items-center justify-center relative p-0.5`}>
                       <img
                         src={item.imageUrl}
                         alt={item.title}
@@ -585,7 +788,7 @@ export const GlobalEventsView: React.FC<GlobalEventsViewProps> = ({
                     </div>
 
                     {/* Informações do Evento à Direita */}
-                    <div className="flex-1 min-w-0 flex flex-col justify-between min-h-[66px] py-0.5">
+                    <div className="flex-1 min-w-0 flex flex-col justify-between min-h-14 py-0.5">
                       <div>
                         {/* Pill de Categoria */}
                         <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-extrabold tracking-wider uppercase ${item.categoryBadgeClass}`}>
@@ -594,7 +797,7 @@ export const GlobalEventsView: React.FC<GlobalEventsViewProps> = ({
 
                         {/* Título do Evento */}
                         <h4
-                          className="text-xs sm:text-[13px] font-bold text-[#0F172A] leading-snug line-clamp-2 mt-1 group-hover:text-[#0055FE] transition-colors font-['Outfit']"
+                          className="text-xs font-bold text-[#0F172A] leading-snug line-clamp-2 mt-1 group-hover:text-[#0055FE] transition-colors font-['Outfit']"
                           title={item.title}
                         >
                           {item.title}
@@ -611,13 +814,85 @@ export const GlobalEventsView: React.FC<GlobalEventsViewProps> = ({
               </div>
 
               {/* Botão Inferior Interno do Card: "Ver todos os destaques →" */}
+              <div className="pt-4 mt-1">
+                <button
+                  type="button"
+                  className="w-full py-2.5 px-3.5 rounded-[14px] bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#0055FE] text-xs sm:text-[13px] font-bold transition-all flex items-center justify-center gap-2 cursor-pointer group shadow-xs"
+                >
+                  <Ticket className="w-4 h-4 text-[#0055FE] stroke-[2]" />
+                  <span>Ver todos os destaques</span>
+                  <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2]" />
+                </button>
+              </div>
+            </div>
+
+            {/* Card "Próximos a começar" */}
+            <div
+              id="upcoming-events-card"
+              className="bg-white rounded-[24px] border border-slate-100/90 shadow-[0_4px_24px_rgba(15,23,42,0.04)] p-5 sm:p-6 flex flex-col justify-between"
+            >
+              {/* Cabeçalho Interno do Card: "Próximos a começar" + "Ver todos →" */}
+              <div className="flex items-center justify-between pb-4">
+                <h3 className="text-base sm:text-[17px] font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
+                  Próximos a começar
+                </h3>
+                <button
+                  type="button"
+                  className="inline-flex items-center gap-1 text-xs sm:text-[12.5px] font-bold text-[#0055FE] hover:text-[#0042CC] transition-colors cursor-pointer group"
+                >
+                  <span>Ver todos</span>
+                  <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2]" />
+                </button>
+              </div>
+
+              {/* Lista dos 3 Próximos Eventos */}
+              <div className="space-y-4">
+                {UPCOMING_EVENTS.map((item) => (
+                  <article
+                    key={item.id}
+                    className="flex items-start gap-3 group cursor-pointer"
+                  >
+                    {/* Thumbnail quadrada arredondada */}
+                    <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 bg-slate-100 shadow-xs">
+                      <img
+                        src={item.imageUrl}
+                        alt={item.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                        referrerPolicy="no-referrer"
+                        loading="lazy"
+                      />
+                    </div>
+
+                    {/* Informações do Evento à Direita */}
+                    <div className="flex-1 min-w-0">
+                      <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-extrabold tracking-wider uppercase ${item.tagClass}`}>
+                        {item.timeTag}
+                      </span>
+
+                      <h4
+                        className="text-xs sm:text-[13px] font-bold text-[#0055FE] leading-snug line-clamp-1 mt-1 font-['Outfit']"
+                        title={item.title}
+                      >
+                        {item.title}
+                      </h4>
+
+                      <div className="flex items-center gap-1 text-[11px] text-[#64748B] font-medium mt-1">
+                        <MapPin className="w-3 h-3 text-slate-400 shrink-0" />
+                        <span className="truncate">{item.location}</span>
+                      </div>
+                    </div>
+                  </article>
+                ))}
+              </div>
+
+              {/* Botão Inferior Interno do Card: "Ver agenda completa →" */}
               <div className="pt-5 mt-2">
                 <button
                   type="button"
                   className="w-full py-3 px-4 rounded-[14px] bg-[#EFF6FF] hover:bg-[#DBEAFE] text-[#0055FE] text-xs sm:text-[13px] font-bold transition-all flex items-center justify-center gap-2 cursor-pointer group shadow-xs"
                 >
-                  <Ticket className="w-4 h-4 text-[#0055FE] stroke-[2]" />
-                  <span>Ver todos os destaques</span>
+                  <CalendarIcon className="w-4 h-4 text-[#0055FE] stroke-[2]" />
+                  <span>Ver agenda completa</span>
                   <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2]" />
                 </button>
               </div>

@@ -132,7 +132,7 @@ export const GlobalCalendarWidget: React.FC<GlobalCalendarWidgetProps> = ({
   return (
     <div
       id="global-calendar-widget"
-      className={`rounded-[20px] bg-white border border-slate-100/90 p-5 sm:p-6 min-h-[340px] sm:min-h-[370px] lg:min-h-[400px] flex flex-col justify-between shadow-[0_4px_24px_rgba(15,23,42,0.04)] ${className}`}
+      className={`rounded-[20px] bg-white border border-slate-100/90 p-5 sm:p-6 min-h-[280px] lg:min-h-[300px] flex flex-col justify-between shadow-[0_4px_24px_rgba(15,23,42,0.04)] ${className}`}
     >
       <div>
         {/* Cabeçalho do Card */}
