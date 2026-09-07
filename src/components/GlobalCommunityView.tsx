@@ -596,7 +596,7 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
                 return (
                   <article
                     key={comm.id}
-                    className="bg-white rounded-[18px] border border-slate-200/80 overflow-hidden shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col group"
+                    className="bg-white rounded-[16px] border border-slate-200/80 overflow-hidden shadow-xs hover:border-slate-300 hover:shadow-sm transition-all duration-200 flex flex-col group"
                   >
                     {/* Imagem de Topo com Badge de Categoria e Ícone Circular Sobreposto */}
                     <div className="relative">
@@ -625,8 +625,8 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
                       </div>
                     </div>
 
-                    {/* Corpo do Card */}
-                    <div className="pt-7 px-4 pb-4 flex flex-col justify-between flex-1">
+                    {/* Corpo do Card com padding interno de 16px */}
+                    <div className="pt-6 px-4 pb-4 flex flex-col justify-between flex-1">
                       <h4 className="text-[14px] sm:text-[15px] font-bold text-[#0F172A] font-['Outfit'] group-hover:text-[#0066FF] transition-colors leading-snug">
                         {comm.name}
                       </h4>
@@ -703,7 +703,7 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
                   <article
                     key={post.id}
                     id={`feed-post-${post.id}`}
-                    className="bg-white rounded-[20px] border border-slate-200/80 p-5 sm:p-6 shadow-xs hover:border-slate-300 transition-colors flex flex-col gap-4"
+                    className="bg-white rounded-[12px] border border-slate-200/80 p-5 shadow-xs hover:border-slate-300 transition-all flex flex-col gap-3.5 mb-4 last:mb-0"
                   >
                     {/* Cabeçalho do Post: Avatar, Nome, Verificado, Cargo/Comunidade, Tempo */}
                     <div className="flex items-center justify-between">
@@ -751,7 +751,7 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
 
                     {/* Imagem Anexada da Publicação quando houver */}
                     {post.image && (
-                      <div className="w-full h-56 sm:h-72 rounded-2xl overflow-hidden bg-slate-100 shadow-2xs">
+                      <div className="w-full h-56 sm:h-72 rounded-xl overflow-hidden bg-slate-100 shadow-2xs">
                         <img
                           src={post.image}
                           alt={post.title}
@@ -774,7 +774,7 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
                     </div>
 
                     {/* Rodapé de Ações Interativas: Curtir, Comentar, Partilhar, Guardar */}
-                    <div className="border-t border-slate-100 pt-3 mt-1 flex items-center justify-between text-xs text-slate-500 font-medium">
+                    <div className="border-t border-[#E2E8F0] pt-3 mt-1 flex items-center justify-between text-xs text-slate-500 font-medium">
                       <div className="flex items-center gap-4 sm:gap-6">
                         <button
                           type="button"
@@ -815,14 +815,14 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
             </div>
           </div>
 
-          {/* COLUNA DIREITA (xl:col-span-4): Sidebar de Widgets (Ordenação estrita) */}
-          <div className="xl:col-span-4 flex flex-col gap-6 w-full">
+          {/* COLUNA DIREITA (xl:col-span-4): Sidebar de Widgets (3 cards separados com margem inferior de 16px) */}
+          <div className="xl:col-span-4 flex flex-col gap-4 w-full">
             {/* 1. Card: Comunidades em tendência */}
             <div
               id="comunidades-em-tendencia-card"
-              className="bg-white rounded-[18px] border border-slate-200/80 p-5 shadow-xs flex flex-col gap-4"
+              className="bg-white rounded-[16px] border border-slate-200/80 p-5 shadow-xs flex flex-col gap-4 hover:border-slate-300 transition-colors mb-4 last:mb-0"
             >
-              <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <h3 className="text-base font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
                   Comunidades em tendência
                 </h3>
@@ -869,9 +869,9 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
             {/* 2. Card: Membros em destaque */}
             <div
               id="membros-em-destaque-card"
-              className="bg-white rounded-[18px] border border-slate-200/80 p-5 shadow-xs flex flex-col gap-4"
+              className="bg-white rounded-[16px] border border-slate-200/80 p-5 shadow-xs flex flex-col gap-4 hover:border-slate-300 transition-colors mb-4 last:mb-0"
             >
-              <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <h3 className="text-base font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
                   Membros em destaque
                 </h3>
@@ -933,9 +933,9 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
             {/* 3. Card: Próximos eventos da comunidade (ABAIXO dos dois anteriores) */}
             <div
               id="proximos-eventos-card"
-              className="bg-white rounded-[18px] border border-slate-200/80 p-5 shadow-xs flex flex-col gap-4"
+              className="bg-white rounded-[16px] border border-slate-200/80 p-5 shadow-xs flex flex-col gap-4 hover:border-slate-300 transition-colors"
             >
-              <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
                 <h3 className="text-base font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
                   Próximos eventos da comunidade
                 </h3>

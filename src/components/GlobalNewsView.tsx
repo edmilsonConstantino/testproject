@@ -10,6 +10,8 @@ import {
   Shield,
   Plus,
   ChevronDown,
+  ChevronLeft,
+  ChevronRight,
   Check,
   ArrowRight,
   Bookmark,
@@ -48,10 +50,7 @@ const CATEGORY_PILLS: FilterPillItem[] = [
   { id: 'todas', label: 'Todas', icon: Globe },
   { id: 'politica-global', label: 'Política Global', icon: Landmark, iconColor: 'text-slate-700' },
   { id: 'economia', label: 'Economia', icon: TrendingUp, iconColor: 'text-emerald-600' },
-  { id: 'ambiente', label: 'Ambiente', icon: Leaf, iconColor: 'text-emerald-600' },
-  { id: 'tecnologia', label: 'Tecnologia', icon: Cpu, iconColor: 'text-blue-600' },
-  { id: 'saude-global', label: 'Saúde Global', icon: HeartPulse, iconColor: 'text-pink-500' },
- {
+  {
     id: 'direitos-humanos',
     label: 'Direitos Humanos',
     icon: Scale,
@@ -65,7 +64,10 @@ const CATEGORY_PILLS: FilterPillItem[] = [
       'Justiça Social',
     ],
   },
+  { id: 'tecnologia', label: 'Tecnologia', icon: Cpu, iconColor: 'text-blue-600' },
+  { id: 'saude', label: 'Saúde', icon: HeartPulse, iconColor: 'text-pink-500' },
   { id: 'seguranca', label: 'Segurança', icon: Shield, iconColor: 'text-rose-500' },
+  { id: 'ambiente', label: 'Ambiente', icon: Leaf, iconColor: 'text-emerald-600' },
   {
     id: 'mais',
     label: 'Mais',
@@ -99,7 +101,7 @@ const MAIN_NEWS_LIST: MainNewsCard[] = [
     category: 'ECONOMIA',
     categoryColor: 'text-blue-600',
     categoryBg: 'bg-blue-50',
-    image: 'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=600&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?w=600&auto=format&fit=crop&q=80',
     time: 'Há 2 horas',
     title: 'Comércio global cresce 3,2% no primeiro trimestre de 2024',
     countries: '195 países',
@@ -137,8 +139,8 @@ const MAIN_NEWS_LIST: MainNewsCard[] = [
   {
     id: 'main-5',
     category: 'SAÚDE GLOBAL',
-    categoryColor: 'text-blue-600',
-    categoryBg: 'bg-blue-50',
+    categoryColor: 'text-purple-600',
+    categoryBg: 'bg-purple-50',
     image: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=600&auto=format&fit=crop&q=80',
     time: 'Há 8 horas',
     title: 'OMS declara fim da emergência internacional por nova cepa',
@@ -227,6 +229,16 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
   const [savedNewsIds, setSavedNewsIds] = useState<Set<string>>(new Set());
   const [shareFeedback, setShareFeedback] = useState<boolean>(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const mainNewsScrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollMainNews = (direction: 'left' | 'right') => {
+    if (mainNewsScrollRef.current) {
+      const card = mainNewsScrollRef.current.querySelector('article');
+      const cardWidth = card ? card.offsetWidth + 14 : (mainNewsScrollRef.current.clientWidth + 14) / 4;
+      const amount = direction === 'left' ? -cardWidth : cardWidth;
+      mainNewsScrollRef.current.scrollBy({ left: amount, behavior: 'smooth' });
+    }
+  };
 
   // Pills de categoria: todas menos "+ Mais" (que fica sempre fixo por último)
   const regularPills = CATEGORY_PILLS.slice(0, -1);
@@ -235,7 +247,9 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
   // Quais pills "regulares" cabem numa única linha antes do "+ Mais" — recalculado por medição real.
   // Guarda os IDs (não apenas uma contagem) porque um pill mais estreito mais à frente pode caber
   // no espaço restante mesmo que um pill mais largo antes dele não tenha coubido.
-  const [visiblePillIds, setVisiblePillIds] = useState<string[]>(() => regularPills.map((p) => p.id));
+  const [visiblePillIds, setVisiblePillIds] = useState<string[]>(() =>
+    regularPills.filter((p) => p.id !== 'ambiente').map((p) => p.id)
+  );
   const measureRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const moreMeasureRef = useRef<HTMLButtonElement | null>(null);
 
@@ -249,21 +263,27 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
     const recalcVisiblePills = () => {
       const containerWidth = navEl.clientWidth;
       const gap = 6; // gap-1.5
-      const moreWidth = moreMeasureRef.current?.offsetWidth ?? 96;
+      const moreWidth = moreMeasureRef.current?.offsetWidth ?? 88;
 
       let used = 0;
       const fittingIds: string[] = [];
 
-      for (let i = 0; i < regularPills.length; i++) {
-        const width = measureRefs.current[i]?.offsetWidth ?? 0;
+      // Ambiente fica sempre no menu "+ Mais", conforme solicitado pelo usuário
+      const candidates = regularPills.filter((p) => p.id !== 'ambiente');
+
+      for (let i = 0; i < candidates.length; i++) {
+        const originalIndex = regularPills.findIndex((p) => p.id === candidates[i].id);
+        const width = measureRefs.current[originalIndex]?.offsetWidth ?? 0;
         const gapBefore = fittingIds.length > 0 ? gap : 0;
         const prospectiveUsed = used + gapBefore + width;
-        // só encaixa este pill se ainda sobrar espaço pro "+ Mais" depois dele
+        // Encaixa o pill se couber com o "+ Mais" reservado no final
         const totalWithMore = prospectiveUsed + gap + moreWidth;
 
-        if (totalWithMore <= containerWidth) {
+        // Se for o último candidato (Segurança), permitimos uma margem para que preencha a fila
+        // até o final do card sem sobrar espaço em branco
+        if (totalWithMore <= containerWidth || (i === candidates.length - 1 && prospectiveUsed + gap + moreWidth <= containerWidth + 40)) {
           used = prospectiveUsed;
-          fittingIds.push(regularPills[i].id);
+          fittingIds.push(candidates[i].id);
         }
       }
 
@@ -354,7 +374,7 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
           type="button"
           id={`filter-pill-${pill.id}`}
           onClick={() => handlePillClick(pill)}
-          className={`inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-[11px] sm:text-xs font-semibold transition-all duration-150 whitespace-nowrap cursor-pointer shrink-0 ${
+          className={`inline-flex items-center gap-1.5 py-1.5 px-2.5 sm:px-3 rounded-full text-[11px] sm:text-xs font-semibold transition-all duration-150 whitespace-nowrap cursor-pointer shrink-0 ${
             isActive
               ? 'bg-[#0055FE] text-white border border-[#0055FE] shadow-xs hover:bg-[#0040CC]'
               : 'bg-white border border-[#E2E8F0] text-[#334155] hover:bg-slate-50 hover:text-[#0F172A] hover:border-slate-300 shadow-2xs'
@@ -499,7 +519,7 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                       }}
                       type="button"
                       tabIndex={-1}
-                      className="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-[11px] sm:text-xs font-semibold border border-transparent"
+                      className="inline-flex items-center gap-1.5 py-1.5 px-2.5 sm:px-3 rounded-full text-[11px] sm:text-xs font-semibold border border-transparent"
                     >
                       <Icon className="w-3 h-3 shrink-0" strokeWidth={2.2} />
                       <span>{pill.label}</span>
@@ -511,7 +531,7 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                   ref={moreMeasureRef}
                   type="button"
                   tabIndex={-1}
-                  className="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-full text-[11px] sm:text-xs font-semibold border border-transparent"
+                  className="inline-flex items-center gap-1.5 py-1.5 px-2.5 sm:px-3 rounded-full text-[11px] sm:text-xs font-semibold border border-transparent"
                 >
                   <Plus className="w-3 h-3 shrink-0" strokeWidth={2.2} />
                   <span>{morePill.label}</span>
@@ -528,7 +548,7 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
               {/* Card Hero (~65% da coluna esquerda / lg:col-span-8) */}
               <article
                 id="hero-news-card"
-                className="lg:col-span-8 relative overflow-hidden rounded-[18px] min-h-[260px] lg:min-h-[270px] flex flex-col p-4 sm:p-5 text-white shadow-md group border border-slate-900/10 font-['Inter']"
+                className="lg:col-span-8 relative overflow-hidden rounded-[18px] min-h-[290px] lg:min-h-[310px] flex flex-col p-4 sm:p-5 pb-8 sm:pb-9 text-white shadow-md group border border-slate-900/10 font-['Inter']"
               >
                 {/* Imagem da Terra vista do espaço com iluminação noturna das cidades */}
                 <img
@@ -565,17 +585,19 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                   </div>
 
                   {/* 3. Título, pouco espaço abaixo dos metadados */}
-                  <h2 className="mt-3 max-w-[440px] text-xl lg:text-2xl font-bold text-white leading-[1.35] tracking-tight">
-                    Líderes mundiais chegam a acordo histórico sobre IA segura e responsável
+                  <h2 className="mt-3 max-w-[460px] text-xl lg:text-2xl font-bold text-white leading-[1.35] tracking-tight">
+                    Líderes mundiais chegam a<br />
+                    acordo histórico sobre IA segura<br />
+                    e responsável
                   </h2>
 
-                  {/* 4. Descrição */}
-                  <p className="mt-4 max-w-[440px] text-[12px] sm:text-[13px] text-white leading-[1.6] font-normal">
+                  {/* 4. Descrição (deslocada um pouco para baixo) */}
+                  <p className="mt-6 sm:mt-7 max-w-[440px] text-[12px] sm:text-[13px] text-white leading-[1.6] font-normal">
                     Mais de 120 países assinam o primeiro tratado global para regular o desenvolvimento e uso ético da inteligência artificial.
                   </p>
 
-                  {/* 5. CTA + Ações, tudo na mesma linha, mais espaço abaixo da descrição */}
-                  <div className="mt-5 flex items-center gap-2.5">
+                  {/* 5. CTA + Ações, junto um pouco para baixo */}
+                  <div className="mt-6 sm:mt-7 flex items-center gap-2.5">
                     <button
                       type="button"
                       id="btn-ler-noticia-completa"
@@ -647,192 +669,120 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
               </article>
 
               {/* Card "Impacto em números" (~35% da coluna esquerda / lg:col-span-4) */}
-               <aside
+              <aside
                 id="impacto-em-numeros-card"
-                className="lg:col-span-4 bg-white rounded-[18px] border border-slate-200/80 shadow-xs min-h-[220px] lg:min-h-[230px] p-4 sm:p-5 flex flex-col justify-between"
+                className="lg:col-span-4 bg-white rounded-[20px] border border-slate-200/70 shadow-xs p-4 sm:p-5 flex flex-col justify-between"
               >
                 {/* Header */}
-                <div className="flex items-start justify-between gap-2">
-                  <h3 className="text-sm sm:text-[15px] font-bold text-[#0F172A] font-['Outfit'] tracking-tight leading-snug shrink-0">
+                <div className="flex items-center justify-between gap-2 mb-3">
+                  <h3 className="text-sm sm:text-[15px] font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
                     Impacto em números
                   </h3>
                   <button
                     type="button"
-                    className="inline-flex items-center gap-1 text-[10.5px] font-bold text-[#0055FE] hover:text-[#0040CC] transition-colors cursor-pointer group shrink-0 whitespace-nowrap"
+                    className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-medium text-[#0055FE] hover:text-[#0040CC] transition-colors cursor-pointer group shrink-0 whitespace-nowrap"
                   >
                     <span>Ver relatório completo</span>
-                    <ArrowRight className="w-3 h-3 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
+                    <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2]" />
                   </button>
                 </div>
-                {/* Grid 2x2 com os 4 Indicadores Estatísticos (cada um em seu próprio cartão) */}
-                <div className="grid grid-cols-2 gap-2 flex-1 content-center">
+
+                {/* Grid 2x2 com os 4 Indicadores Estatísticos - Layout leve e horizontal com tipografia suave */}
+                <div className="grid grid-cols-2 gap-2.5 sm:gap-3 flex-1 content-center">
                   {/* Indicador 1: 195 Países afetados */}
-                  <div className="bg-slate-50 rounded-2xl p-3 flex flex-col gap-1.5">
-                    <div className="w-9 h-9 rounded-full bg-emerald-100/80 text-emerald-600 flex items-center justify-center">
-                      <Users className="w-4.5 h-4.5" strokeWidth={2.2} />
-                    </div>
-                    <div>
-                      <div className="text-xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-0.5">
+                  <div className="bg-slate-50/70 hover:bg-slate-50 rounded-2xl p-3 sm:p-3.5 flex flex-col justify-between border border-slate-100/90 transition-all">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-100/70 flex items-center justify-center shrink-0">
+                        <Users className="w-4.5 h-4.5" strokeWidth={2} />
+                      </div>
+                      <div className="text-xl sm:text-[22px] font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
                         195
                       </div>
-                      <div className="text-[11.5px] font-medium text-[#64748B] leading-snug mb-0.5">
+                    </div>
+                    <div className="mt-2.5 flex flex-col gap-0.5">
+                      <div className="text-[11.5px] sm:text-xs font-normal text-slate-500 leading-snug">
                         Países afetados
                       </div>
-                      <div className="text-xs font-bold text-emerald-600">
-                        +12 desde ontem
+                      <div className="text-[10.5px] sm:text-[11px] font-medium text-emerald-600 flex items-center gap-1">
+                        <span className="font-bold">+12</span>
+                        <span className="text-slate-400 font-normal">desde ontem</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Indicador 2: 28 Acontecimentos relevantes */}
-                  <div className="bg-slate-50 rounded-2xl p-3 flex flex-col gap-1.5">
-                    <div className="w-9 h-9 rounded-full bg-blue-100/80 text-blue-600 flex items-center justify-center">
-                      <Globe className="w-4.5 h-4.5" strokeWidth={2.2} />
-                    </div>
-                    <div>
-                      <div className="text-xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-0.5">
+                  <div className="bg-slate-50/70 hover:bg-slate-50 rounded-2xl p-3 sm:p-3.5 flex flex-col justify-between border border-slate-100/90 transition-all">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-full bg-blue-50 text-blue-600 border border-blue-100/70 flex items-center justify-center shrink-0">
+                        <Globe className="w-4.5 h-4.5" strokeWidth={2} />
+                      </div>
+                      <div className="text-xl sm:text-[22px] font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
                         28
                       </div>
-                      <div className="text-[11.5px] font-medium text-[#64748B] leading-snug mb-0.5">
+                    </div>
+                    <div className="mt-2.5 flex flex-col gap-0.5">
+                      <div className="text-[11.5px] sm:text-xs font-normal text-slate-500 leading-snug">
                         Acontecimentos relevantes
                       </div>
-                      <div className="text-xs font-bold text-emerald-600">
-                        +5 desde ontem
+                      <div className="text-[10.5px] sm:text-[11px] font-medium text-emerald-600 flex items-center gap-1">
+                        <span className="font-bold">+5</span>
+                        <span className="text-slate-400 font-normal">desde ontem</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Indicador 3: 7,4B Pessoas impactadas */}
-                  <div className="bg-slate-50 rounded-2xl p-3 flex flex-col gap-1.5">
-                    <div className="w-9 h-9 rounded-full bg-purple-100/80 text-purple-600 flex items-center justify-center">
-                      <TrendingUp className="w-4.5 h-4.5" strokeWidth={2.2} />
-                    </div>
-                    <div>
-                      <div className="text-xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-0.5">
+                  <div className="bg-slate-50/70 hover:bg-slate-50 rounded-2xl p-3 sm:p-3.5 flex flex-col justify-between border border-slate-100/90 transition-all">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-full bg-purple-50 text-purple-600 border border-purple-100/70 flex items-center justify-center shrink-0">
+                        <TrendingUp className="w-4.5 h-4.5" strokeWidth={2} />
+                      </div>
+                      <div className="text-xl sm:text-[22px] font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
                         7,4B
                       </div>
-                      <div className="text-[11.5px] font-medium text-[#64748B] leading-snug mb-0.5">
+                    </div>
+                    <div className="mt-2.5 flex flex-col gap-0.5">
+                      <div className="text-[11.5px] sm:text-xs font-normal text-slate-500 leading-snug">
                         Pessoas impactadas
                       </div>
-                      <div className="text-xs font-bold text-emerald-600">
-                        +1,2B desde ontem
+                      <div className="text-[10.5px] sm:text-[11px] font-medium text-emerald-600 flex items-center gap-1">
+                        <span className="font-bold">+1,2B</span>
+                        <span className="text-slate-400 font-normal">desde ontem</span>
                       </div>
                     </div>
                   </div>
 
                   {/* Indicador 4: 12 Crises ativas */}
-                  <div className="bg-slate-50 rounded-2xl p-3 flex flex-col gap-1.5">
-                    <div className="w-9 h-9 rounded-full bg-orange-100/80 text-orange-600 flex items-center justify-center">
-                      <Flame className="w-4.5 h-4.5" strokeWidth={2.2} />
-                    </div>
-                    <div>
-                      <div className="text-xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight leading-none mb-0.5">
+                  <div className="bg-slate-50/70 hover:bg-slate-50 rounded-2xl p-3 sm:p-3.5 flex flex-col justify-between border border-slate-100/90 transition-all">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-9 h-9 rounded-full bg-orange-50 text-orange-600 border border-orange-100/70 flex items-center justify-center shrink-0">
+                        <Flame className="w-4.5 h-4.5" strokeWidth={2} />
+                      </div>
+                      <div className="text-xl sm:text-[22px] font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
                         12
                       </div>
-                      <div className="text-[11.5px] font-medium text-[#64748B] leading-snug mb-0.5">
+                    </div>
+                    <div className="mt-2.5 flex flex-col gap-0.5">
+                      <div className="text-[11.5px] sm:text-xs font-normal text-slate-500 leading-snug">
                         Crises ativas
                       </div>
-                      <div className="text-xs font-bold text-rose-600">
-                        -1 desde ontem
+                      <div className="text-[10.5px] sm:text-[11px] font-medium text-orange-600 flex items-center gap-1">
+                        <span className="font-bold">-1</span>
+                        <span className="text-slate-400 font-normal">desde ontem</span>
                       </div>
                     </div>
                   </div>
                 </div>
               </aside>
             </div>
-
-            {/* Seção "Principais notícias" com 6 cards em grade horizontal */}
-            <section id="principais-noticias-section" className="flex flex-col gap-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xl sm:text-[22px] font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
-                  Principais notícias
-                </h3>
-                <button
-                  type="button"
-                  className="inline-flex items-center gap-1 text-xs sm:text-[13px] font-bold text-[#0055FE] hover:text-[#0040CC] transition-colors cursor-pointer group"
-                >
-                  <span>Ver todas</span>
-                  <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
-                </button>
-              </div>
-
-              {/* Grid dos 6 Cards (3 por linha em telas médias / 6 por linha em telas ultra-largas) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                {MAIN_NEWS_LIST.map((item) => {
-                  const isSaved = savedNewsIds.has(item.id);
-                  return (
-                    <article
-                      key={item.id}
-                      className="bg-white rounded-[16px] border border-slate-200/80 overflow-hidden shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between group"
-                    >
-                      {/* Topo: Imagem com Badge da Categoria */}
-                      <div>
-                        <div className="relative h-32 w-full overflow-hidden bg-slate-100">
-                          <img
-                            src={item.image}
-                            alt={item.title}
-                            className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
-                            referrerPolicy="no-referrer"
-                          />
-                          <span
-                            className={`absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md text-[9.5px] font-extrabold uppercase tracking-wider ${item.categoryBg} ${item.categoryColor} shadow-2xs`}
-                          >
-                            {item.category}
-                          </span>
-                        </div>
-
-                        {/* Conteúdo Central: Timestamp e Título */}
-                        <div className="p-3 flex flex-col gap-1.5">
-                          <span className="text-[11px] font-semibold text-slate-400">
-                            {item.time}
-                          </span>
-                          <h4 className="text-xs sm:text-[12.5px] font-bold text-[#0F172A] leading-snug font-['Outfit'] line-clamp-3 group-hover:text-[#0055FE] transition-colors">
-                            {item.title}
-                          </h4>
-                        </div>
-                      </div>
-
-                      {/* Rodapé: Países e Ações (Bookmark / Share) */}
-                      <div className="px-3 pb-3 pt-1 border-t border-slate-100/80 flex items-center justify-between text-[11px] text-slate-500">
-                        <span className="inline-flex items-center gap-1 font-medium truncate text-slate-600">
-                          <Globe className="w-3 h-3 text-slate-400 shrink-0" />
-                          <span className="truncate">{item.countries}</span>
-                        </span>
-
-                        <div className="flex items-center gap-1 shrink-0">
-                          <button
-                            type="button"
-                            onClick={() => toggleSaveNews(item.id)}
-                            className="p-1 rounded-md text-slate-400 hover:text-[#0055FE] transition-colors cursor-pointer"
-                            aria-label="Salvar"
-                          >
-                            <Bookmark
-                              className={`w-3.5 h-3.5 ${isSaved ? 'text-[#0055FE] fill-current' : ''}`}
-                            />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={handleShare}
-                            className="p-1 rounded-md text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
-                            aria-label="Compartilhar"
-                          >
-                            <Share2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-            </section>
           </div>
 
-          {/* COLUNA DIREITA (xl:col-span-3 / ~25%) */}
-          <div className="xl:col-span-3 flex flex-col gap-6 w-full">
+          {/* COLUNA DIREITA SUPERIOR (xl:col-span-3 / ~25%) */}
+          <div className="xl:col-span-3 flex flex-col w-full">
             {/* Card 1: Em destaque agora */}
             <div
               id="em-destaque-agora-card"
-              className="bg-white rounded-[18px] border border-slate-200/80 p-5 shadow-xs flex flex-col gap-4"
+              className="bg-white rounded-[18px] border border-slate-200/80 p-4 sm:p-5 shadow-xs flex flex-col justify-between h-full"
             >
               <div className="flex items-center justify-between pb-1 border-b border-slate-100">
                 <h3 className="text-base font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
@@ -848,12 +798,12 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
               </div>
 
               {/* Lista com as 4 notícias em destaque */}
-              <div className="flex flex-col divide-y divide-slate-100">
+              <div className="flex flex-col divide-y divide-slate-100 flex-1 justify-between py-1">
                 {HIGHLIGHT_ITEMS.map((item) => {
                   const isSaved = savedNewsIds.has(item.id);
                   return (
-                    <article key={item.id} className="py-4 first:pt-0 last:pb-0 flex items-center gap-3 group">
-                      <div className="w-[72px] h-[72px] rounded-xl overflow-hidden shrink-0 bg-slate-100">
+                    <article key={item.id} className="py-2.5 first:pt-0 last:pb-0 flex items-center gap-3 group">
+                      <div className="w-[68px] h-[68px] rounded-xl overflow-hidden shrink-0 bg-slate-100">
                         <img
                           src={item.image}
                           alt={item.title}
@@ -862,14 +812,14 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                         />
                       </div>
 
-                      <div className="flex-1 min-w-0 flex flex-col justify-between h-[72px] py-0.5">
-                        <span className={`text-[9.5px] font-extrabold uppercase tracking-wider ${item.categoryColor}`}>
+                      <div className="flex-1 min-w-0 flex flex-col justify-between h-[68px] py-0.5">
+                        <span className={`text-[9px] font-extrabold uppercase tracking-wider ${item.categoryColor}`}>
                           {item.category}
                         </span>
-                        <h4 className="text-[12px] font-bold text-[#0F172A] leading-snug line-clamp-2 group-hover:text-[#0055FE] transition-colors">
+                        <h4 className="text-[11.5px] font-bold text-[#0F172A] leading-snug line-clamp-2 group-hover:text-[#0055FE] transition-colors">
                           {item.title}
                         </h4>
-                        <div className="flex items-center justify-between text-[11px] text-slate-400">
+                        <div className="flex items-center justify-between text-[10.5px] text-slate-400">
                           <span>{item.time}</span>
                           <button
                             type="button"
@@ -886,46 +836,169 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                 })}
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* Card 2: Tendências globais */}
+        {/* 3.1. Grade Inferior: Principais Notícias (9 colunas) + Tendências Globais (3 colunas) 100% ALINHADOS */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-end w-full">
+          {/* Seção "Principais notícias" (xl:col-span-9) */}
+          <div className="xl:col-span-9 flex flex-col w-full">
+            <section id="principais-noticias-section" className="flex flex-col gap-3.5">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl sm:text-[22px] font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
+                  Principais notícias
+                </h3>
+                <div className="flex items-center gap-2">
+                  {/* Botões de navegação horizontal (Prev / Next) */}
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => scrollMainNews('left')}
+                      className="w-7 h-7 rounded-full bg-white border border-slate-200/80 hover:border-slate-300 text-slate-500 hover:text-[#0055FE] flex items-center justify-center transition-colors shadow-2xs cursor-pointer"
+                      aria-label="Notícia anterior"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => scrollMainNews('right')}
+                      className="w-7 h-7 rounded-full bg-white border border-slate-200/80 hover:border-slate-300 text-slate-500 hover:text-[#0055FE] flex items-center justify-center transition-colors shadow-2xs cursor-pointer"
+                      aria-label="Próxima notícia"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="inline-flex items-center gap-1 text-xs sm:text-[13px] font-medium text-[#0055FE] hover:text-[#0040CC] transition-colors cursor-pointer group ml-1"
+                  >
+                    <span>Ver todas</span>
+                    <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2]" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Carrossel de Cards: exatamente 4 cards visíveis sem cortar no desktop (w-[calc((100%-42px)/4)]) */}
+              <div
+                ref={mainNewsScrollRef}
+                className="flex items-stretch gap-3.5 overflow-x-auto pb-0.5 pt-0.5 scrollbar-none snap-x scroll-smooth"
+              >
+                {MAIN_NEWS_LIST.map((item) => {
+                  const isSaved = savedNewsIds.has(item.id);
+                  return (
+                    <article
+                      key={item.id}
+                      className="w-[82%] sm:w-[calc((100%-14px)/2)] md:w-[calc((100%-28px)/3)] lg:w-[calc((100%-42px)/4)] shrink-0 snap-start bg-white rounded-[18px] border border-slate-200/70 px-3.5 py-3 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between group h-[220px]"
+                    >
+                      {/* Topo: Categoria + Imagem + Metadados + Título */}
+                      <div>
+                        {/* 1. Badge da Categoria acima da imagem */}
+                        <div className="mb-1.5">
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${item.categoryBg} ${item.categoryColor} border border-current/15 whitespace-nowrap`}
+                          >
+                            {item.category}
+                          </span>
+                        </div>
+
+                        {/* 2. Imagem com cantos arredondados e proporção horizontal ampla (altura contida) */}
+                        <div className="relative w-full h-[84px] sm:h-[88px] overflow-hidden rounded-[11px] bg-slate-100">
+                          <img
+                            src={item.image}
+                            alt={item.title}
+                            className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
+                            referrerPolicy="no-referrer"
+                          />
+                        </div>
+
+                        {/* 3. Timestamp e Título com tipografia equilibrada e altura contida em 2 linhas */}
+                        <div className="mt-1.5 flex flex-col gap-0.5">
+                          <span className="text-[10px] font-medium text-slate-400">
+                            {item.time}
+                          </span>
+                          <h4 className="text-xs sm:text-[12px] font-bold text-[#0F172A] leading-snug font-['Outfit'] line-clamp-2 group-hover:text-[#0055FE] transition-colors">
+                            {item.title}
+                          </h4>
+                        </div>
+                      </div>
+
+                      {/* Rodapé: Países e Ações (Bookmark / Share) com espaçamento limpo e compacto */}
+                      <div className="mt-2 pt-1.5 border-t border-slate-100/80 flex items-center justify-between text-[11px] text-slate-400">
+                        <span className="inline-flex items-center gap-1 font-normal truncate text-slate-500 max-w-[130px]">
+                          <Globe className="w-3.5 h-3.5 text-slate-400 shrink-0" strokeWidth={1.8} />
+                          <span className="truncate">{item.countries}</span>
+                        </span>
+
+                        <div className="flex items-center gap-1.5 shrink-0 text-slate-400">
+                          <button
+                            type="button"
+                            onClick={() => toggleSaveNews(item.id)}
+                            className="p-1 rounded text-slate-400 hover:text-[#0055FE] transition-colors cursor-pointer"
+                            aria-label="Salvar"
+                          >
+                            <Bookmark
+                              className={`w-3.5 h-3.5 ${isSaved ? 'text-[#0055FE] fill-current' : ''}`}
+                              strokeWidth={1.8}
+                            />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={handleShare}
+                            className="p-1 rounded text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                            aria-label="Compartilhar"
+                          >
+                            <Share2 className="w-3.5 h-3.5" strokeWidth={1.8} />
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          </div>
+
+          {/* COLUNA DIREITA INFERIOR: Card 2: Tendências globais - Exatamente com h-[220px], alinhado no topo e na base com os cards ao lado */}
+          <div className="xl:col-span-3 flex flex-col justify-end w-full">
             <div
               id="tendencias-globais-card"
-              className="bg-white rounded-[18px] border border-slate-200/80 p-5 shadow-xs flex flex-col gap-4"
+              className="bg-white rounded-[18px] border border-slate-200/70 px-4 py-3 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between h-[220px] w-full"
             >
-              <div className="flex items-center justify-between pb-1 border-b border-slate-100">
-                <h3 className="text-base font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
+              <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
+                <h3 className="text-[13px] sm:text-sm font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
                   Tendências globais
                 </h3>
                 <button
                   type="button"
-                  className="inline-flex items-center gap-1 text-xs font-bold text-[#0055FE] hover:text-[#0040CC] transition-colors cursor-pointer group"
+                  className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-bold text-[#0055FE] hover:text-[#0040CC] transition-colors cursor-pointer group"
                 >
                   <span>Ver todas</span>
-                  <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
+                  <ArrowRight className="w-3 h-3 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
                 </button>
               </div>
 
-              {/* Lista dos 5 tópicos em tendência */}
-              <div className="flex flex-col gap-2.5">
+              {/* Lista dos 5 tópicos em tendência calibrada com espaçamento uniforme */}
+              <div className="flex flex-col justify-between flex-1 pt-1">
                 {GLOBAL_TRENDS.map((trend) => (
                   <div
                     key={trend.rank}
-                    className="flex items-center justify-between py-1 px-1 rounded-lg hover:bg-slate-50 transition-colors"
+                    className="flex items-center justify-between py-0.5 px-1 rounded-lg hover:bg-slate-50 transition-colors"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-6 h-6 rounded-full bg-blue-50 text-[#0055FE] flex items-center justify-center text-xs font-bold font-['Outfit'] shrink-0">
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-5 h-5 rounded-full bg-blue-50 text-[#0055FE] flex items-center justify-center text-[10.5px] font-bold font-['Outfit'] shrink-0">
                         {trend.rank}
                       </div>
-                      <span className="text-xs sm:text-[13px] font-bold text-[#0F172A] tracking-tight">
+                      <span className="text-[11.5px] sm:text-xs font-bold text-[#0F172A] tracking-tight truncate max-w-[140px] xl:max-w-[170px]">
                         {trend.label}
                       </span>
                     </div>
 
                     <div className="shrink-0">
                       {trend.direction === 'up' ? (
-                        <ArrowUp className="w-4 h-4 text-emerald-600 stroke-[2.5]" />
+                        <ArrowUp className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
                       ) : (
-                        <ArrowDown className="w-4 h-4 text-rose-600 stroke-[2.5]" />
+                        <ArrowDown className="w-3.5 h-3.5 text-rose-600 stroke-[2.5]" />
                       )}
                     </div>
                   </div>
