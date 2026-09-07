@@ -34,10 +34,12 @@ import {
 
 export interface CommunityEnvironmentViewProps {
   onNavigateToTab?: (tabId: string) => void;
+  onNavigateToCategory?: (category: string) => void;
   onOpenAuth?: (mode: 'login' | 'register') => void;
   onOpenAiAssistant?: () => void;
   onOpenMobileMenu?: () => void;
   onExploreWorld?: () => void;
+  onBackToOfficial?: () => void;
 }
 
 // Interfaces
@@ -335,10 +337,12 @@ const RECENT_ACTIVITY_DATA: RecentActivityItem[] = [
 
 export const CommunityEnvironmentView: React.FC<CommunityEnvironmentViewProps> = ({
   onNavigateToTab,
+  onNavigateToCategory,
   onOpenAuth,
   onOpenAiAssistant,
   onOpenMobileMenu,
   onExploreWorld,
+  onBackToOfficial,
 }) => {
   // Filtros e Estado
   const [selectedCategory, setSelectedCategory] = useState<string>('ambiente');
@@ -463,9 +467,10 @@ export const CommunityEnvironmentView: React.FC<CommunityEnvironmentViewProps> =
             <button
               type="button"
               onClick={() => {
-                if (onNavigateToTab) onNavigateToTab('comunidade');
+                if (onBackToOfficial) onBackToOfficial();
+                else if (onNavigateToTab) onNavigateToTab('comunidade');
               }}
-              title="Voltar"
+              title="Voltar à Página Oficial da Comunidade"
               className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
             >
               <ArrowLeft className="w-4 h-4" />
@@ -474,7 +479,10 @@ export const CommunityEnvironmentView: React.FC<CommunityEnvironmentViewProps> =
             <nav className="flex items-center gap-1.5 text-[13px] text-[#64748B] whitespace-nowrap overflow-hidden text-ellipsis">
               <button
                 type="button"
-                onClick={() => onNavigateToTab && onNavigateToTab('comunidade')}
+                onClick={() => {
+                  if (onBackToOfficial) onBackToOfficial();
+                  else if (onNavigateToTab) onNavigateToTab('comunidade');
+                }}
                 className="hover:text-slate-900 transition-colors cursor-pointer"
               >
                 Comunidade Global
@@ -671,7 +679,13 @@ export const CommunityEnvironmentView: React.FC<CommunityEnvironmentViewProps> =
               <button
                 key={cat.id}
                 type="button"
-                onClick={() => setSelectedCategory(cat.id)}
+                onClick={() => {
+                  if (cat.id === 'educacao' && onNavigateToCategory) {
+                    onNavigateToCategory('educacao');
+                  } else {
+                    setSelectedCategory(cat.id);
+                  }
+                }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer shadow-2xs ${
                   isActive
                     ? 'bg-[#064E3B] text-white shadow-xs'

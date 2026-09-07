@@ -240,9 +240,10 @@ export default function App() {
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
-        ) : (currentTab === 'comunidade' || currentTab === 'comunidade-global' || currentTab === 'ambiente' || currentTab === 'explorar-comunidade') ? (
-          /* Comunidade Global / Explorar Comunidade > Ambiente View matching UI AMBIENTE.png */
+        ) : (currentTab === 'comunidade' || currentTab === 'comunidade-global' || currentTab === 'ambiente' || currentTab === 'educacao' || currentTab === 'explorar-comunidade') ? (
+          /* Comunidade Global (Página Oficial UI COMUNIDADE GLOBAL.png, Ambiente UI AMBIENTE.png & Educação UI EDUCACAO.png) */
           <GlobalCommunityView
+            initialSubView={currentTab === 'ambiente' || currentTab === 'explorar-comunidade' ? 'ambiente' : currentTab === 'educacao' ? 'educacao' : 'official'}
             onOpenAiAssistant={() => setIsAiModalOpen(true)}
             onOpenMobileMenu={() => setIsMobileSidebarOpen(true)}
             onOpenAuth={handleOpenAuth}

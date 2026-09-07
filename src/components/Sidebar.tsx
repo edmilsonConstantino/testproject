@@ -158,6 +158,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           {navItems.map((item) => {
             const isActive =
               currentTab === item.id ||
+              (item.id === 'comunidade' &&
+                (currentTab === 'comunidade-global' || currentTab === 'ambiente' || currentTab === 'educacao' || currentTab === 'explorar-comunidade')) ||
               ((item.id === 'noticias' || item.id === 'movimento') &&
                 (currentTab === 'noticias' || currentTab === 'movimento' || currentTab === 'mundo-em-movimento'));
 
@@ -176,6 +178,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       ? 'bg-[#00A86B] text-white font-bold shadow-xs'
                       : item.id === 'impacto'
                       ? 'bg-[#064E3B] text-white font-bold shadow-xs'
+                      : item.id === 'comunidade'
+                      ? 'bg-gradient-to-r from-[#0055FE] via-[#0070E0] to-[#00B47D] text-white font-bold shadow-xs'
                       : 'bg-gradient-to-r from-[#0055FE] to-[#0096C7] text-white font-bold shadow-xs'
                     : 'text-[#122244] hover:bg-slate-50 font-bold'
                 }`}
