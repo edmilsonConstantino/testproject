@@ -40,6 +40,7 @@ export interface CommunityEnvironmentViewProps {
   onOpenMobileMenu?: () => void;
   onExploreWorld?: () => void;
   onBackToOfficial?: () => void;
+  onOpenCreateCommunity?: () => void;
 }
 
 // Interfaces
@@ -343,6 +344,7 @@ export const CommunityEnvironmentView: React.FC<CommunityEnvironmentViewProps> =
   onOpenMobileMenu,
   onExploreWorld,
   onBackToOfficial,
+  onOpenCreateCommunity,
 }) => {
   // Filtros e Estado
   const [selectedCategory, setSelectedCategory] = useState<string>('ambiente');
@@ -657,7 +659,13 @@ export const CommunityEnvironmentView: React.FC<CommunityEnvironmentViewProps> =
           <button
             type="button"
             id="btn-criar-comunidade-header"
-            onClick={() => setIsCreateModalOpen(true)}
+            onClick={() => {
+              if (onOpenCreateCommunity) {
+                onOpenCreateCommunity();
+              } else {
+                setIsCreateModalOpen(true);
+              }
+            }}
             className="self-start sm:self-center inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#059669] hover:bg-[#047857] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-sm transition-all cursor-pointer shrink-0"
           >
             <span>Criar Comunidade</span>
@@ -680,8 +688,8 @@ export const CommunityEnvironmentView: React.FC<CommunityEnvironmentViewProps> =
                 key={cat.id}
                 type="button"
                 onClick={() => {
-                  if (cat.id === 'educacao' && onNavigateToCategory) {
-                    onNavigateToCategory('educacao');
+                  if (onNavigateToCategory && (cat.id === 'educacao' || cat.id === 'direitos-humanos' || cat.id === 'todas')) {
+                    onNavigateToCategory(cat.id);
                   } else {
                     setSelectedCategory(cat.id);
                   }

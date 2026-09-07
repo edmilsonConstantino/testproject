@@ -159,7 +159,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             const isActive =
               currentTab === item.id ||
               (item.id === 'comunidade' &&
-                (currentTab === 'comunidade-global' || currentTab === 'ambiente' || currentTab === 'educacao' || currentTab === 'explorar-comunidade')) ||
+                (currentTab === 'comunidade-global' || currentTab === 'ambiente' || currentTab === 'educacao' || currentTab === 'direitos-humanos' || currentTab === 'criar-comunidade' || currentTab === 'explorar-comunidade')) ||
               ((item.id === 'noticias' || item.id === 'movimento') &&
                 (currentTab === 'noticias' || currentTab === 'movimento' || currentTab === 'mundo-em-movimento'));
 

@@ -240,10 +240,20 @@ export default function App() {
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
-        ) : (currentTab === 'comunidade' || currentTab === 'comunidade-global' || currentTab === 'ambiente' || currentTab === 'educacao' || currentTab === 'explorar-comunidade') ? (
-          /* Comunidade Global (Página Oficial UI COMUNIDADE GLOBAL.png, Ambiente UI AMBIENTE.png & Educação UI EDUCACAO.png) */
+        ) : (currentTab === 'comunidade' || currentTab === 'comunidade-global' || currentTab === 'ambiente' || currentTab === 'educacao' || currentTab === 'direitos-humanos' || currentTab === 'criar-comunidade' || currentTab === 'explorar-comunidade') ? (
+          /* Comunidade Global (Página Oficial, Categorias e Criar Comunidade UI CRIAR COMUNIDADE.png) */
           <GlobalCommunityView
-            initialSubView={currentTab === 'ambiente' || currentTab === 'explorar-comunidade' ? 'ambiente' : currentTab === 'educacao' ? 'educacao' : 'official'}
+            initialSubView={
+              currentTab === 'ambiente' || currentTab === 'explorar-comunidade'
+                ? 'ambiente'
+                : currentTab === 'educacao'
+                ? 'educacao'
+                : currentTab === 'direitos-humanos'
+                ? 'direitos-humanos'
+                : currentTab === 'criar-comunidade'
+                ? 'criar-comunidade'
+                : 'official'
+            }
             onOpenAiAssistant={() => setIsAiModalOpen(true)}
             onOpenMobileMenu={() => setIsMobileSidebarOpen(true)}
             onOpenAuth={handleOpenAuth}

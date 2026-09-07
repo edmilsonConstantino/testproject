@@ -3,7 +3,7 @@ import {
   Search,
   Globe,
   Bell,
-  GraduationCap,
+  Scale,
   Plus,
   ArrowRight,
   ArrowLeft,
@@ -13,7 +13,7 @@ import {
   Compass,
   Leaf,
   Cpu,
-  Scale,
+  GraduationCap,
   HeartPulse,
   Rocket,
   Palette,
@@ -24,15 +24,14 @@ import {
   Filter,
   CheckCircle2,
   Sparkles,
-  BookOpen,
-  Award,
-  Video,
+  Megaphone,
   FileText,
-  Atom,
-  Languages,
+  Shield,
+  Heart,
+  HandHeart,
 } from 'lucide-react';
 
-export interface CommunityEducationViewProps {
+export interface CommunityHumanRightsViewProps {
   onNavigateToTab?: (tabId: string) => void;
   onNavigateToCategory?: (category: string) => void;
   onBackToOfficial?: () => void;
@@ -43,7 +42,7 @@ export interface CommunityEducationViewProps {
 }
 
 // Interfaces
-interface TrendingEducationCommunity {
+interface TrendingHumanRightsCommunity {
   rank: number;
   id: string;
   name: string;
@@ -54,7 +53,7 @@ interface TrendingEducationCommunity {
   image: string;
 }
 
-interface EducationResource {
+interface HumanRightsInitiative {
   id: string;
   title: string;
   badgeLabel: string;
@@ -63,7 +62,7 @@ interface EducationResource {
   subtitle: string;
   description: string;
   meta: string;
-  actionText: string;
+  actionText?: string;
   isActionLink?: boolean;
 }
 
@@ -73,12 +72,12 @@ interface TrendingRightItem {
   name: string;
   members: string;
   growth: string;
-  iconType: 'ai' | 'cap' | 'scholarship' | 'book' | 'stem';
+  iconType: 'equality' | 'speech' | 'children' | 'refugees' | 'pride';
   bg: string;
   color: string;
 }
 
-interface RecentEducationActivity {
+interface RecentHumanRightsActivity {
   id: string;
   user: string;
   avatar: string;
@@ -87,219 +86,216 @@ interface RecentEducationActivity {
   timeAgo: string;
 }
 
-// 5 Comunidades em Tendência na Educação
-const TRENDING_EDUCATION_COMMUNITIES: TrendingEducationCommunity[] = [
+// 5 Comunidades em Tendência (Direitos Humanos)
+const TRENDING_HR_COMMUNITIES: TrendingHumanRightsCommunity[] = [
   {
     rank: 1,
-    id: 'edu-comm-1',
-    name: 'IA na Educação',
-    membersCount: '78.3K membros',
-    description: 'Explorando como a inteligência artificial pode melhorar a aprendizagem.',
-    tag: 'Tecnologia Educacional',
-    growth: '▲ 22%',
-    image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=600&auto=format&fit=crop&q=80',
+    id: 'hr-comm-1',
+    name: 'Igualdade para Todos',
+    membersCount: '72.3K membros',
+    description: 'Promovemos igualdade racial e combate à discriminação.',
+    tag: 'Igualdade Racial',
+    growth: '▲ 24%',
+    image: 'https://images.unsplash.com/photo-1576267423445-b2e0074d68a4?w=600&auto=format&fit=crop&q=80',
   },
   {
     rank: 2,
-    id: 'edu-comm-2',
-    name: 'Mulheres na Ciência',
-    membersCount: '64.2K membros',
-    description: 'Incentivando meninas e mulheres a liderarem na ciência e tecnologia.',
-    tag: 'Equidade de Gênero',
+    id: 'hr-comm-2',
+    name: 'Liberdade de Expressão',
+    membersCount: '64.1K membros',
+    description: 'Defendemos o direito de todos à expressão livre e segura.',
+    tag: 'Liberdade',
     growth: '▲ 18%',
-    image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1544717305-2782549b5136?w=600&auto=format&fit=crop&q=80',
   },
   {
     rank: 3,
-    id: 'edu-comm-3',
-    name: 'Bolsas pelo Mundo',
-    membersCount: '76.8K membros',
-    description: 'Compartilhamos oportunidades de bolsas de estudo em todo o mundo.',
-    tag: 'Bolsas de Estudo',
+    id: 'hr-comm-3',
+    name: 'Crianças, Futuro e Dignidade',
+    membersCount: '58.7K membros',
+    description: 'Protegemos os direitos das crianças e garantimos um futuro melhor.',
+    tag: 'Direitos das Crianças',
     growth: '▲ 16%',
-    image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=600&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=600&auto=format&fit=crop&q=80',
   },
   {
     rank: 4,
-    id: 'edu-comm-4',
-    name: 'Educação Sem Fronteiras',
-    membersCount: '45.1K membros',
-    description: 'Recursos e metodologias para uma educação acessível e inclusiva.',
-    tag: 'Educação Inclusiva',
+    id: 'hr-comm-4',
+    name: 'Direitos dos Refugiados',
+    membersCount: '51.2K membros',
+    description: 'Apoio, integração e defesa dos direitos de refugiados e migrantes.',
+    tag: 'Refugiados',
     growth: '▲ 14%',
-    image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1532629345422-7515f3d16bb7?w=600&auto=format&fit=crop&q=80',
   },
   {
     rank: 5,
-    id: 'edu-comm-5',
-    name: 'Leitura que Transforma',
-    membersCount: '38.6K membros',
-    description: 'Promovendo o hábito da leitura e o acesso a livros para todos.',
-    tag: 'Leitura e Literatura',
+    id: 'hr-comm-5',
+    name: 'Orgulho e Direitos LGBTQIA+',
+    membersCount: '43.8K membros',
+    description: 'Construímos espaços seguros e defendemos diversidade e inclusão.',
+    tag: 'LGBTQIA+',
     growth: '▲ 12%',
-    image: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=600&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1573883431240-54e7d483bbfe?w=600&auto=format&fit=crop&q=80',
   },
 ];
 
-// 5 Recursos em Destaque
-const EDUCATION_RESOURCES: EducationResource[] = [
+// 5 Iniciativas em Destaque
+const HR_INITIATIVES: HumanRightsInitiative[] = [
   {
-    id: 'res-1',
-    title: 'Design Thinking na Escola',
-    badgeLabel: 'CURSO',
+    id: 'init-1',
+    title: 'Fim da Violência de Género',
+    badgeLabel: 'CAMPANHA',
     badgeBg: 'bg-[#6366F1]',
-    image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=500&auto=format&fit=crop&q=80',
-    subtitle: 'Curso online • Iniciante',
-    description: 'Aprenda a aplicar o design thinking para resolver problemas reais.',
-    meta: '2.4K inscritos',
-    actionText: 'Gratuito',
+    image: 'https://images.unsplash.com/photo-1509099836639-18ba1795216d?w=500&auto=format&fit=crop&q=80',
+    subtitle: 'Campanha Global',
+    description: '#TodosContraAViolência',
+    meta: '15 países • 12.5K apoiadores',
   },
   {
-    id: 'res-2',
-    title: 'Avaliação para Aprendizagem',
-    badgeLabel: 'WEBINAR',
-    badgeBg: 'bg-[#D97706]',
-    image: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=500&auto=format&fit=crop&q=80',
-    subtitle: 'Webinar • 28 Mai 2024',
-    description: 'Estratégias práticas para avaliar e potencializar o aprendizado.',
-    meta: '1.1K inscritos',
-    actionText: 'Gratuito',
-  },
-  {
-    id: 'res-3',
-    title: 'Guia: Ensino Híbrido',
-    badgeLabel: 'GUIA',
-    badgeBg: 'bg-[#059669]',
-    image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=500&auto=format&fit=crop&q=80',
-    subtitle: 'Guia prático',
-    description: 'Passo a passo para implementar ensino híbrido com sucesso.',
-    meta: 'PDF',
-    actionText: 'Gratuito',
-  },
-  {
-    id: 'res-4',
-    title: 'Escolas Sustentáveis',
+    id: 'init-2',
+    title: 'Trabalho Digno, Vida Digna',
     badgeLabel: 'PROJETO',
+    badgeBg: 'bg-[#059669]',
+    image: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=500&auto=format&fit=crop&q=80',
+    subtitle: 'Projeto Internacional',
+    description: 'Promover condições justas de trabalho para todos.',
+    meta: '23 países • 8.7K beneficiados',
+  },
+  {
+    id: 'init-3',
+    title: 'Direitos Humanos em Foco',
+    badgeLabel: 'WEBINAR',
+    badgeBg: 'bg-[#0284C7]',
+    image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=500&auto=format&fit=crop&q=80',
+    subtitle: 'Webinar • 29 Mai 2024',
+    description: 'Entenda os desafios e avanços dos direitos humanos hoje.',
+    meta: '1.2K inscritos',
+    actionText: 'Gratuito',
+  },
+  {
+    id: 'init-4',
+    title: 'Justiça para Todos',
+    badgeLabel: 'PETIÇÃO',
     badgeBg: 'bg-[#EA580C]',
-    image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=500&auto=format&fit=crop&q=80',
-    subtitle: 'Projeto colaborativo',
-    description: 'Compartilhe iniciativas de sustentabilidade nas escolas.',
-    meta: '860 participantes',
-    actionText: 'Participar',
+    image: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=500&auto=format&fit=crop&q=80',
+    subtitle: 'Petição Global',
+    description: 'Apoie a petição por sistemas judiciais mais justos.',
+    meta: '58.3K assinaturas',
+  },
+  {
+    id: 'init-5',
+    title: 'Relatório Anual 2024',
+    badgeLabel: 'RELATÓRIO',
+    badgeBg: 'bg-[#0F766E]',
+    image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500&auto=format&fit=crop&q=80',
+    subtitle: 'Publicação',
+    description: 'Panorama global dos direitos humanos em 2024.',
+    meta: 'PDF',
+    actionText: 'Download',
     isActionLink: true,
   },
-  {
-    id: 'res-5',
-    title: 'Plataformas Educacionais',
-    badgeLabel: 'FERRAMENTA',
-    badgeBg: 'bg-[#0284C7]',
-    image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500&auto=format&fit=crop&q=80',
-    subtitle: 'Comparativo • 2024',
-    description: 'Compare as melhores plataformas para ensino online.',
-    meta: 'Acessar guia',
-    actionText: 'Gratuito',
-  },
 ];
 
-// Dados da Barra Lateral: Tendências na Educação
-const TRENDING_RIGHT_ITEMS: TrendingRightItem[] = [
+// Barra Lateral: Comunidades em Tendência
+const TRENDING_SIDEBAR_ITEMS: TrendingRightItem[] = [
   {
     rank: 1,
-    id: 'tr-1',
-    name: 'IA na Educação',
-    members: '78.3K membros',
-    growth: '▲ 22%',
-    iconType: 'ai',
-    bg: 'bg-indigo-50',
-    color: 'text-[#4338CA]',
+    id: 'side-1',
+    name: 'Igualdade para Todos',
+    members: '72.3K membros',
+    growth: '▲ 24%',
+    iconType: 'equality',
+    bg: 'bg-purple-50',
+    color: 'text-[#8B5CF6]',
   },
   {
     rank: 2,
-    id: 'tr-2',
-    name: 'Educação Sem Fronteiras',
-    members: '64.2K membros',
+    id: 'side-2',
+    name: 'Liberdade de Expressão',
+    members: '64.1K membros',
     growth: '▲ 18%',
-    iconType: 'cap',
+    iconType: 'speech',
+    bg: 'bg-rose-50',
+    color: 'text-[#F43F5E]',
+  },
+  {
+    rank: 3,
+    id: 'side-3',
+    name: 'Crianças, Futuro e Dignidade',
+    members: '58.7K membros',
+    growth: '▲ 16%',
+    iconType: 'children',
     bg: 'bg-blue-50',
     color: 'text-[#2563EB]',
   },
   {
-    rank: 3,
-    id: 'tr-3',
-    name: 'Bolsas pelo Mundo',
-    members: '76.8K membros',
-    growth: '▲ 16%',
-    iconType: 'scholarship',
-    bg: 'bg-emerald-50',
-    color: 'text-[#059669]',
-  },
-  {
     rank: 4,
-    id: 'tr-4',
-    name: 'Alfabetização para Todos',
-    members: '52.6K membros',
+    id: 'side-4',
+    name: 'Direitos dos Refugiados',
+    members: '51.2K membros',
     growth: '▲ 14%',
-    iconType: 'book',
-    bg: 'bg-rose-50',
-    color: 'text-[#E11D48]',
+    iconType: 'refugees',
+    bg: 'bg-amber-50',
+    color: 'text-[#D97706]',
   },
   {
     rank: 5,
-    id: 'tr-5',
-    name: 'STEM para o Futuro',
-    members: '41.3K membros',
+    id: 'side-5',
+    name: 'Orgulho e Direitos LGBTQIA+',
+    members: '43.8K membros',
     growth: '▲ 12%',
-    iconType: 'stem',
-    bg: 'bg-sky-50',
-    color: 'text-[#0284C7]',
+    iconType: 'pride',
+    bg: 'bg-rainbow',
+    color: 'text-white',
   },
 ];
 
-// Atividades Recentes em Educação
-const RECENT_EDUCATION_ACTIVITIES: RecentEducationActivity[] = [
+// Atividades Recentes em Direitos Humanos
+const RECENT_ACTIVITIES: RecentHumanRightsActivity[] = [
   {
     id: 'act-1',
-    user: 'Ana Costa',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
-    action: 'compartilhou um recurso em',
-    target: 'IA na Educação',
+    user: 'Mariana Lopes',
+    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80',
+    action: 'publicou uma atualização em',
+    target: 'Igualdade para Todos',
     timeAgo: 'Há 1 hora',
   },
   {
     id: 'act-2',
     user: 'João Pereira',
     avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80',
-    action: 'publicou um evento em',
-    target: 'Bolsas pelo Mundo',
+    action: 'iniciou uma campanha em',
+    target: 'Liberdade de Expressão',
     timeAgo: 'Há 2 horas',
   },
   {
     id: 'act-3',
-    user: 'Mariana Lopes',
-    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=120&auto=format&fit=crop&q=80',
-    action: 'comentou em um discussão em',
-    target: 'Professores que Inspiram',
+    user: 'Ana Costa',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80',
+    action: 'compartilhou um recurso em',
+    target: 'Direitos dos Refugiados',
     timeAgo: 'Há 3 horas',
   },
   {
     id: 'act-4',
     user: 'Lucas Mendes',
     avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80',
-    action: 'criou uma publicação em',
-    target: 'Educação Inclusiva',
+    action: 'organizou um evento em',
+    target: 'Justiça para Todos',
     timeAgo: 'Há 4 horas',
   },
   {
     id: 'act-5',
     user: 'Carla Souza',
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80',
-    action: 'entrou na comunidade',
-    target: 'Leitura que Transforma',
+    action: 'participou da discussão em',
+    target: 'Fim da Violência de Gênero',
     timeAgo: 'Há 5 horas',
   },
 ];
 
-export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
+export const CommunityHumanRightsView: React.FC<CommunityHumanRightsViewProps> = ({
   onNavigateToTab,
   onNavigateToCategory,
   onBackToOfficial,
@@ -310,9 +306,9 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
 }) => {
   // Filtros
   const [communityType, setCommunityType] = useState<string>('Todas');
-  const [selectedLevels, setSelectedLevels] = useState<Set<string>>(new Set());
-  const [languageFilter, setLanguageFilter] = useState<string>('Qualquer idioma');
-  const [isLanguageOpen, setIsLanguageOpen] = useState<boolean>(false);
+  const [selectedThemes, setSelectedThemes] = useState<Set<string>>(new Set());
+  const [locationFilter, setLocationFilter] = useState<string>('Qualquer lugar');
+  const [isLocationOpen, setIsLocationOpen] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   // Dropdown "Mais"
@@ -320,20 +316,20 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
 
   // Modais
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
-  const [selectedCommunityModal, setSelectedCommunityModal] = useState<TrendingEducationCommunity | null>(null);
-  const [selectedResourceModal, setSelectedResourceModal] = useState<EducationResource | null>(null);
-  const [joinedCommunities, setJoinedCommunities] = useState<Set<string>>(new Set(['edu-comm-1']));
+  const [selectedCommunityModal, setSelectedCommunityModal] = useState<TrendingHumanRightsCommunity | null>(null);
+  const [selectedInitiativeModal, setSelectedInitiativeModal] = useState<HumanRightsInitiative | null>(null);
+  const [joinedCommunities, setJoinedCommunities] = useState<Set<string>>(new Set(['hr-comm-1']));
 
   // Topbar dropdowns
   const [isLangSelectorOpen, setIsLangSelectorOpen] = useState<boolean>(false);
   const [currentLang, setCurrentLang] = useState<string>('PT');
 
-  // Alternar Checkbox Nível Educacional
-  const toggleLevel = (level: string) => {
-    setSelectedLevels((prev) => {
+  // Alternar Checkbox Tema
+  const toggleTheme = (theme: string) => {
+    setSelectedThemes((prev) => {
       const next = new Set(prev);
-      if (next.has(level)) next.delete(level);
-      else next.add(level);
+      if (next.has(theme)) next.delete(theme);
+      else next.add(theme);
       return next;
     });
   };
@@ -341,8 +337,8 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
   // Limpar Filtros
   const handleClearFilters = () => {
     setCommunityType('Todas');
-    setSelectedLevels(new Set());
-    setLanguageFilter('Qualquer idioma');
+    setSelectedThemes(new Set());
+    setLocationFilter('Qualquer lugar');
     setSearchQuery('');
   };
 
@@ -357,7 +353,7 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
   };
 
   return (
-    <div id="community-education-view" className="w-full bg-[#F8FAFC] min-h-screen text-[#0F172A] flex flex-col">
+    <div id="community-human-rights-view" className="w-full bg-[#F8FAFC] min-h-screen text-[#0F172A] flex flex-col">
       {/* 1. Barra Superior com Breadcrumb, Pesquisa Central e Controles de Usuário */}
       <div className="w-full bg-white border-b border-slate-200/80 sticky top-0 z-30 shadow-2xs">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-4">
@@ -389,7 +385,7 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
                 Explorar Comunidade
               </button>
               <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 hidden sm:inline" />
-              <span className="font-bold text-[#0F172A]">Educação</span>
+              <span className="font-bold text-[#0F172A]">Direitos Humanos</span>
             </nav>
           </div>
 
@@ -474,41 +470,41 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
 
       {/* Conteúdo Principal */}
       <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col gap-5">
-        {/* 2. Cabeçalho de Educação com Ícone e Métricas */}
-        <section id="educacao-header" className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        {/* 2. Cabeçalho de Direitos Humanos com Ícone e Métricas */}
+        <section id="direitos-humanos-header" className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-start sm:items-center gap-3.5">
-            {/* Ícone Quadrado Arredondado com Capelo Azul */}
+            {/* Ícone Quadrado Arredondado com Balança Azul/Violeta */}
             <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-[#EEF2FF] border border-indigo-200/80 flex items-center justify-center shrink-0 shadow-2xs">
-              <GraduationCap className="w-7 h-7 sm:w-8 sm:h-8 text-[#4F46E5]" strokeWidth={2.2} />
+              <Scale className="w-7 h-7 sm:w-8 sm:h-8 text-[#4338CA]" strokeWidth={2.2} />
             </div>
 
             <div className="flex flex-col">
               <h1 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight font-['Outfit'] leading-tight">
-                Educação
+                Direitos Humanos
               </h1>
               <p className="text-xs sm:text-sm text-[#64748B] font-normal leading-snug">
-                Aprendizagem para todos. Compartilhe conhecimento, recursos e oportunidades educacionais.
+                Dignidade para todos. Promova direitos, defenda liberdades e construa sociedades mais justas.
               </p>
 
               {/* Fita de Métricas: Comunidades, Membros e Países */}
               <div className="flex flex-wrap items-center gap-4 sm:gap-6 mt-1.5 text-[11.5px] sm:text-xs font-semibold text-[#64748B]">
                 <span className="flex items-center gap-1.5">
                   <Users className="w-3.5 h-3.5 text-slate-500" />
-                  <strong className="font-bold text-[#0F172A]">1.572</strong> comunidades
+                  <strong className="font-bold text-[#0F172A]">1.248</strong> comunidades
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Users className="w-3.5 h-3.5 text-slate-500" />
-                  <strong className="font-bold text-[#0F172A]">285.620</strong> membros
+                  <strong className="font-bold text-[#0F172A]">198.450</strong> membros
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Globe className="w-3.5 h-3.5 text-slate-500" />
-                  <strong className="font-bold text-[#0F172A]">192</strong> países
+                  <strong className="font-bold text-[#0F172A]">187</strong> países
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Botão "+ Criar Comunidade" Azul/Índigo */}
+          {/* Botão "+ Criar Comunidade" Azul */}
           <button
             type="button"
             onClick={() => {
@@ -518,7 +514,7 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
                 setIsCreateModalOpen(true);
               }
             }}
-            id="btn-criar-comunidade-educacao"
+            id="btn-criar-comunidade-direitos-humanos"
             className="self-start sm:self-center inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-sm transition-all cursor-pointer shrink-0"
           >
             <span>Criar Comunidade</span>
@@ -526,9 +522,9 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
           </button>
         </section>
 
-        {/* 3. Fita Horizontal de Categorias (com Educação Selecionada) */}
+        {/* 3. Fita Horizontal de Categorias (com Direitos Humanos Selecionado) */}
         <nav
-          id="categories-ribbon-educacao"
+          id="categories-ribbon-direitos-humanos"
           className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 relative"
           aria-label="Categorias de Comunidades"
         >
@@ -543,7 +539,7 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
             { id: 'cultura', label: 'Cultura', icon: Palette },
           ].map((cat) => {
             const Icon = cat.icon;
-            const isActive = cat.id === 'educacao';
+            const isActive = cat.id === 'direitos-humanos';
 
             return (
               <button
@@ -554,7 +550,7 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
                 }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer shadow-2xs ${
                   isActive
-                    ? 'bg-[#3730A3] text-white shadow-xs'
+                    ? 'bg-[#4338CA] text-white shadow-xs'
                     : 'bg-white border border-slate-200/90 text-[#334155] hover:bg-slate-50 hover:text-slate-900'
                 }`}
               >
@@ -601,11 +597,11 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
           </div>
         </nav>
 
-        {/* 4. Grade de Três Colunas (Filtros, Centro com Banner/Comunidades/Recursos, Coluna Lateral) */}
+        {/* 4. Grade de Três Colunas (Filtros, Centro com Banner/Comunidades/Iniciativas, Coluna Lateral) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
           {/* COLUNA ESQUERDA: Filtros (lg:col-span-2) */}
           <aside
-            id="filtros-educacao-sidebar"
+            id="filtros-direitos-humanos-sidebar"
             className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex flex-col gap-4"
           >
             <div className="flex items-center justify-between pb-1 border-b border-slate-100">
@@ -628,14 +624,13 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
               <div className="flex flex-col gap-1.5">
                 {[
                   'Todas',
-                  'Escolas e Universidades',
-                  'Cursos e Formação',
-                  'Grupos de Estudo',
-                  'Educação Infantil',
-                  'Educação Inclusiva',
-                  'Pesquisa e Inovação',
-                  'Bolsa de Estudos',
-                  'Iniciativas Educacionais',
+                  'Organizações',
+                  'ONGs',
+                  'Grupos de Advocacia',
+                  'Iniciativas Locais',
+                  'Redes de Apoio',
+                  'Movimentos Sociais',
+                  'Centros de Pesquisa',
                 ].map((type) => {
                   const isChecked = communityType === type;
                   return (
@@ -645,7 +640,7 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
                     >
                       <input
                         type="radio"
-                        name="edu-community-type"
+                        name="hr-community-type"
                         checked={isChecked}
                         onChange={() => setCommunityType(type)}
                         className="sr-only"
@@ -666,28 +661,32 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
               </div>
             </div>
 
-            {/* Grupo 2: Nível Educacional (Checkboxes) */}
+            {/* Grupo 2: Temas de Direitos Humanos (Checkboxes) */}
             <div className="flex flex-col gap-2 pt-1 border-t border-slate-100">
-              <span className="text-xs font-bold text-[#0F172A]">Nível Educacional</span>
+              <span className="text-xs font-bold text-[#0F172A]">Temas de Direitos Humanos</span>
               <div className="flex flex-col gap-1.5">
                 {[
-                  'Educação Infantil',
-                  'Ensino Fundamental',
-                  'Ensino Médio',
-                  'Ensino Superior',
-                  'Pós-graduação',
-                  'Educação Contínua',
-                ].map((level) => {
-                  const isChecked = selectedLevels.has(level);
+                  'Liberdade de Expressão',
+                  'Direitos das Mulheres',
+                  'Igualdade Racial',
+                  'Direitos das Crianças',
+                  'Direitos de Refugiados',
+                  'Pessoas com Deficiência',
+                  'Direitos LGBTQIA+',
+                  'Justiça Social',
+                  'Trabalho Digno',
+                  'Povos Indígenas',
+                ].map((theme) => {
+                  const isChecked = selectedThemes.has(theme);
                   return (
                     <label
-                      key={level}
+                      key={theme}
                       className="flex items-center gap-2 text-[11.5px] text-[#334155] hover:text-slate-900 cursor-pointer select-none"
                     >
                       <input
                         type="checkbox"
                         checked={isChecked}
-                        onChange={() => toggleLevel(level)}
+                        onChange={() => toggleTheme(theme)}
                         className="sr-only"
                       />
                       <span
@@ -699,46 +698,46 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
                       >
                         {isChecked && <Check className="w-2.5 h-2.5 stroke-[3]" />}
                       </span>
-                      <span>{level}</span>
+                      <span>{theme}</span>
                     </label>
                   );
                 })}
               </div>
             </div>
 
-            {/* Grupo 3: Idioma (Dropdown) */}
+            {/* Grupo 3: Localização (Dropdown) */}
             <div className="flex flex-col gap-1.5 pt-1 border-t border-slate-100 relative">
-              <span className="text-xs font-bold text-[#0F172A]">Idioma</span>
+              <span className="text-xs font-bold text-[#0F172A]">Localização</span>
               <button
                 type="button"
-                onClick={() => setIsLanguageOpen(!isLanguageOpen)}
+                onClick={() => setIsLocationOpen(!isLocationOpen)}
                 className="w-full flex items-center justify-between px-3 py-2 text-xs font-semibold text-slate-700 bg-[#F8FAFC] border border-slate-200 rounded-xl hover:bg-slate-100 transition-colors cursor-pointer"
               >
-                <span className="truncate">{languageFilter}</span>
-                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isLanguageOpen ? 'rotate-180' : ''}`} />
+                <span className="truncate">{locationFilter}</span>
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${isLocationOpen ? 'rotate-180' : ''}`} />
               </button>
 
-              {isLanguageOpen && (
+              {isLocationOpen && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-slate-200 rounded-xl shadow-lg py-1 z-20 text-xs font-medium">
-                  {['Qualquer idioma', 'Português', 'Inglês', 'Espanhol', 'Francês'].map((lang) => (
+                  {['Qualquer lugar', 'Global', 'África', 'América Latina', 'Europa', 'Ásia'].map((loc) => (
                     <button
-                      key={lang}
+                      key={loc}
                       type="button"
                       onClick={() => {
-                        setLanguageFilter(lang);
-                        setIsLanguageOpen(false);
+                        setLocationFilter(loc);
+                        setIsLocationOpen(false);
                       }}
                       className="w-full text-left px-3 py-1.5 hover:bg-slate-50 flex items-center justify-between text-slate-700"
                     >
-                      <span>{lang}</span>
-                      {languageFilter === lang && <Check className="w-3 h-3 text-blue-600" />}
+                      <span>{loc}</span>
+                      {locationFilter === loc && <Check className="w-3 h-3 text-blue-600" />}
                     </button>
                   ))}
                 </div>
               )}
             </div>
 
-            {/* Botão Aplicar Filtros */}
+            {/* Botão Aplicar Filtros com Gradiente Azul/Esmeralda */}
             <button
               type="button"
               className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#0052FF] to-[#00A86B] hover:opacity-95 text-white font-bold text-xs shadow-xs transition-all cursor-pointer mt-1"
@@ -747,42 +746,42 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
             </button>
           </aside>
 
-          {/* COLUNA CENTRAL: Hero Banner, Comunidades e Recursos (lg:col-span-7) */}
+          {/* COLUNA CENTRAL: Hero Banner, Comunidades e Iniciativas (lg:col-span-7) */}
           <div className="lg:col-span-7 flex flex-col gap-6">
-            {/* HERO BANNER: "Educação que transforma vidas" com 3 Métricas Integradas */}
+            {/* HERO BANNER: "Direitos não são privilégios. São dignidade." */}
             <section
-              id="hero-educacao-banner"
-              className="relative rounded-2xl overflow-hidden min-h-[260px] flex items-center text-white shadow-sm border border-slate-900/10 bg-[#1E293B] group"
+              id="hero-direitos-humanos-banner"
+              className="relative rounded-2xl overflow-hidden min-h-[260px] flex items-center text-white shadow-sm border border-slate-900/10 bg-[#1E1B4B] group"
             >
-              {/* Imagem de Fundo com Estudantes e Laptop */}
+              {/* Imagem de Fundo com braços erguidos em união */}
               <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1577896851231-70ef18881754?w=1400&auto=format&fit=crop&q=85"
-                  alt="Estudantes e professores em sala de aula"
+                  src="https://images.unsplash.com/photo-1576267423445-b2e0074d68a4?w=1400&auto=format&fit=crop&q=85"
+                  alt="Pessoas unidas pelos direitos humanos"
                   className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-700"
                   referrerPolicy="no-referrer"
                 />
-                {/* Gradiente Escuro na Esquerda para Leitura */}
-                <div className="absolute inset-0 bg-gradient-to-r from-[#0F172A]/90 via-[#0F172A]/75 to-[#0F172A]/30" />
+                {/* Gradiente Escuro para Leitura */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0F172A]/90 via-[#0F172A]/75 to-[#0F172A]/25" />
               </div>
 
               <div className="relative z-10 p-6 sm:p-8 w-full flex flex-col sm:flex-row items-center justify-between gap-6">
                 {/* Textos da Esquerda */}
                 <div className="max-w-md flex flex-col gap-2">
                   <h2 className="text-2xl sm:text-3xl font-extrabold text-white leading-tight font-['Outfit'] tracking-tight">
-                    Educação <br />
-                    que transforma vidas
+                    Direitos não são <br />
+                    privilégios. São dignidade.
                   </h2>
                   <p className="text-xs sm:text-[13px] text-white/90 leading-relaxed font-normal">
-                    Junte-se a educadores e aprendizes do mundo todo para construir um futuro com mais conhecimento, equidade e oportunidades.
+                    Descubra comunidades que defendem direitos humanos em todo o mundo e faça parte da mudança.
                   </p>
 
                   <div className="pt-2">
                     <button
                       type="button"
                       onClick={() => {
-                        if (TRENDING_EDUCATION_COMMUNITIES.length > 0) {
-                          setSelectedCommunityModal(TRENDING_EDUCATION_COMMUNITIES[0]);
+                        if (TRENDING_HR_COMMUNITIES.length > 0) {
+                          setSelectedCommunityModal(TRENDING_HR_COMMUNITIES[0]);
                         }
                       }}
                       className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-slate-100 text-[#0F172A] text-xs sm:text-sm font-bold shadow-sm transition-all cursor-pointer"
@@ -796,25 +795,25 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
                 {/* 3 Cartões de Métricas Empilhados na Direita */}
                 <div className="flex sm:flex-col gap-2.5 shrink-0 w-full sm:w-auto">
                   <div className="bg-black/35 backdrop-blur-md border border-white/20 rounded-xl px-4 py-2.5 flex items-center gap-3">
-                    <BookOpen className="w-5 h-5 text-amber-400" />
+                    <Shield className="w-5 h-5 text-indigo-400" />
                     <div>
-                      <span className="block text-sm font-black text-white font-['Outfit']">8.450</span>
-                      <span className="text-[10px] text-slate-200">Recursos compartilhados</span>
+                      <span className="block text-sm font-black text-white font-['Outfit']">3.650</span>
+                      <span className="text-[10px] text-slate-200">Projetos ativos</span>
                     </div>
                   </div>
 
                   <div className="bg-black/35 backdrop-blur-md border border-white/20 rounded-xl px-4 py-2.5 flex items-center gap-3">
-                    <GraduationCap className="w-5 h-5 text-indigo-400" />
+                    <Megaphone className="w-5 h-5 text-rose-400" />
                     <div>
-                      <span className="block text-sm font-black text-white font-['Outfit']">3.120</span>
-                      <span className="text-[10px] text-slate-200">Cursos e formações</span>
+                      <span className="block text-sm font-black text-white font-['Outfit']">2.180</span>
+                      <span className="text-[10px] text-slate-200">Campanhas em curso</span>
                     </div>
                   </div>
 
                   <div className="bg-black/35 backdrop-blur-md border border-white/20 rounded-xl px-4 py-2.5 flex items-center gap-3">
                     <Globe className="w-5 h-5 text-emerald-400" />
                     <div>
-                      <span className="block text-sm font-black text-white font-['Outfit']">192</span>
+                      <span className="block text-sm font-black text-white font-['Outfit']">98</span>
                       <span className="text-[10px] text-slate-200">Países envolvidos</span>
                     </div>
                   </div>
@@ -822,11 +821,11 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
               </div>
             </section>
 
-            {/* Seção: Comunidades em tendência na Educação (5 Cards) */}
-            <section id="comunidades-tendencia-educacao-section" className="flex flex-col gap-3.5">
+            {/* Seção: Comunidades em tendência (Direitos Humanos) (5 Cards) */}
+            <section id="comunidades-tendencia-direitos-humanos-section" className="flex flex-col gap-3.5">
               <div className="flex items-center justify-between">
                 <h3 className="text-base sm:text-lg font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
-                  Comunidades em tendência na Educação
+                  Comunidades em tendência (Direitos Humanos)
                 </h3>
                 <button
                   type="button"
@@ -841,7 +840,7 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
               {/* Grid de 5 Cards com Botão Slider '>' */}
               <div className="relative">
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-                  {TRENDING_EDUCATION_COMMUNITIES.map((comm) => (
+                  {TRENDING_HR_COMMUNITIES.map((comm) => (
                     <article
                       key={comm.id}
                       onClick={() => setSelectedCommunityModal(comm)}
@@ -894,11 +893,11 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
               </div>
             </section>
 
-            {/* Seção: Recursos em destaque (5 Cards) */}
-            <section id="recursos-destaque-section" className="flex flex-col gap-3.5">
+            {/* Seção: Iniciativas em destaque (5 Cards) */}
+            <section id="iniciativas-destaque-section" className="flex flex-col gap-3.5">
               <div className="flex items-center justify-between">
                 <h3 className="text-base sm:text-lg font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
-                  Recursos em destaque
+                  Iniciativas em destaque
                 </h3>
                 <button
                   type="button"
@@ -909,26 +908,26 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
                 </button>
               </div>
 
-              {/* Grid de 5 Recursos */}
+              {/* Grid de 5 Iniciativas */}
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-                {EDUCATION_RESOURCES.map((res) => (
+                {HR_INITIATIVES.map((init) => (
                   <article
-                    key={res.id}
-                    onClick={() => setSelectedResourceModal(res)}
+                    key={init.id}
+                    onClick={() => setSelectedInitiativeModal(init)}
                     className="bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all flex flex-col cursor-pointer group"
                   >
-                    {/* Imagem do Recurso com Badge */}
+                    {/* Imagem da Iniciativa com Badge */}
                     <div className="relative h-24 w-full overflow-hidden bg-slate-100">
                       <img
-                        src={res.image}
-                        alt={res.title}
+                        src={init.image}
+                        alt={init.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         referrerPolicy="no-referrer"
                       />
                       <span
-                        className={`absolute top-2 left-2 text-[8.5px] font-black text-white px-2 py-0.5 rounded shadow-2xs uppercase tracking-wider ${res.badgeBg}`}
+                        className={`absolute top-2 left-2 text-[8.5px] font-black text-white px-2 py-0.5 rounded shadow-2xs uppercase tracking-wider ${init.badgeBg}`}
                       >
-                        {res.badgeLabel}
+                        {init.badgeLabel}
                       </span>
                     </div>
 
@@ -936,24 +935,26 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
                     <div className="p-2.5 flex-1 flex flex-col justify-between">
                       <div>
                         <h4 className="text-[11.5px] font-bold text-[#0F172A] font-['Outfit'] line-clamp-1 leading-snug group-hover:text-indigo-600 transition-colors">
-                          {res.title}
+                          {init.title}
                         </h4>
-                        <p className="text-[9.5px] text-slate-500 mb-1">{res.subtitle}</p>
+                        <p className="text-[9.5px] text-slate-500 mb-1">{init.subtitle}</p>
                         <p className="text-[10px] text-slate-600 line-clamp-2 leading-tight">
-                          {res.description}
+                          {init.description}
                         </p>
                       </div>
 
                       {/* Rodapé */}
                       <div className="mt-2 pt-1.5 border-t border-slate-100 flex items-center justify-between text-[10px]">
-                        <span className="text-slate-500 font-medium">{res.meta}</span>
-                        <span
-                          className={`font-bold ${
-                            res.isActionLink ? 'text-blue-600 hover:underline' : 'text-emerald-600'
-                          }`}
-                        >
-                          {res.actionText}
-                        </span>
+                        <span className="text-slate-500 font-medium truncate">{init.meta}</span>
+                        {init.actionText && (
+                          <span
+                            className={`font-bold shrink-0 ml-1 ${
+                              init.isActionLink ? 'text-blue-600 hover:underline' : 'text-emerald-600'
+                            }`}
+                          >
+                            {init.actionText}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </article>
@@ -962,13 +963,13 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
             </section>
           </div>
 
-          {/* COLUNA DIREITA: Tendências, Atividades Recentes e CTA Educacional (lg:col-span-3) */}
+          {/* COLUNA DIREITA: Tendências, Atividades Recentes e CTA (lg:col-span-3) */}
           <aside className="lg:col-span-3 flex flex-col gap-4">
-            {/* 1. Card: Comunidades em tendência (Educação) */}
+            {/* 1. Card: Comunidades em tendência */}
             <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex flex-col gap-3">
               <div className="flex items-center justify-between pb-1 border-b border-slate-100">
                 <h3 className="text-xs font-bold text-[#0F172A] font-['Outfit']">
-                  Comunidades em tendência (Educação)
+                  Comunidades em tendência
                 </h3>
                 <button
                   type="button"
@@ -981,7 +982,7 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
 
               {/* Lista 1 a 5 */}
               <div className="flex flex-col divide-y divide-slate-100">
-                {TRENDING_RIGHT_ITEMS.map((item) => (
+                {TRENDING_SIDEBAR_ITEMS.map((item) => (
                   <div
                     key={item.id}
                     className="py-2 flex items-center justify-between gap-2 hover:bg-slate-50 px-1 rounded-lg transition-colors cursor-pointer group"
@@ -990,12 +991,18 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
                       <span className="text-xs font-bold text-slate-400 w-3 shrink-0">
                         {item.rank}
                       </span>
-                      <div className={`w-7 h-7 rounded-lg ${item.bg} ${item.color} flex items-center justify-center shrink-0`}>
-                        {item.iconType === 'ai' && <Sparkles className="w-4 h-4" />}
-                        {item.iconType === 'cap' && <GraduationCap className="w-4 h-4" />}
-                        {item.iconType === 'scholarship' && <Award className="w-4 h-4" />}
-                        {item.iconType === 'book' && <BookOpen className="w-4 h-4" />}
-                        {item.iconType === 'stem' && <Atom className="w-4 h-4" />}
+                      <div
+                        className={`w-7 h-7 rounded-lg ${
+                          item.bg === 'bg-rainbow'
+                            ? 'bg-gradient-to-r from-red-500 via-yellow-500 via-green-500 to-indigo-500'
+                            : item.bg
+                        } ${item.color} flex items-center justify-center shrink-0 shadow-2xs`}
+                      >
+                        {item.iconType === 'equality' && <Scale className="w-4 h-4" />}
+                        {item.iconType === 'speech' && <Megaphone className="w-4 h-4" />}
+                        {item.iconType === 'children' && <Heart className="w-4 h-4" />}
+                        {item.iconType === 'refugees' && <Globe className="w-4 h-4" />}
+                        {item.iconType === 'pride' && <span className="text-[10px] font-black">🏳️‍🌈</span>}
                       </div>
                       <div className="min-w-0 flex-1">
                         <h4 className="text-xs font-bold text-[#0F172A] truncate group-hover:text-indigo-600 transition-colors">
@@ -1014,11 +1021,11 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
               </div>
             </div>
 
-            {/* 2. Card: Atividades recentes (Educação) */}
+            {/* 2. Card: Atividades recentes (Direitos Humanos) */}
             <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex flex-col gap-3">
               <div className="flex items-center justify-between pb-1 border-b border-slate-100">
                 <h3 className="text-xs font-bold text-[#0F172A] font-['Outfit']">
-                  Atividades recentes (Educação)
+                  Atividades recentes (Direitos Humanos)
                 </h3>
                 <button
                   type="button"
@@ -1030,7 +1037,7 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
               </div>
 
               <div className="flex flex-col divide-y divide-slate-100">
-                {RECENT_EDUCATION_ACTIVITIES.map((act) => (
+                {RECENT_ACTIVITIES.map((act) => (
                   <div key={act.id} className="py-2.5 flex items-start gap-2.5">
                     <img
                       src={act.avatar}
@@ -1052,18 +1059,18 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
               </div>
             </div>
 
-            {/* 3. Card CTA: "Compartilhe conhecimento. Inspire o futuro." com Grafismo de Globo e Livros */}
+            {/* 3. Card CTA: "Seja a voz da mudança. Defenda direitos. Inspire ações." */}
             <div
-              id="cta-educacao-card"
-              className="relative rounded-2xl overflow-hidden p-5 text-white bg-gradient-to-br from-[#4338CA] via-[#4F46E5] to-[#6366F1] shadow-md flex flex-col justify-between min-h-[170px]"
+              id="cta-direitos-humanos-card"
+              className="relative rounded-2xl overflow-hidden p-5 text-white bg-gradient-to-br from-[#312E81] via-[#4338CA] to-[#6366F1] shadow-md flex flex-col justify-between min-h-[170px]"
             >
               <div className="relative z-10 max-w-[210px] flex flex-col gap-1">
                 <h3 className="text-sm sm:text-base font-extrabold text-white font-['Outfit'] leading-tight">
-                  Compartilhe conhecimento. <br />
-                  Inspire o futuro.
+                  Seja a voz da mudança. <br />
+                  Defenda direitos. Inspire ações.
                 </h3>
                 <p className="text-[10.5px] text-white/85 leading-snug">
-                  Crie ou participe de comunidades educacionais e faça parte da transformação global.
+                  Crie ou participe de comunidades que protegem a dignidade humana em todo o mundo.
                 </p>
               </div>
 
@@ -1072,29 +1079,32 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsCreateModalOpen(true)}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-[#4338CA] text-xs font-bold shadow-xs hover:shadow-sm transition-all cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white hover:bg-slate-50 text-[#312E81] text-xs font-bold shadow-xs hover:shadow-sm transition-all cursor-pointer"
                 >
                   <span>Criar Comunidade</span>
                   <Plus className="w-3.5 h-3.5 stroke-[2.8]" />
                 </button>
               </div>
 
-              {/* Ilustração no Canto Inferior Direito: Globo com capelo e livros */}
-              <div className="absolute right-1 -bottom-1 pointer-events-none opacity-90">
-                <svg width="105" height="95" viewBox="0 0 105 95" fill="none">
-                  {/* Livros Empilhados */}
-                  <rect x="52" y="76" width="48" height="7" rx="2" fill="#E2E8F0" />
-                  <rect x="55" y="70" width="44" height="6" rx="2" fill="#F59E0B" />
-                  <rect x="58" y="64" width="40" height="6" rx="2" fill="#3B82F6" />
-                  {/* Globo */}
-                  <circle cx="45" cy="50" r="22" fill="#10B981" />
-                  <ellipse cx="45" cy="50" rx="14" ry="22" stroke="#34D399" strokeWidth="1.5" />
-                  <line x1="23" y1="50" x2="67" y2="50" stroke="#34D399" strokeWidth="1.5" />
-                  {/* Capelo no Topo */}
-                  <polygon points="45,22 25,30 45,36 65,30" fill="#1E1B4B" />
-                  <polygon points="45,36 33,32 33,40 45,43 57,40 57,32" fill="#312E81" />
-                  <line x1="62" y1="30" x2="64" y2="42" stroke="#F59E0B" strokeWidth="2" />
-                  <circle cx="64" cy="43" r="1.5" fill="#F59E0B" />
+              {/* Ilustração no Canto Inferior Direito: Grupo diverso com megafone e cartazes */}
+              <div className="absolute right-0 -bottom-1 pointer-events-none opacity-95">
+                <svg width="115" height="100" viewBox="0 0 115 100" fill="none">
+                  {/* Globo de Fundo */}
+                  <circle cx="75" cy="50" r="32" fill="#4F46E5" fillOpacity="0.4" />
+                  <ellipse cx="75" cy="50" rx="20" ry="32" stroke="#818CF8" strokeWidth="1" strokeOpacity="0.5" />
+                  {/* Pessoas em Ilustração Simplificada */}
+                  <circle cx="95" cy="45" r="9" fill="#FBBF24" />
+                  <path d="M85 70 C85 58, 105 58, 105 70 Z" fill="#F43F5E" />
+                  {/* Pessoa Central com Megafone */}
+                  <circle cx="70" cy="38" r="10" fill="#F59E0B" />
+                  <path d="M57 68 C57 54, 83 54, 83 68 Z" fill="#10B981" />
+                  {/* Megafone */}
+                  <polygon points="52,40 40,35 40,48 52,44" fill="#FBBF24" />
+                  <rect x="36" y="38" width="5" height="6" fill="#F59E0B" />
+                  <path d="M42 45 L40 52" stroke="#D97706" strokeWidth="2.5" strokeLinecap="round" />
+                  {/* Pessoa na Esquerda */}
+                  <circle cx="48" cy="48" r="8" fill="#FCD34D" />
+                  <path d="M38 72 C38 60, 58 60, 58 72 Z" fill="#3B82F6" />
                 </svg>
               </div>
             </div>
@@ -1102,7 +1112,7 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
         </div>
       </main>
 
-      {/* Modal Criar Comunidade Educacional */}
+      {/* Modal Criar Comunidade de Direitos Humanos */}
       {isCreateModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
           <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 relative flex flex-col gap-4">
@@ -1115,15 +1125,15 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
             </button>
 
             <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
-                <GraduationCap className="w-6 h-6 stroke-[2.2]" />
+              <div className="w-10 h-10 rounded-2xl bg-[#EEF2FF] text-[#4338CA] flex items-center justify-center">
+                <Scale className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-slate-900 font-['Outfit']">
-                  Criar Comunidade Educacional
+                <h3 className="text-lg font-bold text-[#0F172A] font-['Outfit']">
+                  Criar Comunidade de Direitos Humanos
                 </h3>
                 <p className="text-xs text-slate-500">
-                  Conecte educadores, estudantes e compartilhe conhecimento transformador.
+                  Conecte pessoas, defenda liberdades e amplifique vozes.
                 </p>
               </div>
             </div>
@@ -1132,67 +1142,60 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
               onSubmit={(e) => {
                 e.preventDefault();
                 setIsCreateModalOpen(false);
-                alert('Comunidade Educacional criada com sucesso!');
               }}
-              className="flex flex-col gap-3.5 mt-1"
+              className="flex flex-col gap-3.5 mt-2"
             >
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Nome da Comunidade *
+                  Nome da Comunidade
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="Ex: Robótica para Jovens"
-                  className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none"
+                  placeholder="Ex: Aliança pela Igualdade"
+                  className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none"
                 />
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Tipo</label>
-                  <select className="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-200 bg-white focus:border-indigo-500 outline-none">
-                    <option>Cursos e Formação</option>
-                    <option>Grupos de Estudo</option>
-                    <option>Escolas e Universidades</option>
-                    <option>Bolsa de Estudos</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Nível</label>
-                  <select className="w-full text-xs px-3 py-2.5 rounded-xl border border-slate-200 bg-white focus:border-indigo-500 outline-none">
-                    <option>Ensino Médio</option>
-                    <option>Ensino Superior</option>
-                    <option>Educação Contínua</option>
-                    <option>Geral</option>
-                  </select>
-                </div>
               </div>
 
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1">
-                  Missão e Atividades
+                  Tema Principal
+                </label>
+                <select className="w-full text-xs px-3 py-2 rounded-xl border border-slate-200 bg-white">
+                  <option>Igualdade Racial</option>
+                  <option>Direitos das Mulheres</option>
+                  <option>Liberdade de Expressão</option>
+                  <option>Direitos dos Refugiados</option>
+                  <option>Direitos LGBTQIA+</option>
+                  <option>Justiça Social</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1">
+                  Descrição e Propósito
                 </label>
                 <textarea
                   rows={3}
-                  placeholder="Descreva o propósito da comunidade, tópicos de estudo e frequência dos encontros..."
-                  className="w-full text-xs px-3.5 py-2.5 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none resize-none"
+                  required
+                  placeholder="Explique o impacto e as ações que esta comunidade busca realizar..."
+                  className="w-full text-xs p-3 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none resize-none"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-100">
                 <button
                   type="button"
                   onClick={() => setIsCreateModalOpen(false)}
-                  className="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors cursor-pointer"
+                  className="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 text-xs font-bold text-white bg-[#2563EB] hover:bg-[#1D4ED8] rounded-xl shadow-xs transition-colors cursor-pointer"
+                  className="px-5 py-2 text-xs font-bold text-white bg-[#2563EB] hover:bg-[#1D4ED8] rounded-xl shadow-xs"
                 >
-                  Publicar Comunidade
+                  Criar Comunidade
                 </button>
               </div>
             </form>
@@ -1200,59 +1203,117 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
         </div>
       )}
 
-      {/* Modal Detalhes da Comunidade */}
+      {/* Modal de Detalhes da Comunidade Selecionada */}
       {selectedCommunityModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
-          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full overflow-hidden relative flex flex-col">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-md w-full overflow-hidden relative flex flex-col">
             <button
               type="button"
               onClick={() => setSelectedCommunityModal(null)}
-              className="absolute top-3 right-3 z-10 bg-white/80 hover:bg-white text-slate-700 w-8 h-8 rounded-full flex items-center justify-center shadow-md transition-colors cursor-pointer"
+              className="absolute top-3 right-3 text-white bg-black/50 hover:bg-black/70 w-8 h-8 rounded-full flex items-center justify-center z-10 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
 
-            <div className="relative h-44 w-full">
+            <div className="relative h-40 w-full">
               <img
                 src={selectedCommunityModal.image}
                 alt={selectedCommunityModal.name}
                 className="w-full h-full object-cover"
-                referrerPolicy="no-referrer"
               />
-              <span className="absolute top-3 left-3 text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md shadow-sm bg-blue-600 text-white">
+              <span className="absolute bottom-3 left-3 bg-blue-600 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-md">
                 {selectedCommunityModal.tag}
               </span>
             </div>
 
-            <div className="p-6 flex flex-col gap-4">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="text-xl font-bold text-slate-900 font-['Outfit']">
-                    {selectedCommunityModal.name}
-                  </h3>
-                  <p className="text-xs text-slate-500 flex items-center gap-2 mt-0.5">
-                    <span>{selectedCommunityModal.membersCount}</span>
-                    <span>•</span>
-                    <span className="text-emerald-700 font-bold">{selectedCommunityModal.growth}</span>
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => toggleJoinCommunity(selectedCommunityModal.id)}
-                  className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    joinedCommunities.has(selectedCommunityModal.id)
-                      ? 'bg-indigo-100 text-indigo-800'
-                      : 'bg-[#2563EB] text-white hover:bg-[#1D4ED8]'
-                  }`}
-                >
-                  {joinedCommunities.has(selectedCommunityModal.id) ? 'Membro Ativo ✓' : 'Juntar-se +'}
-                </button>
+            <div className="p-5 flex flex-col gap-3">
+              <div>
+                <h3 className="text-base font-bold text-[#0F172A] font-['Outfit']">
+                  {selectedCommunityModal.name}
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {selectedCommunityModal.membersCount} • {selectedCommunityModal.growth}
+                </p>
               </div>
 
               <p className="text-xs text-slate-600 leading-relaxed">
-                {selectedCommunityModal.description} Uma rede internacional de educadores e alunos promovendo a troca contínua de metodologias e materiais didáticos abertos.
+                {selectedCommunityModal.description}
               </p>
+
+              <div className="flex items-center gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    toggleJoinCommunity(selectedCommunityModal.id);
+                    setSelectedCommunityModal(null);
+                  }}
+                  className={`flex-1 py-2.5 rounded-xl font-bold text-xs transition-all cursor-pointer ${
+                    joinedCommunities.has(selectedCommunityModal.id)
+                      ? 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                      : 'bg-[#2563EB] text-white hover:bg-[#1D4ED8] shadow-xs'
+                  }`}
+                >
+                  {joinedCommunities.has(selectedCommunityModal.id)
+                    ? 'Membro ativo'
+                    : 'Juntar-se à Comunidade'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de Iniciativa Selecionada */}
+      {selectedInitiativeModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs animate-in fade-in duration-150">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-md w-full overflow-hidden relative flex flex-col">
+            <button
+              type="button"
+              onClick={() => setSelectedInitiativeModal(null)}
+              className="absolute top-3 right-3 text-white bg-black/50 hover:bg-black/70 w-8 h-8 rounded-full flex items-center justify-center z-10 cursor-pointer"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            <div className="relative h-40 w-full">
+              <img
+                src={selectedInitiativeModal.image}
+                alt={selectedInitiativeModal.title}
+                className="w-full h-full object-cover"
+              />
+              <span
+                className={`absolute top-3 left-3 text-[9px] font-bold text-white px-2.5 py-1 rounded ${selectedInitiativeModal.badgeBg}`}
+              >
+                {selectedInitiativeModal.badgeLabel}
+              </span>
+            </div>
+
+            <div className="p-5 flex flex-col gap-3">
+              <div>
+                <h3 className="text-base font-bold text-[#0F172A] font-['Outfit']">
+                  {selectedInitiativeModal.title}
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  {selectedInitiativeModal.subtitle}
+                </p>
+              </div>
+
+              <p className="text-xs text-slate-600 leading-relaxed">
+                {selectedInitiativeModal.description}
+              </p>
+
+              <div className="pt-2 flex items-center justify-between border-t border-slate-100">
+                <span className="text-xs font-semibold text-slate-500">
+                  {selectedInitiativeModal.meta}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedInitiativeModal(null)}
+                  className="px-4 py-2 bg-[#2563EB] text-white text-xs font-bold rounded-xl hover:bg-[#1D4ED8]"
+                >
+                  Participar
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -1261,4 +1322,4 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
   );
 };
 
-export default CommunityEducationView;
+export default CommunityHumanRightsView;
