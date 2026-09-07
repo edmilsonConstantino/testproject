@@ -8,6 +8,8 @@ import { ExploreWorldView } from './components/ExploreWorldView';
 import { GlobalNewsView } from './components/GlobalNewsView';
 import { GlobalEventsView } from './components/GlobalEventsView';
 import { GlobalCommunityView } from './components/GlobalCommunityView';
+import { GlobalImpactView } from './components/GlobalImpactView';
+import { AboutVilaView } from './components/AboutVilaView';
 import { CountryDetailModal } from './components/CountryDetailModal';
 import { VideoModal } from './components/VideoModal';
 import { SearchCommandModal } from './components/SearchCommandModal';
@@ -53,10 +55,16 @@ const getInitialTab = (): string => {
     return 'eventos';
   } else if (target === 'explorar' || target === 'explorar-o-mundo') {
     return 'explorar';
+  } else if (target === 'impacto' || target === 'impacto-global') {
+    return 'impacto';
+  } else if (target === 'sobre' || target === 'sobre-a-vila' || target.includes('sobre')) {
+    return 'sobre';
   } else if (target === 'inicio') {
     return 'inicio';
+  } else if (target === 'comunidade' || target === 'comunidade-global') {
+    return 'comunidade';
   }
-  return 'comunidade';
+  return 'sobre';
 };
 
 export default function App() {
@@ -92,12 +100,16 @@ export default function App() {
         target.includes('noticia')
       ) {
         setCurrentTab('noticias');
-      } else if (target === 'comunidade' || target === 'comunidade-global' || target.includes('comunidade')) {
+      } else if (target === 'comunidade' || target === 'comunidade-global' || target.includes('comunidade') || target === 'ambiente' || target === 'explorar-comunidade') {
         setCurrentTab('comunidade');
       } else if (target === 'eventos' || target === 'eventos-globais') {
         setCurrentTab('eventos');
       } else if (target === 'explorar' || target === 'explorar-o-mundo') {
         setCurrentTab('explorar');
+      } else if (target === 'impacto' || target === 'impacto-global') {
+        setCurrentTab('impacto');
+      } else if (target === 'sobre' || target === 'sobre-a-vila' || target.includes('sobre')) {
+        setCurrentTab('sobre');
       } else if (target === 'inicio' || target === 'home' || target === '') {
         setCurrentTab('inicio');
       }
@@ -228,17 +240,57 @@ export default function App() {
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
-        ) : (currentTab === 'comunidade' || currentTab === 'comunidade-global') ? (
-          /* Comunidade Global View */
+        ) : (currentTab === 'comunidade' || currentTab === 'comunidade-global' || currentTab === 'ambiente' || currentTab === 'explorar-comunidade') ? (
+          /* Comunidade Global / Explorar Comunidade > Ambiente View matching UI AMBIENTE.png */
           <GlobalCommunityView
             onOpenAiAssistant={() => setIsAiModalOpen(true)}
+            onOpenMobileMenu={() => setIsMobileSidebarOpen(true)}
+            onOpenAuth={handleOpenAuth}
+            onNavigateToTab={(tabId) => {
+              setCurrentTab(tabId);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
             onExploreMap={() => {
+              setCurrentTab('explorar');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onExploreWorld={() => {
               setCurrentTab('explorar');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onOpenCreateCommunityModal={() => {
               setAuthModal({ isOpen: true, mode: 'register' });
             }}
+          />
+        ) : (currentTab === 'impacto' || currentTab === 'impacto-global') ? (
+          /* Impacto Global / Ambiente View matching UI AMBIENTE */
+          <GlobalImpactView
+            onOpenAiAssistant={() => setIsAiModalOpen(true)}
+            onOpenMobileMenu={() => setIsMobileSidebarOpen(true)}
+            onOpenAuth={handleOpenAuth}
+            onNavigateToTab={(tabId) => {
+              setCurrentTab(tabId);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onExploreWorld={() => {
+              setCurrentTab('explorar');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onExploreCommunity={() => {
+              setCurrentTab('comunidade');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        ) : (currentTab === 'sobre' || currentTab === 'sobre-a-vila') ? (
+          /* Sobre a VILA View matching exact reference 9 UI VILA SOBRE */
+          <AboutVilaView
+            onOpenMobileMenu={() => setIsMobileSidebarOpen(true)}
+            onNavigateToTab={(tabId) => {
+              setCurrentTab(tabId);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onOpenAiAssistant={() => setIsAiModalOpen(true)}
+            onOpenAuth={(mode) => setAuthModal({ isOpen: true, mode })}
           />
         ) : (
           /* Subview Render for Other Sidebar Tabs */

@@ -46,7 +46,7 @@ export const GlobalWorldMapHero: React.FC<GlobalWorldMapHeroProps> = ({
   return (
     <div
       id="global-world-map-hero"
-      className={`rounded-[20px] bg-[#050B1A] p-6 sm:p-8 lg:p-9 min-h-[340px] sm:min-h-[370px] lg:min-h-[400px] flex flex-col justify-between text-white shadow-[0_12px_40px_rgba(5,11,26,0.35)] border border-slate-800/80 relative overflow-hidden group ${className}`}
+      className={`rounded-[18px] bg-[#070F22] p-6 sm:p-7 lg:p-8 min-h-[360px] sm:min-h-[380px] lg:min-h-[410px] flex flex-col justify-between text-white shadow-xs border border-slate-800/80 relative overflow-hidden group ${className}`}
     >
       {/* 1. Imagem de Alta Resolução do Mapa Mundi Noturno com Luzes das Cidades */}
       <div
@@ -57,7 +57,7 @@ export const GlobalWorldMapHero: React.FC<GlobalWorldMapHeroProps> = ({
       />
 
       {/* Gradiente Escuro Suave para Garantir Contraste WCAG do Texto no Lado Esquerdo */}
-      <div className="absolute inset-0 bg-gradient-to-r from-[#050B1A]/95 via-[#050B1A]/70 to-[#050B1A]/20 pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#070F22]/95 via-[#070F22]/75 to-[#070F22]/25 pointer-events-none" />
 
       {/* Brilho atmosférico sutil no topo */}
       <div className="absolute top-0 right-1/4 w-96 h-48 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
@@ -106,7 +106,7 @@ export const GlobalWorldMapHero: React.FC<GlobalWorldMapHeroProps> = ({
 
       {/* 3. Conteúdo Textual Superior */}
       <div className="relative z-10 max-w-sm sm:max-w-md lg:max-w-lg">
-        <h2 className="text-2xl sm:text-3xl lg:text-[32px] font-extrabold text-white leading-[1.2] font-['Outfit'] tracking-tight">
+        <h2 className="text-2xl sm:text-3xl lg:text-[30px] font-extrabold text-white leading-[1.2] font-['Outfit'] tracking-tight">
           {title}
         </h2>
         <p className="text-slate-300 text-xs sm:text-[13.5px] lg:text-sm mt-2.5 leading-relaxed font-normal max-w-sm">
@@ -114,11 +114,11 @@ export const GlobalWorldMapHero: React.FC<GlobalWorldMapHeroProps> = ({
         </p>
 
         {/* Botão Pill Gradiente Azul/Esmeralda */}
-        <div className="mt-6">
+        <div className="mt-5 sm:mt-6">
           <button
             type="button"
             onClick={handleAction}
-            className="inline-flex items-center gap-2.5 px-6 py-3 rounded-full bg-gradient-to-r from-[#0052FE] via-[#007AFE] to-[#00C99E] hover:from-[#0042CC] hover:via-[#006CE0] hover:to-[#00A885] text-white text-xs sm:text-[13.5px] font-bold transition-all shadow-[0_4px_20px_rgba(0,201,158,0.35)] hover:shadow-[0_6px_24px_rgba(0,201,158,0.5)] hover:scale-[1.02] active:scale-[0.98] cursor-pointer group"
+            className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-gradient-to-r from-[#0055FE] via-[#006EFE] to-[#00C99E] hover:from-[#0042CC] hover:via-[#005DD0] hover:to-[#00A885] text-white text-xs sm:text-[13px] font-bold transition-all shadow-[0_4px_20px_rgba(0,201,158,0.35)] hover:shadow-[0_6px_24px_rgba(0,201,158,0.5)] hover:scale-[1.02] active:scale-[0.98] cursor-pointer group"
           >
             <span>{buttonText}</span>
             <ArrowRight className="w-4 h-4 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
@@ -126,14 +126,14 @@ export const GlobalWorldMapHero: React.FC<GlobalWorldMapHeroProps> = ({
         </div>
       </div>
 
-      {/* 4. Rodapé: Cápsulas Translúcidas com as categorias */}
+      {/* 4. Rodapé: Cápsulas Translúcidas com as categorias exatamente como na imagem de referência */}
       {categories && categories.length > 0 && (
-        <div className="relative z-10 pt-6 mt-4 flex flex-wrap items-center gap-3">
+        <div className="relative z-10 pt-4 mt-4 flex flex-wrap items-center gap-2.5">
           {/* Cápsula Principal de Categorias */}
-          <div className="bg-[#0A1325]/85 border border-slate-700/60 rounded-full px-4 sm:px-6 py-2.5 flex flex-wrap items-center gap-4 sm:gap-6 text-xs backdrop-blur-md shadow-inner">
+          <div className="bg-[#0B152A]/85 border border-slate-700/60 rounded-full px-4 sm:px-5 py-2 flex flex-wrap items-center gap-3.5 sm:gap-5 text-xs backdrop-blur-md shadow-inner">
             {categories.map((item) => (
-              <div key={item.name} className="flex items-center gap-2">
-                <span className={`w-2.5 h-2.5 rounded-full ${item.color} ${item.glow || ''} shrink-0`} />
+              <div key={item.name} className="flex items-center gap-1.5 sm:gap-2">
+                <span className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full ${item.color} ${item.glow || ''} shrink-0`} />
                 <span className="font-medium text-slate-200 text-[11px] sm:text-[12px] whitespace-nowrap">
                   {item.name}
                 </span>
@@ -141,10 +141,10 @@ export const GlobalWorldMapHero: React.FC<GlobalWorldMapHeroProps> = ({
             ))}
           </div>
 
-          {/* Cápsula Secundária Opcional (ex.: Outros em eventos) */}
+          {/* Cápsula Secundária (Outros) */}
           {secondaryCategory && (
-            <div className="bg-[#0A1325]/85 border border-slate-700/60 rounded-full px-5 py-2.5 flex items-center gap-2 text-xs backdrop-blur-md shadow-inner">
-              <span className={`w-2.5 h-2.5 rounded-full ${secondaryCategory.color} ${secondaryCategory.glow || ''} shrink-0`} />
+            <div className="bg-[#0B152A]/85 border border-slate-700/60 rounded-full px-4 py-2 flex items-center gap-1.5 sm:gap-2 text-xs backdrop-blur-md shadow-inner">
+              <span className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full ${secondaryCategory.color} ${secondaryCategory.glow || ''} shrink-0`} />
               <span className="font-medium text-slate-200 text-[11px] sm:text-[12px] whitespace-nowrap">
                 {secondaryCategory.name}
               </span>

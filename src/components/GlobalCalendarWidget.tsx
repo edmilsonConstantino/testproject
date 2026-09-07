@@ -132,11 +132,11 @@ export const GlobalCalendarWidget: React.FC<GlobalCalendarWidgetProps> = ({
   return (
     <div
       id="global-calendar-widget"
-      className={`rounded-[20px] bg-white border border-slate-100/90 p-5 sm:p-6 min-h-[340px] sm:min-h-[370px] lg:min-h-[400px] flex flex-col justify-between shadow-[0_4px_24px_rgba(15,23,42,0.04)] ${className}`}
+      className={`rounded-[18px] bg-white border border-slate-200/80 p-5 min-h-[360px] sm:min-h-[380px] lg:min-h-[410px] flex flex-col justify-between shadow-xs ${className}`}
     >
       <div>
         {/* Cabeçalho do Card */}
-        <div className="flex items-center justify-between pb-3">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
           <h3 className="text-sm sm:text-[15px] font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
             Calendário Global
           </h3>
@@ -150,13 +150,13 @@ export const GlobalCalendarWidget: React.FC<GlobalCalendarWidgetProps> = ({
         </div>
 
         {/* Navegação de Mês */}
-        <div className="flex items-center justify-between py-2 px-1">
+        <div className="flex items-center justify-between py-2.5 px-1">
           <button
             type="button"
             onClick={handlePrevMonth}
             disabled={currentMonthIndex === 0}
             aria-label="Mês anterior"
-            className="p-1 rounded-md text-[#0055FE] hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer"
+            className="p-1 rounded-md text-[#0055FE] hover:bg-blue-50 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer"
           >
             <ChevronLeft className="w-4 h-4 stroke-[2.2]" />
           </button>
@@ -168,14 +168,14 @@ export const GlobalCalendarWidget: React.FC<GlobalCalendarWidgetProps> = ({
             onClick={handleNextMonth}
             disabled={currentMonthIndex === MONTHS_DATA.length - 1}
             aria-label="Próximo mês"
-            className="p-1 rounded-md text-[#0055FE] hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer"
+            className="p-1 rounded-md text-[#0055FE] hover:bg-blue-50 disabled:opacity-30 disabled:hover:bg-transparent transition-colors cursor-pointer"
           >
             <ChevronRight className="w-4 h-4 stroke-[2.2]" />
           </button>
         </div>
 
         {/* Dias da Semana: SEG TER QUA QUI SEX SÁB DOM */}
-        <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 mb-1 select-none">
+        <div className="grid grid-cols-7 gap-1 text-center text-[10.5px] font-bold text-slate-400 mb-1.5 select-none">
           <span>SEG</span>
           <span>TER</span>
           <span>QUA</span>
@@ -196,21 +196,21 @@ export const GlobalCalendarWidget: React.FC<GlobalCalendarWidgetProps> = ({
                 type="button"
                 onClick={() => handleDayClick(d)}
                 disabled={!d.isCurrentMonth}
-                className={`relative h-7 sm:h-8 rounded-[8px] flex flex-col items-center justify-center transition-all select-none ${
+                className={`relative h-8 sm:h-8.5 rounded-[10px] flex flex-col items-center justify-center transition-all select-none ${
                   !d.isCurrentMonth
-                    ? 'text-slate-300 cursor-default'
+                    ? 'text-slate-300 cursor-default font-normal'
                     : isSelected
                     ? 'bg-[#0055FE] text-white font-bold shadow-xs cursor-pointer'
-                    : 'text-slate-700 hover:bg-slate-100 font-semibold cursor-pointer'
+                    : 'text-slate-700 hover:bg-slate-100/80 font-medium cursor-pointer'
                 }`}
               >
-                <span className="text-[11.5px] leading-none">{d.day}</span>
-                {/* Ponto indicador de evento */}
+                <span className="text-[12px] leading-none">{d.day}</span>
+                {/* Ponto indicador de evento verde sob o dia */}
                 {d.hasEvent && !isSelected && (
-                  <span className="w-1 h-1 rounded-full bg-emerald-500 mt-0.5" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1" />
                 )}
                 {d.hasEvent && isSelected && (
-                  <span className="w-1 h-1 rounded-full bg-white mt-0.5" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-white mt-1" />
                 )}
               </button>
             );
@@ -219,14 +219,14 @@ export const GlobalCalendarWidget: React.FC<GlobalCalendarWidgetProps> = ({
       </div>
 
       {/* Rodapé: Link "Ver calendário completo →" */}
-      <div className="pt-2 border-t border-slate-100 text-center mt-2">
+      <div className="pt-3 border-t border-slate-100 text-center mt-3">
         <button
           type="button"
           onClick={onViewFullCalendar}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0055FE] hover:text-[#0042CC] transition-colors cursor-pointer group"
+          className="inline-flex items-center gap-1.5 text-xs sm:text-[12.5px] font-bold text-[#0055FE] hover:text-[#0042CC] transition-colors cursor-pointer group"
         >
           <span>Ver calendário completo</span>
-          <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2]" />
+          <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
         </button>
       </div>
     </div>

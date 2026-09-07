@@ -775,14 +775,130 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                 </div>
               </aside>
             </div>
+              {/* Seção "Principais notícias" com cards mais largos nas laterais, altura reduzida e navegação fluida */}
+              <section id="principais-noticias-section" className="flex flex-col gap-3.5">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-xl sm:text-[22px] font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
+                    Principais notícias
+                  </h3>
+                  <div className="flex items-center gap-1.5">
+                    {/* Botões de navegação horizontal (Prev / Next) */}
+                    <button
+                      type="button"
+                      onClick={() => scrollMainNews('left')}
+                      className="w-7 h-7 rounded-full bg-white border border-slate-200/80 hover:border-slate-300 text-slate-500 hover:text-[#0055FE] flex items-center justify-center transition-colors shadow-2xs cursor-pointer"
+                      aria-label="Notícia anterior"
+                      title="Notícia anterior"
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => scrollMainNews('right')}
+                      className="w-7 h-7 rounded-full bg-white border border-slate-200/80 hover:border-slate-300 text-slate-500 hover:text-[#0055FE] flex items-center justify-center transition-colors shadow-2xs cursor-pointer"
+                      aria-label="Próxima notícia"
+                      title="Próxima notícia"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+
+                    {/* Opção "Ver todas" com texto e seta dentro de borda arredondada (estilo pílula) */}
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200/90 hover:border-[#0055FE]/40 hover:bg-blue-50/40 text-xs sm:text-[13px] font-medium text-[#0055FE] hover:text-[#0040CC] transition-all shadow-2xs cursor-pointer group ml-1"
+                    >
+                      <span>Ver todas</span>
+                      <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2]" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Carrossel de Cards: exatamente 4 cards visíveis sem cortar no desktop (w-[calc((100%-42px)/4)]) */}
+                <div
+                  ref={mainNewsScrollRef}
+                  className="flex items-stretch gap-3.5 overflow-x-auto pb-2.5 pt-0.5 scrollbar-none snap-x scroll-smooth"
+                >
+                  {MAIN_NEWS_LIST.map((item) => {
+                    const isSaved = savedNewsIds.has(item.id);
+                    return (
+                      <article
+                        key={item.id}
+                        className="w-[82%] sm:w-[calc((100%-14px)/2)] md:w-[calc((100%-28px)/3)] lg:w-[calc((100%-42px)/4)] shrink-0 snap-start bg-white rounded-[18px] border border-slate-200/70 px-3.5 py-3 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between group"
+                      >
+                        {/* Topo: Categoria + Imagem + Metadados + Título */}
+                        <div>
+                          {/* 1. Badge da Categoria acima da imagem */}
+                          <div className="mb-2">
+                            <span
+                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[9.5px] font-bold uppercase tracking-wider ${item.categoryBg} ${item.categoryColor} border border-current/15 whitespace-nowrap`}
+                            >
+                              {item.category}
+                            </span>
+                          </div>
+
+                          {/* 2. Imagem com cantos arredondados e proporção horizontal ampla (altura contida) */}
+                          <div className="relative w-full h-[88px] sm:h-[92px] overflow-hidden rounded-[11px] bg-slate-100">
+                            <img
+                              src={item.image}
+                              alt={item.title}
+                              className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
+                              referrerPolicy="no-referrer"
+                            />
+                          </div>
+
+                          {/* 3. Timestamp e Título com tipografia equilibrada e altura contida em 2 linhas */}
+                          <div className="mt-2 flex flex-col gap-0.5">
+                            <span className="text-[10.5px] font-medium text-slate-400">
+                              {item.time}
+                            </span>
+                            <h4 className="text-xs sm:text-[12.5px] font-bold text-[#0F172A] leading-snug font-['Outfit'] line-clamp-2 group-hover:text-[#0055FE] transition-colors">
+                              {item.title}
+                            </h4>
+                          </div>
+                        </div>
+
+                        {/* Rodapé: Países e Ações (Bookmark / Share) com espaçamento limpo e compacto */}
+                        <div className="mt-2.5 pt-1.5 border-t border-slate-100/80 flex items-center justify-between text-[11px] text-slate-400">
+                          <span className="inline-flex items-center gap-1 font-normal truncate text-slate-500 max-w-[130px]">
+                            <Globe className="w-3.5 h-3.5 text-slate-400 shrink-0" strokeWidth={1.8} />
+                            <span className="truncate">{item.countries}</span>
+                          </span>
+
+                          <div className="flex items-center gap-1.5 shrink-0 text-slate-400">
+                            <button
+                              type="button"
+                              onClick={() => toggleSaveNews(item.id)}
+                              className="p-1 rounded text-slate-400 hover:text-[#0055FE] transition-colors cursor-pointer"
+                              aria-label="Salvar"
+                            >
+                              <Bookmark
+                                className={`w-3.5 h-3.5 ${isSaved ? 'text-[#0055FE] fill-current' : ''}`}
+                                strokeWidth={1.8}
+                              />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={handleShare}
+                              className="p-1 rounded text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
+                              aria-label="Compartilhar"
+                            >
+                              <Share2 className="w-3.5 h-3.5" strokeWidth={1.8} />
+                            </button>
+                          </div>
+                        </div>
+                      </article>
+                    );
+                  })}
+                </div>
+              </section>
           </div>
 
-          {/* COLUNA DIREITA SUPERIOR (xl:col-span-3 / ~25%) */}
-          <div className="xl:col-span-3 flex flex-col w-full">
+          {/* COLUNA DIREITA (xl:col-span-3 / ~25%) */}
+          <div className="xl:col-span-3 flex flex-col gap-6 w-full">
             {/* Card 1: Em destaque agora */}
             <div
               id="em-destaque-agora-card"
-              className="bg-white rounded-[18px] border border-slate-200/80 p-4 sm:p-5 shadow-xs flex flex-col justify-between h-full"
+              className="bg-white rounded-[18px] border border-slate-200/80 p-5 shadow-xs flex flex-col gap-4"
             >
               <div className="flex items-center justify-between pb-1 border-b border-slate-100">
                 <h3 className="text-base font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
@@ -798,12 +914,12 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
               </div>
 
               {/* Lista com as 4 notícias em destaque */}
-              <div className="flex flex-col divide-y divide-slate-100 flex-1 justify-between py-1">
+              <div className="flex flex-col divide-y divide-slate-100">
                 {HIGHLIGHT_ITEMS.map((item) => {
                   const isSaved = savedNewsIds.has(item.id);
                   return (
-                    <article key={item.id} className="py-2.5 first:pt-0 last:pb-0 flex items-center gap-3 group">
-                      <div className="w-[68px] h-[68px] rounded-xl overflow-hidden shrink-0 bg-slate-100">
+                    <article key={item.id} className="py-4 first:pt-0 last:pb-0 flex items-center gap-3 group">
+                      <div className="w-[72px] h-[72px] rounded-xl overflow-hidden shrink-0 bg-slate-100">
                         <img
                           src={item.image}
                           alt={item.title}
@@ -812,14 +928,14 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                         />
                       </div>
 
-                      <div className="flex-1 min-w-0 flex flex-col justify-between h-[68px] py-0.5">
-                        <span className={`text-[9px] font-extrabold uppercase tracking-wider ${item.categoryColor}`}>
+                      <div className="flex-1 min-w-0 flex flex-col justify-between h-[72px] py-0.5">
+                        <span className={`text-[9.5px] font-extrabold uppercase tracking-wider ${item.categoryColor}`}>
                           {item.category}
                         </span>
-                        <h4 className="text-[11.5px] font-bold text-[#0F172A] leading-snug line-clamp-2 group-hover:text-[#0055FE] transition-colors">
+                        <h4 className="text-[12px] font-bold text-[#0F172A] leading-snug line-clamp-2 group-hover:text-[#0055FE] transition-colors">
                           {item.title}
                         </h4>
-                        <div className="flex items-center justify-between text-[10.5px] text-slate-400">
+                        <div className="flex items-center justify-between text-[11px] text-slate-400">
                           <span>{item.time}</span>
                           <button
                             type="button"
@@ -836,160 +952,37 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
                 })}
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* 3.1. Grade Inferior: Principais Notícias (9 colunas) + Tendências Globais (3 colunas) 100% ALINHADOS */}
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-end w-full">
-          {/* Seção "Principais notícias" (xl:col-span-9) */}
-          <div className="xl:col-span-9 flex flex-col w-full">
-            <section id="principais-noticias-section" className="flex flex-col gap-3.5">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xl sm:text-[22px] font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
-                  Principais notícias
-                </h3>
-                <div className="flex items-center gap-2">
-                  {/* Botões de navegação horizontal (Prev / Next) */}
-                  <div className="flex items-center gap-1">
-                    <button
-                      type="button"
-                      onClick={() => scrollMainNews('left')}
-                      className="w-7 h-7 rounded-full bg-white border border-slate-200/80 hover:border-slate-300 text-slate-500 hover:text-[#0055FE] flex items-center justify-center transition-colors shadow-2xs cursor-pointer"
-                      aria-label="Notícia anterior"
-                    >
-                      <ChevronLeft className="w-4 h-4" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => scrollMainNews('right')}
-                      className="w-7 h-7 rounded-full bg-white border border-slate-200/80 hover:border-slate-300 text-slate-500 hover:text-[#0055FE] flex items-center justify-center transition-colors shadow-2xs cursor-pointer"
-                      aria-label="Próxima notícia"
-                    >
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  <button
-                    type="button"
-                    className="inline-flex items-center gap-1 text-xs sm:text-[13px] font-medium text-[#0055FE] hover:text-[#0040CC] transition-colors cursor-pointer group ml-1"
-                  >
-                    <span>Ver todas</span>
-                    <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2]" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Carrossel de Cards: exatamente 4 cards visíveis sem cortar no desktop (w-[calc((100%-42px)/4)]) */}
-              <div
-                ref={mainNewsScrollRef}
-                className="flex items-stretch gap-3.5 overflow-x-auto pb-0.5 pt-0.5 scrollbar-none snap-x scroll-smooth"
-              >
-                {MAIN_NEWS_LIST.map((item) => {
-                  const isSaved = savedNewsIds.has(item.id);
-                  return (
-                    <article
-                      key={item.id}
-                      className="w-[82%] sm:w-[calc((100%-14px)/2)] md:w-[calc((100%-28px)/3)] lg:w-[calc((100%-42px)/4)] shrink-0 snap-start bg-white rounded-[18px] border border-slate-200/70 px-3.5 py-3 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between group h-[220px]"
-                    >
-                      {/* Topo: Categoria + Imagem + Metadados + Título */}
-                      <div>
-                        {/* 1. Badge da Categoria acima da imagem */}
-                        <div className="mb-1.5">
-                          <span
-                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase tracking-wider ${item.categoryBg} ${item.categoryColor} border border-current/15 whitespace-nowrap`}
-                          >
-                            {item.category}
-                          </span>
-                        </div>
-
-                        {/* 2. Imagem com cantos arredondados e proporção horizontal ampla (altura contida) */}
-                        <div className="relative w-full h-[84px] sm:h-[88px] overflow-hidden rounded-[11px] bg-slate-100">
-                          <img
-                            src={item.image}
-                            alt={item.title}
-                            className="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
-                            referrerPolicy="no-referrer"
-                          />
-                        </div>
-
-                        {/* 3. Timestamp e Título com tipografia equilibrada e altura contida em 2 linhas */}
-                        <div className="mt-1.5 flex flex-col gap-0.5">
-                          <span className="text-[10px] font-medium text-slate-400">
-                            {item.time}
-                          </span>
-                          <h4 className="text-xs sm:text-[12px] font-bold text-[#0F172A] leading-snug font-['Outfit'] line-clamp-2 group-hover:text-[#0055FE] transition-colors">
-                            {item.title}
-                          </h4>
-                        </div>
-                      </div>
-
-                      {/* Rodapé: Países e Ações (Bookmark / Share) com espaçamento limpo e compacto */}
-                      <div className="mt-2 pt-1.5 border-t border-slate-100/80 flex items-center justify-between text-[11px] text-slate-400">
-                        <span className="inline-flex items-center gap-1 font-normal truncate text-slate-500 max-w-[130px]">
-                          <Globe className="w-3.5 h-3.5 text-slate-400 shrink-0" strokeWidth={1.8} />
-                          <span className="truncate">{item.countries}</span>
-                        </span>
-
-                        <div className="flex items-center gap-1.5 shrink-0 text-slate-400">
-                          <button
-                            type="button"
-                            onClick={() => toggleSaveNews(item.id)}
-                            className="p-1 rounded text-slate-400 hover:text-[#0055FE] transition-colors cursor-pointer"
-                            aria-label="Salvar"
-                          >
-                            <Bookmark
-                              className={`w-3.5 h-3.5 ${isSaved ? 'text-[#0055FE] fill-current' : ''}`}
-                              strokeWidth={1.8}
-                            />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={handleShare}
-                            className="p-1 rounded text-slate-400 hover:text-slate-700 transition-colors cursor-pointer"
-                            aria-label="Compartilhar"
-                          >
-                            <Share2 className="w-3.5 h-3.5" strokeWidth={1.8} />
-                          </button>
-                        </div>
-                      </div>
-                    </article>
-                  );
-                })}
-              </div>
-            </section>
-          </div>
-
-          {/* COLUNA DIREITA INFERIOR: Card 2: Tendências globais - Exatamente com h-[220px], alinhado no topo e na base com os cards ao lado */}
-          <div className="xl:col-span-3 flex flex-col justify-end w-full">
+            {/* Card 2: Tendências globais - Altura reduzida e espaçamento mais compacto */}
             <div
               id="tendencias-globais-card"
-              className="bg-white rounded-[18px] border border-slate-200/70 px-4 py-3 shadow-2xs hover:shadow-md transition-all duration-200 flex flex-col justify-between h-[220px] w-full"
+              className="bg-white rounded-[18px] border border-slate-200/80 px-4 py-3.5 sm:px-4.5 sm:py-3.5 shadow-xs flex flex-col gap-2.5"
             >
               <div className="flex items-center justify-between pb-1.5 border-b border-slate-100">
-                <h3 className="text-[13px] sm:text-sm font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
+                <h3 className="text-[15px] sm:text-base font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
                   Tendências globais
                 </h3>
                 <button
                   type="button"
-                  className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-bold text-[#0055FE] hover:text-[#0040CC] transition-colors cursor-pointer group"
+                  className="inline-flex items-center gap-1 text-xs font-bold text-[#0055FE] hover:text-[#0040CC] transition-colors cursor-pointer group"
                 >
                   <span>Ver todas</span>
-                  <ArrowRight className="w-3 h-3 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
+                  <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform stroke-[2.2]" />
                 </button>
               </div>
 
-              {/* Lista dos 5 tópicos em tendência calibrada com espaçamento uniforme */}
-              <div className="flex flex-col justify-between flex-1 pt-1">
+              {/* Lista dos 5 tópicos em tendência com espaçamento vertical reduzido */}
+              <div className="flex flex-col gap-1">
                 {GLOBAL_TRENDS.map((trend) => (
                   <div
                     key={trend.rank}
                     className="flex items-center justify-between py-0.5 px-1 rounded-lg hover:bg-slate-50 transition-colors"
                   >
                     <div className="flex items-center gap-2.5">
-                      <div className="w-5 h-5 rounded-full bg-blue-50 text-[#0055FE] flex items-center justify-center text-[10.5px] font-bold font-['Outfit'] shrink-0">
+                      <div className="w-5.5 h-5.5 rounded-full bg-blue-50 text-[#0055FE] flex items-center justify-center text-[11px] font-bold font-['Outfit'] shrink-0">
                         {trend.rank}
                       </div>
-                      <span className="text-[11.5px] sm:text-xs font-bold text-[#0F172A] tracking-tight truncate max-w-[140px] xl:max-w-[170px]">
+                      <span className="text-xs sm:text-[12.5px] font-bold text-[#0F172A] tracking-tight">
                         {trend.label}
                       </span>
                     </div>

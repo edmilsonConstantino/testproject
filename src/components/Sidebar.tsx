@@ -5,6 +5,7 @@ import {
   Users,
   Sparkles,
   HeartHandshake,
+  Heart,
   Info,
   Settings,
   ChevronDown,
@@ -14,7 +15,11 @@ import {
   X,
   Check,
   BarChart3,
-  Newspaper
+  Newspaper,
+  Leaf,
+  Home,
+  HelpCircle,
+  Rocket
 } from 'lucide-react';
 import { Logo } from './Logo';
 
@@ -51,12 +56,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // 11 navigation items matching exact reference design and prompt specifications
-  const navItems = [
+  interface NavItem {
+    id: string;
+    label: string;
+    icon: React.ReactNode;
+    badge?: string;
+  }
+
+  // Navigation items matching exact reference design from UI VILA SOBRE
+  const navItems: NavItem[] = [
     {
       id: 'inicio',
       label: 'Início',
-      icon: <Globe className="w-4 h-4" strokeWidth={2.2} />
+      icon: <Home className="w-4 h-4" strokeWidth={2.2} />
     },
     {
       id: 'explorar',
@@ -67,7 +79,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
       id: 'noticias',
       label: 'Mundo em Movimento',
       icon: <Newspaper className="w-4 h-4" strokeWidth={2.2} />,
-      badge: 'NOVO',
     },
     {
       id: 'eventos',
@@ -82,21 +93,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
     {
       id: 'impacto',
       label: 'Impacto Global',
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round">
-          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
-        </svg>
-      )
+      icon: <Leaf className="w-4 h-4" strokeWidth={2.2} />
     },
     {
       id: 'ia',
       label: 'VILA AI',
-      icon: <Sparkles className="w-4 h-4" strokeWidth={2.2} />
+      icon: <Sparkles className="w-4 h-4 text-emerald-500" strokeWidth={2.2} />
     },
     {
       id: 'parceiros',
       label: 'Parceiros Globais',
-      icon: <HeartHandshake className="w-4 h-4" strokeWidth={2.2} />
+      icon: <Heart className="w-4 h-4" strokeWidth={2.2} />
     },
     {
       id: 'sobre',
@@ -167,6 +174,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   isActive
                     ? item.id === 'noticias' || item.id === 'movimento'
                       ? 'bg-[#00A86B] text-white font-bold shadow-xs'
+                      : item.id === 'impacto'
+                      ? 'bg-[#064E3B] text-white font-bold shadow-xs'
                       : 'bg-gradient-to-r from-[#0055FE] to-[#0096C7] text-white font-bold shadow-xs'
                     : 'text-[#122244] hover:bg-slate-50 font-bold'
                 }`}
@@ -299,14 +308,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <p className="text-[11.5px] font-bold text-[#1E293B] leading-[1.3] font-['Outfit']">
               Juntos, construímos um mundo melhor.
             </p>
-            <p className="text-[10.5px] font-semibold text-[#64748B] mt-0.5">
-              7.842.521 cidadãos ativos
-            </p>
 
             <button
               type="button"
-              onClick={onOpenImpactModal}
-              className="mt-1.5 inline-flex items-center gap-1.5 text-[11px] font-bold text-[#2563EB] hover:text-[#1D4ED8] transition-colors cursor-pointer group/impact"
+              onClick={() => {
+                onSelectTab('impacto');
+                if (onCloseMobile) onCloseMobile();
+              }}
+              className="mt-2 w-full inline-flex items-center justify-center gap-1.5 py-1 px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-[11px] font-bold text-[#0055FE] hover:text-[#0042CC] shadow-2xs transition-colors cursor-pointer group/impact"
             >
               <span>Ver impacto global</span>
               <ArrowRight className="w-3 h-3 transform group-hover/impact:translate-x-0.5 transition-transform" />
@@ -385,7 +394,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
               onClick={() => setIsLightMode(!isLightMode)}
               id="theme-toggle-switch"
               className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                isLightMode ? 'bg-[#1D63FF]' : 'bg-slate-300'
+                isLightMode
+                  ? currentTab === 'impacto'
+                    ? 'bg-[#064E3B]'
+                    : 'bg-[#1D63FF]'
+                  : 'bg-slate-300'
               }`}
             >
               <span
@@ -396,7 +409,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </button>
           </div>
 
-          {/* 4. Botões "Entrar" e "Criar Conta" (Azul) */}
+          {/* 4. Botões "Entrar" e "Criar Conta" */}
           <div className="grid grid-cols-2 gap-2 w-full pt-0.5">
             <button
               type="button"
@@ -410,9 +423,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
               type="button"
               id="sidebar-btn-register"
               onClick={() => onOpenAuth('register')}
-              className="bg-[#0055FE] hover:bg-[#0040CC] text-white font-bold rounded-xl py-1.5 px-2 text-[11.5px] shadow-2xs text-center transition-all cursor-pointer"
+              className={`${
+                currentTab === 'impacto'
+                  ? 'bg-[#064E3B] hover:bg-[#053d2e]'
+                  : 'bg-[#0055FE] hover:bg-[#0040CC]'
+              } text-white font-bold rounded-xl py-1.5 px-2 text-[11.5px] shadow-2xs text-center transition-all cursor-pointer`}
             >
-              Criar conta
+              Criar Conta
             </button>
           </div>
         </div>
