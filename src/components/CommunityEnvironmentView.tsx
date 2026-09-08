@@ -688,7 +688,7 @@ export const CommunityEnvironmentView: React.FC<CommunityEnvironmentViewProps> =
                 key={cat.id}
                 type="button"
                 onClick={() => {
-                  if (onNavigateToCategory && (cat.id === 'educacao' || cat.id === 'direitos-humanos' || cat.id === 'todas')) {
+                  if (onNavigateToCategory && (cat.id === 'educacao' || cat.id === 'direitos-humanos' || cat.id === 'cultura' || cat.id === 'todas')) {
                     onNavigateToCategory(cat.id);
                   } else {
                     setSelectedCategory(cat.id);

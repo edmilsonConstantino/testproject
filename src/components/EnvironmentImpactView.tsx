@@ -51,6 +51,7 @@ export interface EnvironmentImpactViewProps {
   onOpenMobileMenu?: () => void;
   onOpenAuth?: (mode: 'login' | 'register') => void;
   onNavigateToTab?: (tabId: string) => void;
+  onNavigateToCategory?: (category: string) => void;
 }
 
 interface ProjectItem {
@@ -72,6 +73,7 @@ export const EnvironmentImpactView: React.FC<EnvironmentImpactViewProps> = ({
   onOpenMobileMenu,
   onOpenAuth = () => {},
   onNavigateToTab = () => {},
+  onNavigateToCategory,
 }) => {
   // State
   const [activeCategory, setActiveCategory] = useState<string>('ambiente');
@@ -385,9 +387,12 @@ export const EnvironmentImpactView: React.FC<EnvironmentImpactViewProps> = ({
           {/* Breadcrumb e Back Arrow */}
           <div className="flex items-center gap-2.5 text-xs text-slate-500 w-full md:w-auto overflow-x-auto whitespace-nowrap">
             <button
-              onClick={() => onExploreCommunity()}
+              onClick={() => {
+                if (onNavigateToCategory) onNavigateToCategory('todas');
+                else onExploreCommunity();
+              }}
               className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-500 hover:text-slate-800 transition-colors cursor-pointer"
-              title="Voltar"
+              title="Voltar ao Impacto Global"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
@@ -398,7 +403,12 @@ export const EnvironmentImpactView: React.FC<EnvironmentImpactViewProps> = ({
               Comunidade Global
             </button>
             <ChevronRight className="w-3 h-3 text-slate-400" />
-            <span className="font-medium text-slate-600">Impacto Global</span>
+            <button
+              onClick={() => onNavigateToCategory && onNavigateToCategory('todas')}
+              className="hover:text-[#064E3B] font-medium text-slate-600 transition-colors cursor-pointer"
+            >
+              Impacto Global
+            </button>
             <ChevronRight className="w-3 h-3 text-slate-400" />
             <span className="font-bold text-[#064E3B]">Ambiente</span>
           </div>
@@ -554,7 +564,13 @@ export const EnvironmentImpactView: React.FC<EnvironmentImpactViewProps> = ({
             return (
               <button
                 key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
+                onClick={() => {
+                  if (onNavigateToCategory && (cat.id === 'todas' || cat.id === 'saude' || cat.id === 'tecnologia' || cat.id === 'cultura' || cat.id === 'educacao' || cat.id === 'direitos' || cat.id === 'ambiente' || cat.id === 'empreendedorismo')) {
+                    onNavigateToCategory(cat.id === 'direitos' ? 'direitos-humanos' : cat.id);
+                  } else {
+                    setActiveCategory(cat.id);
+                  }
+                }}
                 className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                   isActive
                     ? 'bg-[#064E3B] text-white shadow-xs border border-[#064E3B]'

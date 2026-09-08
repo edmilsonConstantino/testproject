@@ -106,6 +106,8 @@ export default function App() {
         setCurrentTab('eventos');
       } else if (target === 'explorar' || target === 'explorar-o-mundo') {
         setCurrentTab('explorar');
+      } else if (target === 'empreendedorismo' || target === 'tecnologia' || target === 'saude') {
+        setCurrentTab(target);
       } else if (target === 'impacto' || target === 'impacto-global') {
         setCurrentTab('impacto');
       } else if (target === 'sobre' || target === 'sobre-a-vila' || target.includes('sobre')) {
@@ -240,7 +242,7 @@ export default function App() {
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
-        ) : (currentTab === 'comunidade' || currentTab === 'comunidade-global' || currentTab === 'ambiente' || currentTab === 'educacao' || currentTab === 'direitos-humanos' || currentTab === 'criar-comunidade' || currentTab === 'explorar-comunidade') ? (
+        ) : (currentTab === 'comunidade' || currentTab === 'comunidade-global' || currentTab === 'ambiente' || currentTab === 'educacao' || currentTab === 'direitos-humanos' || currentTab === 'cultura' || currentTab === 'criar-comunidade' || currentTab === 'explorar-comunidade') ? (
           /* Comunidade Global (Página Oficial, Categorias e Criar Comunidade UI CRIAR COMUNIDADE.png) */
           <GlobalCommunityView
             initialSubView={
@@ -250,6 +252,8 @@ export default function App() {
                 ? 'educacao'
                 : currentTab === 'direitos-humanos'
                 ? 'direitos-humanos'
+                : currentTab === 'cultura'
+                ? 'cultura'
                 : currentTab === 'criar-comunidade'
                 ? 'criar-comunidade'
                 : 'official'
@@ -273,9 +277,10 @@ export default function App() {
               setAuthModal({ isOpen: true, mode: 'register' });
             }}
           />
-        ) : (currentTab === 'impacto' || currentTab === 'impacto-global') ? (
-          /* Impacto Global / Ambiente View matching UI AMBIENTE */
+        ) : (currentTab === 'impacto' || currentTab === 'impacto-global' || currentTab === 'saude' || currentTab === 'tecnologia' || currentTab === 'empreendedorismo' || currentTab === 'ambiente') ? (
+          /* Impacto Global (UI IMPACTO GLOBAL.png) / Ambiente / Saúde / Tecnologia / Empreendedorismo */
           <GlobalImpactView
+            initialSubView={currentTab === 'empreendedorismo' ? 'empreendedorismo' : currentTab === 'tecnologia' ? 'tecnologia' : currentTab === 'saude' ? 'saude' : currentTab === 'ambiente' ? 'ambiente' : 'todas'}
             onOpenAiAssistant={() => setIsAiModalOpen(true)}
             onOpenMobileMenu={() => setIsMobileSidebarOpen(true)}
             onOpenAuth={handleOpenAuth}

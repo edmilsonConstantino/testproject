@@ -3,10 +3,11 @@ import { CommunityOfficialHomeView } from './CommunityOfficialHomeView';
 import { CommunityEnvironmentView } from './CommunityEnvironmentView';
 import { CommunityEducationView } from './CommunityEducationView';
 import { CommunityHumanRightsView } from './CommunityHumanRightsView';
+import { CommunityCultureView } from './CommunityCultureView';
 import { CreateCommunityWizardView } from './CreateCommunityWizardView';
 
 export interface GlobalCommunityViewProps {
-  initialSubView?: 'official' | 'ambiente' | 'educacao' | 'direitos-humanos' | 'criar-comunidade';
+  initialSubView?: 'official' | 'ambiente' | 'educacao' | 'direitos-humanos' | 'cultura' | 'criar-comunidade';
   onNavigateToTab?: (tabId: string) => void;
   onOpenAuth?: (mode: 'login' | 'register') => void;
   onOpenAiAssistant?: () => void;
@@ -26,7 +27,7 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
   onExploreMap,
   onOpenCreateCommunityModal,
 }) => {
-  const [currentSubView, setCurrentSubView] = useState<'official' | 'ambiente' | 'educacao' | 'direitos-humanos' | 'criar-comunidade'>(initialSubView);
+  const [currentSubView, setCurrentSubView] = useState<'official' | 'ambiente' | 'educacao' | 'direitos-humanos' | 'cultura' | 'criar-comunidade'>(initialSubView);
 
   // Sincronizar se initialSubView mudar
   useEffect(() => {
@@ -44,6 +45,9 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (catId === 'direitos-humanos') {
       setCurrentSubView('direitos-humanos');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (catId === 'cultura') {
+      setCurrentSubView('cultura');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (catId === 'todas') {
       setCurrentSubView('official');
@@ -66,6 +70,24 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
         }}
         onNavigateToTab={onNavigateToTab}
         onOpenAuth={onOpenAuth}
+      />
+    );
+  }
+
+  // Categoria 4: Cultura (UI CULTURA.png)
+  if (currentSubView === 'cultura') {
+    return (
+      <CommunityCultureView
+        onBackToOfficial={() => {
+          setCurrentSubView('official');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onNavigateToCategory={handleNavigateCategory}
+        onNavigateToTab={onNavigateToTab}
+        onOpenAuth={onOpenAuth}
+        onOpenAiAssistant={onOpenAiAssistant}
+        onOpenMobileMenu={onOpenMobileMenu}
+        onOpenCreateCommunity={handleOpenCreateCommunity}
       />
     );
   }
