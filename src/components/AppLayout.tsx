@@ -13,6 +13,8 @@ export interface AppLayoutProps {
   onOpenSearchModal?: () => void;
   searchPlaceholder?: string;
   showTopbar?: boolean;
+  isLoggedIn?: boolean;
+  onLogout?: () => void;
   children: React.ReactNode;
 }
 
@@ -27,6 +29,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onOpenSearchModal = () => {},
   searchPlaceholder,
   showTopbar = true,
+  isLoggedIn = false,
+  onLogout,
   children,
 }) => {
   return (
@@ -39,6 +43,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         onOpenImpactModal={onOpenImpactModal}
         isMobileOpen={isMobileSidebarOpen}
         onCloseMobile={onCloseMobileSidebar}
+        isLoggedIn={isLoggedIn}
+        onLogout={onLogout}
       />
 
       {/* 2. Área principal de conteúdo à direita da Sidebar */}

@@ -1,598 +1,695 @@
 import React, { useState } from 'react';
 import {
-  Bell,
   Mail,
-  Smartphone,
+  Bell,
   MessageSquare,
-  Moon,
-  Clock,
-  Eye,
-  CheckCircle2,
-  AlertTriangle,
-  Info,
+  Smartphone,
   Check,
-  Volume2,
+  Clock,
+  ChevronDown,
+  ChevronRight,
+  Megaphone,
   Calendar,
+  Users,
+  Flag,
+  FileText,
+  Heart,
+  PieChart,
+  CheckCircle2,
+  X,
+  Volume2,
+  SlidersHorizontal,
 } from 'lucide-react';
 
-interface NotificationMatrixRow {
+interface NotificationTypeRow {
   id: string;
-  category: string;
+  name: string;
   description: string;
+  icon: React.ReactNode;
   email: boolean;
   push: boolean;
   sms: boolean;
-  mobile: boolean;
+  app: boolean;
 }
 
 export const NotificationsTab: React.FC = () => {
-  // Canais principais
+  // 1. Estados dos Canais de Notificação (Left Card 1)
   const [emailEnabled, setEmailEnabled] = useState(true);
   const [pushEnabled, setPushEnabled] = useState(true);
   const [smsEnabled, setSmsEnabled] = useState(false);
   const [mobileEnabled, setMobileEnabled] = useState(true);
 
-  // Horário de Silêncio
+  // 2. Horário de Silêncio (Left Card 2)
   const [quietHoursActive, setQuietHoursActive] = useState(true);
   const [quietStart, setQuietStart] = useState('22:00');
-  const [quietEnd, setQuietEnd] = useState('08:00');
-  const [allowEmergencies, setAllowEmergencies] = useState(true);
-  const [quietDays, setQuietDays] = useState<'todos' | 'semana' | 'fimdesemana'>('todos');
+  const [quietEnd, setQuietEnd] = useState('07:00');
+  const [timezone, setTimezone] = useState('(UTC+00:00) Lisboa');
+  const [isTimezoneOpen, setIsTimezoneOpen] = useState(false);
 
-  // Matriz de Tipos de Notificação x Canal
-  const [matrix, setMatrix] = useState<NotificationMatrixRow[]>([
+  // 3. Tipos de Notificações (Right Card - 7 itens com matriz exata da imagem)
+  const [notificationTypes, setNotificationTypes] = useState<NotificationTypeRow[]>([
     {
-      id: 'novos_projetos',
-      category: 'Novas iniciativas na minha área de interesse',
-      description: 'Avisos quando são lançados projetos alinhados aos seus temas favoritos.',
+      id: 'avisos-importantes',
+      name: 'Avisos importantes',
+      description: 'Notificações críticas sobre a plataforma.',
+      icon: (
+        <div className="w-8 h-8 rounded-full bg-[#ECFDF5] text-[#10B981] flex items-center justify-center shrink-0">
+          <Megaphone className="w-4 h-4" />
+        </div>
+      ),
+      email: true,
+      push: true,
+      sms: true,
+      app: true,
+    },
+    {
+      id: 'eventos-atividades',
+      name: 'Eventos e atividades',
+      description: 'Lembretes de eventos e atividades.',
+      icon: (
+        <div className="w-8 h-8 rounded-full bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
+          <Calendar className="w-4 h-4" />
+        </div>
+      ),
       email: true,
       push: true,
       sms: false,
-      mobile: true,
+      app: true,
     },
     {
-      id: 'atualizacoes_seguidas',
-      category: 'Atualizações de projetos que sigo',
-      description: 'Relatórios de progresso, marcos alcançados e novas fases de implementação.',
+      id: 'comunidade-colaboracao',
+      name: 'Comunidade e colaboração',
+      description: 'Comentários, menções e interações.',
+      icon: (
+        <div className="w-8 h-8 rounded-full bg-[#F5F3FF] text-[#8B5CF6] flex items-center justify-center shrink-0">
+          <Users className="w-4 h-4" />
+        </div>
+      ),
       email: true,
       push: true,
       sms: false,
-      mobile: true,
+      app: true,
     },
     {
-      id: 'atividades_comunidade',
-      category: 'Atividades da comunidade e eventos locais',
-      description: 'Encontros presenciais, fóruns regionais e voluntariado comunitário.',
+      id: 'projetos-iniciativas',
+      name: 'Projetos e iniciativas',
+      description: 'Atualizações sobre projetos e iniciativas.',
+      icon: (
+        <div className="w-8 h-8 rounded-full bg-[#FFF7ED] text-[#F97316] flex items-center justify-center shrink-0">
+          <Flag className="w-4 h-4" />
+        </div>
+      ),
+      email: true,
+      push: true,
+      sms: false,
+      app: true,
+    },
+    {
+      id: 'servicos-atualizacoes',
+      name: 'Serviços e atualizações',
+      description: 'Novos serviços, melhorias e manutenções.',
+      icon: (
+        <div className="w-8 h-8 rounded-full bg-[#ECFEFF] text-[#06B6D4] flex items-center justify-center shrink-0">
+          <FileText className="w-4 h-4" />
+        </div>
+      ),
+      email: true,
+      push: true,
+      sms: false,
+      app: true,
+    },
+    {
+      id: 'promocoes-oportunidades',
+      name: 'Promoções e oportunidades',
+      description: 'Ofertas, parcerias e oportunidades especiais.',
+      icon: (
+        <div className="w-8 h-8 rounded-full bg-[#FFF1F2] text-[#F43F5E] flex items-center justify-center shrink-0">
+          <Heart className="w-4 h-4" />
+        </div>
+      ),
       email: false,
       push: true,
       sms: false,
-      mobile: true,
+      app: false,
     },
     {
-      id: 'mensagens_mencoes',
-      category: 'Mensagens diretas e menções',
-      description: 'Quando outro membro envia mensagem direta ou menciona o seu perfil.',
-      email: true,
-      push: true,
-      sms: true,
-      mobile: true,
-    },
-    {
-      id: 'impacto_financeiro',
-      category: 'Impacto financeiro e comprovativos de doação',
-      description: 'Recibos fiscais, prestação de contas de fundos e metas de financiamento.',
+      id: 'relatorios-resumos',
+      name: 'Relatórios e resumos',
+      description: 'Resumos semanais e relatórios personalizados.',
+      icon: (
+        <div className="w-8 h-8 rounded-full bg-[#F1F5F9] text-[#64748B] flex items-center justify-center shrink-0">
+          <PieChart className="w-4 h-4" />
+        </div>
+      ),
       email: true,
       push: false,
       sms: false,
-      mobile: true,
-    },
-    {
-      id: 'alertas_criticos',
-      category: 'Alertas críticos e emergências humanitárias',
-      description: 'Situações urgentes de socorro climático ou apelos de ação imediata.',
-      email: true,
-      push: true,
-      sms: true,
-      mobile: true,
+      app: false,
     },
   ]);
 
-  // Preview format: desktop vs mobile
-  const [previewDevice, setPreviewDevice] = useState<'desktop' | 'mobile'>('mobile');
-  const [showSavedToast, setShowSavedToast] = useState(false);
+  // Toast e Modais de feedback
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isManageModalOpen, setIsManageModalOpen] = useState(false);
 
-  const toggleCell = (rowId: string, channel: 'email' | 'push' | 'sms' | 'mobile') => {
-    setMatrix((prev) =>
-      prev.map((row) =>
-        row.id === rowId ? { ...row, [channel]: !row[channel] } : row
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  const toggleNotificationChannel = (
+    rowId: string,
+    channel: 'email' | 'push' | 'sms' | 'app'
+  ) => {
+    setNotificationTypes((prev) =>
+      prev.map((item) =>
+        item.id === rowId ? { ...item, [channel]: !item[channel] } : item
       )
     );
   };
 
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    setShowSavedToast(true);
-    setTimeout(() => setShowSavedToast(false), 3000);
+  const handleSave = () => {
+    showToast('Preferências de notificações salvas com sucesso!');
   };
 
+  // Ícone colorido VILA SVG idêntico ao oficial
+  const VilaMiniLogo = () => (
+    <svg className="w-7 h-7 shrink-0" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="45" stroke="#EA4335" strokeWidth="10" strokeDasharray="70 200" />
+      <circle cx="50" cy="50" r="45" stroke="#4285F4" strokeWidth="10" strokeDasharray="70 200" strokeDashoffset="-70" />
+      <circle cx="50" cy="50" r="45" stroke="#34A853" strokeWidth="10" strokeDasharray="70 200" strokeDashoffset="-140" />
+      <circle cx="50" cy="50" r="45" stroke="#FBBC05" strokeWidth="10" strokeDasharray="70 200" strokeDashoffset="-210" />
+      <circle cx="50" cy="50" r="18" fill="#2563EB" />
+    </svg>
+  );
+
   return (
-    <div className="w-full space-y-6">
-      {/* Toast de Confirmação */}
-      {showSavedToast && (
-        <div className="fixed bottom-6 right-6 z-50 bg-[#2563EB] text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-2.5 border border-blue-600 animate-in fade-in slide-in-from-bottom-3">
-          <CheckCircle2 className="w-5 h-5 text-blue-200" />
-          <span className="text-xs sm:text-sm font-semibold">Configuração de notificações atualizada!</span>
+    <div className="w-full space-y-6 pb-6 font-['Plus_Jakarta_Sans',sans-serif]">
+      {/* Toast Notificação */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 bg-[#0F172A] text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 border border-slate-700 animate-in fade-in slide-in-from-bottom-2 duration-200">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span className="text-xs font-medium">{toastMessage}</span>
+          <button
+            type="button"
+            onClick={() => setToastMessage(null)}
+            className="text-slate-400 hover:text-white ml-2 cursor-pointer"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
         </div>
       )}
 
-      {/* 1. Canais de Envio (Cards Superiores) */}
-      <section className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs">
-        <div className="flex items-center gap-2.5 mb-5 pb-3 border-b border-slate-100">
-          <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-            <Bell className="w-4 h-4" />
-          </div>
-          <div>
-            <h2 className="text-base font-bold text-[#0F172A] font-['Outfit']">
-              Canais de Comunicação
-            </h2>
-            <p className="text-xs text-slate-500">
-              Ative ou pause cada um dos canais disponíveis para entrega de alertas.
-            </p>
-          </div>
-        </div>
+      {/* GRID SUPERIOR DE 2 COLUNAS (LADO ESQUERDO: CANAIS + SILÊNCIO | LADO DIREITO: TIPOS DE NOTIFICAÇÕES) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* ========================================================
+            COLUNA ESQUERDA: Canais de notificação + Horário de silêncio
+           ======================================================== */}
+        <div className="lg:col-span-5 space-y-6">
+          {/* CARD 1: Canais de notificação */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs space-y-4">
+            <div className="pb-1">
+              <h3 className="text-base font-bold text-[#0F172A] font-['Outfit']">
+                Canais de notificação
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Escolha os canais onde deseja receber notificações.
+              </p>
+            </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Canal: E-mail */}
-          <div className="p-4 rounded-xl border border-slate-200 hover:border-slate-300 bg-white flex flex-col justify-between transition-all">
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center">
-                  <Mail className="w-4 h-4" />
+            <div className="divide-y divide-slate-100">
+              {/* Canal: E-mail */}
+              <div className="py-3.5 flex items-center justify-between gap-3.5">
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-10 h-10 rounded-full bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-bold text-[#0F172A]">E-mail</h4>
+                    <p className="text-[11px] text-slate-400 truncate">
+                      Receba notificações importantes no seu e-mail.
+                    </p>
+                  </div>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
+
+                <label className="relative inline-flex items-center cursor-pointer shrink-0">
                   <input
                     type="checkbox"
                     checked={emailEnabled}
                     onChange={(e) => setEmailEnabled(e.target.checked)}
                     className="sr-only peer"
                   />
-                  <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#2563EB]" />
+                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2563EB]" />
                 </label>
               </div>
-              <h3 className="text-xs font-bold text-[#0F172A]">E-mail</h3>
-              <p className="text-[11px] text-slate-500 mt-1">
-                divan@vilaglobal.org
-              </p>
-            </div>
-            <div className="mt-3 pt-2 border-t border-slate-100 flex items-center gap-1.5 text-[11px] text-emerald-600 font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              {emailEnabled ? 'Verificado & Ativo' : 'Pausado'}
-            </div>
-          </div>
 
-          {/* Canal: Push Notificações */}
-          <div className="p-4 rounded-xl border border-slate-200 hover:border-slate-300 bg-white flex flex-col justify-between transition-all">
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <div className="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                  <Bell className="w-4 h-4" />
+              {/* Canal: Push / Web */}
+              <div className="py-3.5 flex items-center justify-between gap-3.5">
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-10 h-10 rounded-full bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
+                    <Bell className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-bold text-[#0F172A]">Push / Web</h4>
+                    <p className="text-[11px] text-slate-400 truncate">
+                      Notificações no navegador quando estiver online.
+                    </p>
+                  </div>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
+
+                <label className="relative inline-flex items-center cursor-pointer shrink-0">
                   <input
                     type="checkbox"
                     checked={pushEnabled}
                     onChange={(e) => setPushEnabled(e.target.checked)}
                     className="sr-only peer"
                   />
-                  <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#2563EB]" />
+                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2563EB]" />
                 </label>
               </div>
-              <h3 className="text-xs font-bold text-[#0F172A]">Navegador Web / Push</h3>
-              <p className="text-[11px] text-slate-500 mt-1">
-                Google Chrome (macOS)
-              </p>
-            </div>
-            <div className="mt-3 pt-2 border-t border-slate-100 flex items-center gap-1.5 text-[11px] text-emerald-600 font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              {pushEnabled ? 'Autorizado' : 'Silenciado'}
-            </div>
-          </div>
 
-          {/* Canal: SMS */}
-          <div className="p-4 rounded-xl border border-slate-200 hover:border-slate-300 bg-white flex flex-col justify-between transition-all">
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                  <MessageSquare className="w-4 h-4" />
+              {/* Canal: SMS */}
+              <div className="py-3.5 flex items-center justify-between gap-3.5">
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-10 h-10 rounded-full bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
+                    <MessageSquare className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-bold text-[#0F172A]">SMS</h4>
+                    <p className="text-[11px] text-slate-400 truncate">
+                      Receba alertas e mensagens importantes no telemóvel.
+                    </p>
+                  </div>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
+
+                <label className="relative inline-flex items-center cursor-pointer shrink-0">
                   <input
                     type="checkbox"
                     checked={smsEnabled}
                     onChange={(e) => setSmsEnabled(e.target.checked)}
                     className="sr-only peer"
                   />
-                  <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#2563EB]" />
+                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2563EB]" />
                 </label>
               </div>
-              <h3 className="text-xs font-bold text-[#0F172A]">SMS / Mensagens de Texto</h3>
-              <p className="text-[11px] text-slate-500 mt-1">
-                +351 912 345 678
-              </p>
-            </div>
-            <div className="mt-3 pt-2 border-t border-slate-100 flex items-center gap-1.5 text-[11px] text-slate-500 font-medium">
-              <span className={`w-1.5 h-1.5 rounded-full ${smsEnabled ? 'bg-emerald-500' : 'bg-slate-400'}`} />
-              {smsEnabled ? 'Ativo para emergências' : 'Desativado'}
-            </div>
-          </div>
 
-          {/* Canal: App Mobile VILA */}
-          <div className="p-4 rounded-xl border border-slate-200 hover:border-slate-300 bg-white flex flex-col justify-between transition-all">
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
-                  <Smartphone className="w-4 h-4" />
+              {/* Canal: App Mobile */}
+              <div className="py-3.5 flex items-center justify-between gap-3.5">
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-10 h-10 rounded-full bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
+                    <Smartphone className="w-5 h-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-bold text-[#0F172A]">App Mobile</h4>
+                    <p className="text-[11px] text-slate-400 truncate">
+                      Notificações dentro da aplicação móvel da VILA.
+                    </p>
+                  </div>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
+
+                <label className="relative inline-flex items-center cursor-pointer shrink-0">
                   <input
                     type="checkbox"
                     checked={mobileEnabled}
                     onChange={(e) => setMobileEnabled(e.target.checked)}
                     className="sr-only peer"
                   />
-                  <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-[#2563EB]" />
+                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2563EB]" />
                 </label>
               </div>
-              <h3 className="text-xs font-bold text-[#0F172A]">App Mobile VILA</h3>
-              <p className="text-[11px] text-slate-500 mt-1">
-                iPhone 15 Pro (iOS 18)
+            </div>
+          </div>
+
+          {/* CARD 2: Horário de silêncio */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs space-y-4">
+            <div>
+              <h3 className="text-base font-bold text-[#0F172A] font-['Outfit']">
+                Horário de silêncio
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Defina um período para não receber notificações push.
               </p>
             </div>
-            <div className="mt-3 pt-2 border-t border-slate-100 flex items-center gap-1.5 text-[11px] text-emerald-600 font-semibold">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              {mobileEnabled ? 'Sincronizado' : 'Silenciado'}
+
+            {/* Linha de Ativação do Silêncio */}
+            <div className="pt-2 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="text-slate-400">
+                  <Volume2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-[#0F172A]">
+                    Ativar horário de silêncio
+                  </h4>
+                  <p className="text-[11px] text-slate-400">
+                    As notificações push serão pausadas neste período.
+                  </p>
+                </div>
+              </div>
+
+              <label className="relative inline-flex items-center cursor-pointer shrink-0">
+                <input
+                  type="checkbox"
+                  checked={quietHoursActive}
+                  onChange={(e) => setQuietHoursActive(e.target.checked)}
+                  className="sr-only peer"
+                />
+                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2563EB]" />
+              </label>
+            </div>
+
+            {/* Configuração de Horários: De, Até, Fuso horário */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+              {/* De */}
+              <div>
+                <label className="block text-[11px] font-bold text-slate-500 mb-1">
+                  De
+                </label>
+                <div className="relative flex items-center">
+                  <input
+                    type="text"
+                    value={quietStart}
+                    onChange={(e) => setQuietStart(e.target.value)}
+                    className="w-full bg-white text-xs font-semibold text-slate-800 px-3 py-2 rounded-xl border border-slate-200 focus:border-blue-600 outline-none pr-8"
+                  />
+                  <Clock className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Até */}
+              <div>
+                <label className="block text-[11px] font-bold text-slate-500 mb-1">
+                  Até
+                </label>
+                <div className="relative flex items-center">
+                  <input
+                    type="text"
+                    value={quietEnd}
+                    onChange={(e) => setQuietEnd(e.target.value)}
+                    className="w-full bg-white text-xs font-semibold text-slate-800 px-3 py-2 rounded-xl border border-slate-200 focus:border-blue-600 outline-none pr-8"
+                  />
+                  <Clock className="w-3.5 h-3.5 text-slate-400 absolute right-2.5 pointer-events-none" />
+                </div>
+              </div>
+
+              {/* Fuso horário */}
+              <div className="relative">
+                <label className="block text-[11px] font-bold text-slate-500 mb-1">
+                  Fuso horário
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setIsTimezoneOpen(!isTimezoneOpen)}
+                  className="w-full bg-white text-xs font-semibold text-slate-800 px-2.5 py-2 rounded-xl border border-slate-200 focus:border-blue-600 outline-none flex items-center justify-between cursor-pointer hover:border-slate-300"
+                >
+                  <span className="truncate text-[11px]">{timezone}</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                </button>
+
+                {isTimezoneOpen && (
+                  <div className="absolute right-0 mt-1 w-48 bg-white rounded-xl border border-slate-200 shadow-lg p-1 z-20 text-xs animate-in fade-in zoom-in-95 duration-100">
+                    {[
+                      '(UTC+00:00) Lisboa',
+                      '(UTC+00:00) Londres',
+                      '(UTC-03:00) São Paulo',
+                      '(UTC+01:00) Madrid',
+                      '(UTC+01:00) Paris',
+                    ].map((tz) => (
+                      <button
+                        key={tz}
+                        type="button"
+                        onClick={() => {
+                          setTimezone(tz);
+                          setIsTimezoneOpen(false);
+                        }}
+                        className={`w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-blue-50 transition-colors ${
+                          timezone === tz ? 'text-blue-600 font-bold bg-blue-50/60' : 'text-slate-700'
+                        }`}
+                      >
+                        {tz}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
-      </section>
 
-      {/* 2. Matriz de Notificações por Canal */}
-      <section className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5 pb-3 border-b border-slate-100">
-          <div>
-            <h2 className="text-base font-bold text-[#0F172A] font-['Outfit']">
-              Matriz de Notificações × Canal
-            </h2>
-            <p className="text-xs text-slate-500">
-              Defina com precisão por onde cada tipo de notificação será entregue.
+        {/* ========================================================
+            COLUNA DIREITA: Tipos de notificações (Matriz com Checkboxes)
+           ======================================================== */}
+        <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs space-y-4">
+          <div className="pb-1">
+            <div className="flex items-center gap-2">
+              <span className="text-base">📯</span>
+              <h3 className="text-base font-bold text-[#0F172A] font-['Outfit']">
+                Tipos de notificações
+              </h3>
+            </div>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Ative ou desative os tipos de notificações que deseja receber.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={() => {
-              setMatrix((prev) =>
-                prev.map((row) => ({
-                  ...row,
-                  email: true,
-                  push: true,
-                  sms: row.id === 'alertas_criticos',
-                  mobile: true,
-                }))
-              );
-            }}
-            className="text-xs font-semibold text-blue-600 hover:underline self-start sm:self-auto cursor-pointer"
-          >
-            Restaurar recomendadas
-          </button>
-        </div>
 
-        {/* Tabela Responsiva */}
-        <div className="overflow-x-auto -mx-5 sm:mx-0">
-          <table className="w-full text-left border-collapse min-w-[640px]">
-            <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/50 text-[11px] uppercase tracking-wider text-slate-500">
-                <th className="py-3 px-4 font-bold">Tipo de Notificação</th>
-                <th className="py-3 px-3 text-center font-bold">E-mail</th>
-                <th className="py-3 px-3 text-center font-bold">Web Push</th>
-                <th className="py-3 px-3 text-center font-bold">SMS</th>
-                <th className="py-3 px-3 text-center font-bold">Mobile App</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 text-xs">
-              {matrix.map((row) => (
-                <tr key={row.id} className="hover:bg-slate-50/50 transition-colors">
-                  <td className="py-3.5 px-4 max-w-xs">
-                    <p className="font-semibold text-[#0F172A] leading-tight">
-                      {row.category}
-                    </p>
-                    <p className="text-[11px] text-slate-500 mt-0.5">
-                      {row.description}
-                    </p>
-                  </td>
-
-                  {/* E-mail cell */}
-                  <td className="py-3.5 px-3 text-center">
-                    <button
-                      type="button"
-                      disabled={!emailEnabled}
-                      onClick={() => toggleCell(row.id, 'email')}
-                      className={`w-6 h-6 rounded-md mx-auto flex items-center justify-center transition-all cursor-pointer ${
-                        !emailEnabled
-                          ? 'opacity-30 cursor-not-allowed bg-slate-100 text-slate-300'
-                          : row.email
-                          ? 'bg-[#2563EB] text-white shadow-2xs'
-                          : 'border border-slate-300 bg-white text-transparent hover:border-slate-400'
-                      }`}
-                    >
-                      <Check className="w-3.5 h-3.5 stroke-[3]" />
-                    </button>
-                  </td>
-
-                  {/* Web Push cell */}
-                  <td className="py-3.5 px-3 text-center">
-                    <button
-                      type="button"
-                      disabled={!pushEnabled}
-                      onClick={() => toggleCell(row.id, 'push')}
-                      className={`w-6 h-6 rounded-md mx-auto flex items-center justify-center transition-all cursor-pointer ${
-                        !pushEnabled
-                          ? 'opacity-30 cursor-not-allowed bg-slate-100 text-slate-300'
-                          : row.push
-                          ? 'bg-[#2563EB] text-white shadow-2xs'
-                          : 'border border-slate-300 bg-white text-transparent hover:border-slate-400'
-                      }`}
-                    >
-                      <Check className="w-3.5 h-3.5 stroke-[3]" />
-                    </button>
-                  </td>
-
-                  {/* SMS cell */}
-                  <td className="py-3.5 px-3 text-center">
-                    <button
-                      type="button"
-                      disabled={!smsEnabled}
-                      onClick={() => toggleCell(row.id, 'sms')}
-                      className={`w-6 h-6 rounded-md mx-auto flex items-center justify-center transition-all cursor-pointer ${
-                        !smsEnabled
-                          ? 'opacity-30 cursor-not-allowed bg-slate-100 text-slate-300'
-                          : row.sms
-                          ? 'bg-[#2563EB] text-white shadow-2xs'
-                          : 'border border-slate-300 bg-white text-transparent hover:border-slate-400'
-                      }`}
-                    >
-                      <Check className="w-3.5 h-3.5 stroke-[3]" />
-                    </button>
-                  </td>
-
-                  {/* Mobile App cell */}
-                  <td className="py-3.5 px-3 text-center">
-                    <button
-                      type="button"
-                      disabled={!mobileEnabled}
-                      onClick={() => toggleCell(row.id, 'mobile')}
-                      className={`w-6 h-6 rounded-md mx-auto flex items-center justify-center transition-all cursor-pointer ${
-                        !mobileEnabled
-                          ? 'opacity-30 cursor-not-allowed bg-slate-100 text-slate-300'
-                          : row.mobile
-                          ? 'bg-[#2563EB] text-white shadow-2xs'
-                          : 'border border-slate-300 bg-white text-transparent hover:border-slate-400'
-                      }`}
-                    >
-                      <Check className="w-3.5 h-3.5 stroke-[3]" />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      {/* 3. Horário de Silêncio & Pré-visualização Lado a Lado */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Horário de Silêncio (Não Incomodar) */}
-        <section className="lg:col-span-7 bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-            <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-                <Moon className="w-4 h-4" />
+          {/* Cabeçalho da Matriz: E-mail, Push, SMS, App */}
+          <div className="overflow-x-auto -mx-2 sm:mx-0">
+            <div className="min-w-[500px]">
+              <div className="grid grid-cols-12 gap-2 pb-2.5 border-b border-slate-100 text-[11px] font-bold text-slate-500">
+                <div className="col-span-6 pl-1"></div>
+                <div className="col-span-6 grid grid-cols-4 text-center">
+                  <span>E-mail</span>
+                  <span>Push</span>
+                  <span>SMS</span>
+                  <span>App</span>
+                </div>
               </div>
-              <div>
-                <h2 className="text-base font-bold text-[#0F172A] font-['Outfit']">
-                  Horário de Silêncio (Não Incomodar)
-                </h2>
-                <p className="text-xs text-slate-500">
-                  Suspender notificações automáticas e sons durante o período de descanso.
+
+              {/* Lista dos 7 Tipos com Checkboxes */}
+              <div className="divide-y divide-slate-100">
+                {notificationTypes.map((row) => (
+                  <div
+                    key={row.id}
+                    className="grid grid-cols-12 gap-2 py-3.5 items-center hover:bg-slate-50/60 rounded-xl px-1 transition-colors"
+                  >
+                    {/* Informações da Notificação */}
+                    <div className="col-span-6 flex items-center gap-3 min-w-0 pr-2">
+                      {row.icon}
+                      <div className="min-w-0">
+                        <h4 className="text-xs font-bold text-[#0F172A] truncate">
+                          {row.name}
+                        </h4>
+                        <p className="text-[11px] text-slate-400 truncate">
+                          {row.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Checkboxes das 4 Colunas */}
+                    <div className="col-span-6 grid grid-cols-4 items-center justify-items-center">
+                      {/* E-mail */}
+                      <button
+                        type="button"
+                        onClick={() => toggleNotificationChannel(row.id, 'email')}
+                        className={`w-5 h-5 rounded-md flex items-center justify-center transition-all cursor-pointer ${
+                          row.email
+                            ? 'bg-[#2563EB] text-white shadow-2xs'
+                            : 'border border-slate-300 bg-white hover:border-slate-400'
+                        }`}
+                        title="Alternar E-mail"
+                      >
+                        {row.email && <Check className="w-3.5 h-3.5 stroke-[2.5]" />}
+                      </button>
+
+                      {/* Push */}
+                      <button
+                        type="button"
+                        onClick={() => toggleNotificationChannel(row.id, 'push')}
+                        className={`w-5 h-5 rounded-md flex items-center justify-center transition-all cursor-pointer ${
+                          row.push
+                            ? 'bg-[#2563EB] text-white shadow-2xs'
+                            : 'border border-slate-300 bg-white hover:border-slate-400'
+                        }`}
+                        title="Alternar Push"
+                      >
+                        {row.push && <Check className="w-3.5 h-3.5 stroke-[2.5]" />}
+                      </button>
+
+                      {/* SMS */}
+                      <button
+                        type="button"
+                        onClick={() => toggleNotificationChannel(row.id, 'sms')}
+                        className={`w-5 h-5 rounded-md flex items-center justify-center transition-all cursor-pointer ${
+                          row.sms
+                            ? 'bg-[#2563EB] text-white shadow-2xs'
+                            : 'border border-slate-300 bg-white hover:border-slate-400'
+                        }`}
+                        title="Alternar SMS"
+                      >
+                        {row.sms && <Check className="w-3.5 h-3.5 stroke-[2.5]" />}
+                      </button>
+
+                      {/* App */}
+                      <button
+                        type="button"
+                        onClick={() => toggleNotificationChannel(row.id, 'app')}
+                        className={`w-5 h-5 rounded-md flex items-center justify-center transition-all cursor-pointer ${
+                          row.app
+                            ? 'bg-[#2563EB] text-white shadow-2xs'
+                            : 'border border-slate-300 bg-white hover:border-slate-400'
+                        }`}
+                        title="Alternar App"
+                      >
+                        {row.app && <Check className="w-3.5 h-3.5 stroke-[2.5]" />}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* GRID INFERIOR: RESUMO DAS SUAS PREFERÊNCIAS & PRÉ-VISUALIZAÇÃO */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* ========================================================
+            CARD 4: Resumo das suas preferências
+           ======================================================== */}
+        <div className="lg:col-span-6 bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs space-y-4">
+          <div>
+            <h3 className="text-base font-bold text-[#0F172A] font-['Outfit']">
+              Resumo das suas preferências
+            </h3>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Veja como suas notificações estão configuradas.
+            </p>
+          </div>
+
+          {/* 4 Mini Blocos de Status */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+            {/* E-mail */}
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
+                <Mail className="w-4.5 h-4.5" />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-xs font-bold text-[#0F172A] leading-tight">E-mail</h4>
+                <p className="text-[11px] text-emerald-600 font-semibold leading-tight mt-0.5">
+                  {emailEnabled ? 'Ativado' : 'Desativado'}
+                </p>
+                <p className="text-[10px] text-slate-400 leading-tight">principal</p>
+              </div>
+            </div>
+
+            {/* Push / Web */}
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
+                <Bell className="w-4.5 h-4.5" />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-xs font-bold text-[#0F172A] leading-tight">Push / Web</h4>
+                <p className="text-[11px] text-emerald-600 font-semibold leading-tight mt-0.5">
+                  {pushEnabled ? 'Ativado' : 'Desativado'}
+                </p>
+                <p className="text-[10px] text-slate-400 leading-tight">
+                  {quietHoursActive ? `silêncio: ${quietStart} - ${quietEnd}` : 'sem silêncio'}
                 </p>
               </div>
             </div>
 
-            <label className="relative inline-flex items-center cursor-pointer shrink-0">
-              <input
-                type="checkbox"
-                checked={quietHoursActive}
-                onChange={(e) => setQuietHoursActive(e.target.checked)}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#2563EB]" />
-            </label>
+            {/* SMS */}
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
+                <MessageSquare className="w-4.5 h-4.5" />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-xs font-bold text-[#0F172A] leading-tight">SMS</h4>
+                <p className={`text-[11px] font-medium leading-tight mt-0.5 ${smsEnabled ? 'text-emerald-600' : 'text-slate-400'}`}>
+                  {smsEnabled ? 'Ativado' : 'Desativado'}
+                </p>
+              </div>
+            </div>
+
+            {/* App Mobile */}
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-xl bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
+                <Smartphone className="w-4.5 h-4.5" />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-xs font-bold text-[#0F172A] leading-tight">App Mobile</h4>
+                <p className="text-[11px] text-emerald-600 font-semibold leading-tight mt-0.5">
+                  {mobileEnabled ? 'Ativado' : 'Desativado'}
+                </p>
+              </div>
+            </div>
           </div>
 
-          {quietHoursActive && (
-            <div className="space-y-4 animate-in fade-in duration-200 pt-1">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs font-semibold text-[#0F172A] mb-1.5 flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-slate-400" />
-                    Início do silêncio
-                  </label>
-                  <input
-                    type="time"
-                    value={quietStart}
-                    onChange={(e) => setQuietStart(e.target.value)}
-                    className="w-full bg-white text-xs sm:text-sm text-slate-800 px-3.5 py-2 rounded-xl border border-slate-200 focus:border-blue-600 outline-none"
-                  />
-                </div>
+          {/* Rodapé: Link "Gerir todos os canais →" */}
+          <div className="pt-2 flex justify-end">
+            <button
+              type="button"
+              onClick={() => showToast('Todos os canais estão sincronizados.')}
+              className="text-xs font-semibold text-[#2563EB] hover:text-blue-700 flex items-center gap-1 cursor-pointer"
+            >
+              <span>Gerir todos os canais</span>
+              <ChevronRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
 
-                <div>
-                  <label className="block text-xs font-semibold text-[#0F172A] mb-1.5 flex items-center gap-1.5">
-                    <Clock className="w-3.5 h-3.5 text-slate-400" />
-                    Fim do silêncio
-                  </label>
-                  <input
-                    type="time"
-                    value={quietEnd}
-                    onChange={(e) => setQuietEnd(e.target.value)}
-                    className="w-full bg-white text-xs sm:text-sm text-slate-800 px-3.5 py-2 rounded-xl border border-slate-200 focus:border-blue-600 outline-none"
-                  />
-                </div>
+        {/* ========================================================
+            CARD 5: Pré-visualização
+           ======================================================== */}
+        <div className="lg:col-span-6 bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs space-y-4">
+          <div>
+            <h3 className="text-base font-bold text-[#0F172A] font-['Outfit']">
+              Pré-visualização
+            </h3>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Exemplo de como as notificações serão exibidas.
+            </p>
+          </div>
+
+          {/* Card de Notificação VILA Simulada */}
+          <div
+            onClick={() => showToast('Notificação clicada: Conferência de Sustentabilidade')}
+            className="p-3.5 sm:p-4 rounded-2xl bg-slate-50/80 hover:bg-slate-50 border border-slate-100/90 flex items-center justify-between gap-3 transition-colors cursor-pointer group"
+          >
+            <div className="flex items-start gap-3 min-w-0">
+              <div className="w-8 h-8 rounded-full bg-white shadow-2xs border border-slate-100 flex items-center justify-center shrink-0 mt-0.5">
+                <VilaMiniLogo />
               </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-[#0F172A] mb-1.5 flex items-center gap-1.5">
-                  <Calendar className="w-3.5 h-3.5 text-slate-400" />
-                  Dias aplicáveis
-                </label>
-                <div className="flex gap-2">
-                  {[
-                    { id: 'todos', label: 'Todos os dias' },
-                    { id: 'semana', label: 'Dias úteis (Seg–Sex)' },
-                    { id: 'fimdesemana', label: 'Fins de semana' },
-                  ].map((d) => (
-                    <button
-                      key={d.id}
-                      type="button"
-                      onClick={() => setQuietDays(d.id as any)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                        quietDays === d.id
-                          ? 'bg-blue-50 text-blue-700 border border-blue-200'
-                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200/70 border border-transparent'
-                      }`}
-                    >
-                      {d.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+              <div className="min-w-0">
                 <div className="flex items-center gap-2">
-                  <AlertTriangle className="w-4 h-4 text-amber-500 shrink-0" />
-                  <span className="text-xs text-slate-700 font-medium">
-                    Permitir alertas de emergência humanitária crítica
-                  </span>
+                  <h4 className="text-xs font-bold text-[#0F172A]">VILA</h4>
                 </div>
-                <input
-                  type="checkbox"
-                  checked={allowEmergencies}
-                  onChange={(e) => setAllowEmergencies(e.target.checked)}
-                  className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 cursor-pointer"
-                />
+                <h5 className="text-xs font-bold text-[#0F172A] mt-0.5">
+                  Evento em breve
+                </h5>
+                <p className="text-[11px] text-slate-500 leading-relaxed mt-0.5 line-clamp-1">
+                  Conferência de Sustentabilidade começa amanhã às 10:00. Não perca!
+                </p>
               </div>
             </div>
-          )}
-        </section>
 
-        {/* Pré-visualização ao Vivo */}
-        <section className="lg:col-span-5 bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-            <div className="flex items-center gap-2">
-              <Eye className="w-4 h-4 text-blue-600" />
-              <h2 className="text-base font-bold text-[#0F172A] font-['Outfit']">
-                Pré-visualização do Aviso
-              </h2>
-            </div>
-            <div className="flex gap-1 bg-slate-100 p-1 rounded-xl">
-              <button
-                type="button"
-                onClick={() => setPreviewDevice('mobile')}
-                className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-                  previewDevice === 'mobile'
-                    ? 'bg-white text-slate-900 shadow-2xs'
-                    : 'text-slate-500 hover:text-slate-900'
-                }`}
-              >
-                Mobile
-              </button>
-              <button
-                type="button"
-                onClick={() => setPreviewDevice('desktop')}
-                className={`px-2.5 py-1 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
-                  previewDevice === 'desktop'
-                    ? 'bg-white text-slate-900 shadow-2xs'
-                    : 'text-slate-500 hover:text-slate-900'
-                }`}
-              >
-                Desktop
-              </button>
+            <div className="flex items-center gap-3 shrink-0">
+              <span className="text-[11px] text-slate-400 font-medium">há 2 min</span>
+              <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-700 transition-colors" />
             </div>
           </div>
-
-          {/* Render do Mock de Notificação */}
-          {previewDevice === 'mobile' ? (
-            <div className="p-4 rounded-2xl bg-slate-900 text-white shadow-md space-y-2 border border-slate-800">
-              <div className="flex items-center justify-between text-[11px] text-slate-400">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-4 h-4 rounded-full bg-blue-600 text-white flex items-center justify-center font-black text-[9px]">
-                    V
-                  </div>
-                  <span className="font-bold text-slate-200">VILA APP</span>
-                </div>
-                <span>agora mesmo</span>
-              </div>
-              <h4 className="text-xs font-bold text-white">
-                Novo Marco Alcançado no Algarve! 🌊
-              </h4>
-              <p className="text-[11px] text-slate-300 leading-relaxed">
-                O projeto "Ria Formosa Regenerativa" completou 100% da sua meta de limpeza costeira com 42 voluntários.
-              </p>
-              <div className="pt-2 flex gap-2">
-                <span className="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold cursor-pointer">
-                  Ver Projeto
-                </span>
-                <span className="px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300 text-[10px] font-medium cursor-pointer">
-                  Dispensar
-                </span>
-              </div>
-            </div>
-          ) : (
-            <div className="p-4 rounded-xl bg-white border border-slate-300 shadow-lg space-y-2 max-w-sm ml-auto">
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center shrink-0 font-black text-xs">
-                    VILA
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-[#0F172A]">
-                      Mensagem de Ana Silveira
-                    </h4>
-                    <p className="text-[11px] text-slate-600 line-clamp-2">
-                      "Olá Divan, atualizámos os indicadores da iniciativa de microcrédito comunitário."
-                    </p>
-                  </div>
-                </div>
-                <span className="text-[10px] text-slate-400 shrink-0">12:42</span>
-              </div>
-              <div className="text-[11px] text-blue-600 font-semibold text-right pt-1">
-                Responder na VILA →
-              </div>
-            </div>
-          )}
-
-          <p className="text-[11px] text-slate-400 text-center">
-            As notificações respeitam o idioma da interface ({previewDevice === 'mobile' ? 'iOS / Android' : 'Chrome / Safari'}).
-          </p>
-        </section>
+        </div>
       </div>
 
-      {/* Botão de Guardar */}
+      {/* BOTÃO FIXO / ALINHADO À DIREITA: Guardar alterações */}
       <div className="flex justify-end pt-2">
         <button
           type="button"
           onClick={handleSave}
-          className="px-6 py-2.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-sm transition-all cursor-pointer"
+          className="px-5 py-2.5 rounded-xl bg-[#0055FE] hover:bg-[#0042CC] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-sm flex items-center gap-2 transition-all cursor-pointer"
         >
-          Guardar preferências de avisos
+          <Check className="w-4 h-4 stroke-[2.5]" />
+          <span>Guardar alterações</span>
         </button>
       </div>
     </div>

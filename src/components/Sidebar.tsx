@@ -1,36 +1,42 @@
 import React, { useState, useRef, useEffect } from 'react';
 import {
+  Globe,
   Compass,
+  Film,
   Calendar,
   Users,
   Sparkles,
-  HeartHandshake,
+  Leaf,
   Heart,
   Info,
   Settings,
   ChevronDown,
   ArrowRight,
   Sun,
-  Globe,
+  Moon,
   X,
   Check,
-  BarChart3,
-  Newspaper,
-  Leaf,
-  Home,
-  HelpCircle,
-  Rocket,
-  Key
+  LogOut
 } from 'lucide-react';
 import { Logo } from './Logo';
 
-interface SidebarProps {
+export interface SidebarProps {
   currentTab: string;
+  settingsSubTab?: string;
   onSelectTab: (tabId: string) => void;
   onOpenAuth: (mode: 'login' | 'register') => void;
   onOpenImpactModal?: () => void;
   isMobileOpen?: boolean;
   onCloseMobile?: () => void;
+  isLoggedIn?: boolean;
+  onLogout?: () => void;
+}
+
+interface NavItem {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  badge?: string;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -40,6 +46,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenImpactModal,
   isMobileOpen = false,
   onCloseMobile,
+  isLoggedIn = false,
+  onLogout,
 }) => {
   const [isLightMode, setIsLightMode] = useState(true);
   const [selectedLang, setSelectedLang] = useState<'PT' | 'EN' | 'ES'>('PT');
@@ -57,64 +65,60 @@ export const Sidebar: React.FC<SidebarProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  interface NavItem {
-    id: string;
-    label: string;
-    icon: React.ReactNode;
-    badge?: string;
-  }
-
-  // Navigation items matching exact reference design from UI VILA SOBRE
+  // EXACT 10 Navigation items in the official required order:
+  // Início → Explorar o Mundo → Mundo em Movimento (badge "NOVO") → Eventos Globais →
+  // Comunidade Global → VILA AI → Impacto Global → Parceiros Globais → Sobre a VILA → Definições
   const navItems: NavItem[] = [
     {
       id: 'inicio',
       label: 'Início',
-      icon: <Home className="w-4 h-4" strokeWidth={2.2} />
+      icon: <Globe className="w-4 h-4" strokeWidth={2.2} />,
     },
     {
       id: 'explorar',
       label: 'Explorar o Mundo',
-      icon: <Compass className="w-4 h-4" strokeWidth={2.2} />
+      icon: <Compass className="w-4 h-4" strokeWidth={2.2} />,
     },
     {
-      id: 'noticias',
+      id: 'movimento',
       label: 'Mundo em Movimento',
-      icon: <Newspaper className="w-4 h-4" strokeWidth={2.2} />,
+      icon: <Film className="w-4 h-4" strokeWidth={2.2} />,
+      badge: 'NOVO',
     },
     {
       id: 'eventos',
       label: 'Eventos Globais',
-      icon: <Calendar className="w-4 h-4" strokeWidth={2.2} />
+      icon: <Calendar className="w-4 h-4" strokeWidth={2.2} />,
     },
     {
       id: 'comunidade',
       label: 'Comunidade Global',
-      icon: <Users className="w-4 h-4" strokeWidth={2.2} />
-    },
-    {
-      id: 'impacto',
-      label: 'Impacto Global',
-      icon: <Leaf className="w-4 h-4" strokeWidth={2.2} />
+      icon: <Users className="w-4 h-4" strokeWidth={2.2} />,
     },
     {
       id: 'ia',
       label: 'VILA AI',
-      icon: <Sparkles className="w-4 h-4 text-emerald-500" strokeWidth={2.2} />
+      icon: <Sparkles className="w-4 h-4" strokeWidth={2.2} />,
+    },
+    {
+      id: 'impacto',
+      label: 'Impacto Global',
+      icon: <Leaf className="w-4 h-4" strokeWidth={2.2} />,
     },
     {
       id: 'parceiros',
       label: 'Parceiros Globais',
-      icon: <Heart className="w-4 h-4" strokeWidth={2.2} />
+      icon: <Heart className="w-4 h-4" strokeWidth={2.2} />,
     },
     {
       id: 'sobre',
       label: 'Sobre a VILA',
-      icon: <Info className="w-4 h-4" strokeWidth={2.2} />
+      icon: <Info className="w-4 h-4" strokeWidth={2.2} />,
     },
     {
       id: 'definicoes',
       label: 'Definições',
-      icon: <Settings className="w-4 h-4" strokeWidth={2.2} />
+      icon: <Settings className="w-4 h-4" strokeWidth={2.2} />,
     },
   ];
 
@@ -128,10 +132,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
         />
       )}
 
-      {/* Main Sidebar Container - Fixed ~230px width, rendered cleanly on left */}
+      {/* Main Sidebar Container - Fixed ~230px width, shared across all pages */}
       <aside
         id="main-sidebar"
-        className={`fixed top-0 left-0 bottom-0 z-40 w-[230px] h-screen max-h-[100dvh] bg-white border-r border-slate-200/90 px-3 py-2 sm:py-2.5 flex flex-col justify-between select-none overflow-y-auto no-scrollbar transition-transform duration-300 ease-in-out shadow-xs ${
+        className={`fixed top-0 left-0 bottom-0 z-40 w-[230px] h-screen max-h-[100dvh] bg-white border-r border-slate-200/90 px-3 py-2.5 flex flex-col justify-between select-none overflow-y-auto no-scrollbar transition-transform duration-300 ease-in-out shadow-xs ${
           isMobileOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
         }`}
       >
@@ -150,21 +154,40 @@ export const Sidebar: React.FC<SidebarProps> = ({
           )}
         </div>
 
-        {/* 2. Menu de Navegação Completo (11 Itens com fundo verde #10B981 no ativo) */}
+        {/* 2. Menu de Navegação Completo: exatamente 10 itens na ordem oficial */}
         <nav
-          className="flex-1 min-h-0 overflow-y-auto no-scrollbar py-1.5 flex flex-col justify-evenly gap-0.5 pr-0.5"
+          className="flex-1 min-h-0 overflow-y-auto no-scrollbar py-2 flex flex-col justify-evenly gap-1 pr-0.5"
           aria-label="Navegação Principal"
           id="sidebar-nav-container"
         >
           {navItems.map((item) => {
             const isActive =
               currentTab === item.id ||
+              (item.id === 'inicio' && (currentTab === 'home' || currentTab === '')) ||
+              (item.id === 'movimento' &&
+                (currentTab === 'noticias' || currentTab === 'mundo-em-movimento')) ||
               (item.id === 'comunidade' &&
-                (currentTab === 'comunidade-global' || currentTab === 'ambiente' || currentTab === 'educacao' || currentTab === 'direitos-humanos' || currentTab === 'cultura' || currentTab === 'criar-comunidade' || currentTab === 'explorar-comunidade')) ||
+                (currentTab === 'comunidade-global' ||
+                  currentTab === 'ambiente' ||
+                  currentTab === 'educacao' ||
+                  currentTab === 'direitos-humanos' ||
+                  currentTab === 'cultura' ||
+                  currentTab === 'criar-comunidade' ||
+                  currentTab === 'explorar-comunidade')) ||
               (item.id === 'impacto' &&
-                (currentTab === 'impacto' || currentTab === 'impacto-global' || currentTab === 'saude' || currentTab === 'tecnologia')) ||
-              ((item.id === 'noticias' || item.id === 'movimento') &&
-                (currentTab === 'noticias' || currentTab === 'movimento' || currentTab === 'mundo-em-movimento'));
+                (currentTab === 'impacto-global' ||
+                  currentTab === 'saude' ||
+                  currentTab === 'tecnologia' ||
+                  currentTab === 'empreendedorismo')) ||
+              (item.id === 'sobre' && currentTab === 'sobre-a-vila') ||
+              (item.id === 'definicoes' &&
+                (currentTab === 'preferencias' ||
+                  currentTab === 'settings' ||
+                  currentTab === 'configuracoes' ||
+                  currentTab === 'privacidade' ||
+                  currentTab === 'seguranca' ||
+                  currentTab === 'contas' ||
+                  currentTab === 'integracoes'));
 
             return (
               <button
@@ -177,33 +200,30 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 }}
                 className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[12px] leading-tight transition-all duration-200 group cursor-pointer ${
                   isActive
-                    ? item.id === 'noticias' || item.id === 'movimento'
-                      ? 'bg-[#00A86B] text-white font-bold shadow-xs'
-                      : item.id === 'impacto'
-                      ? 'bg-[#064E3B] text-white font-bold shadow-xs'
-                      : item.id === 'comunidade'
-                      ? 'bg-gradient-to-r from-[#0055FE] via-[#0070E0] to-[#00B47D] text-white font-bold shadow-xs'
-                      : 'bg-gradient-to-r from-[#0055FE] to-[#0096C7] text-white font-bold shadow-xs'
-                    : 'text-[#122244] hover:bg-slate-50 font-bold'
+                    ? 'bg-gradient-to-r from-[#0055FE] to-[#0096C7] text-white font-bold shadow-xs'
+                    : 'text-[#122244] hover:bg-slate-50 hover:text-[#0055FE] font-medium'
                 }`}
                 aria-current={isActive ? 'page' : undefined}
               >
                 <div className="flex items-center gap-2 min-w-0">
                   <span
                     className={`shrink-0 transition-colors ${
-                      isActive ? 'text-white' : 'text-[#122244] group-hover:text-[#0055FE]'
+                      isActive
+                        ? 'text-white'
+                        : item.id === 'ia'
+                        ? 'text-emerald-500 group-hover:text-[#0055FE]'
+                        : 'text-[#122244] group-hover:text-[#0055FE]'
                     }`}
                   >
                     {item.icon}
                   </span>
                   <span className="truncate tracking-tight">{item.label}</span>
                 </div>
+
                 {item.badge && (
                   <span
                     className={`ml-1 px-1.5 py-0.5 rounded-full text-[8.5px] font-extrabold tracking-wider uppercase shrink-0 transition-colors ${
-                      item.id === 'noticias' || item.id === 'movimento'
-                        ? 'bg-[#0055FE] text-white'
-                        : isActive
+                      isActive
                         ? 'bg-white/25 text-white'
                         : 'bg-[#D1FAE5] text-[#047857] border border-[#A7F3D0]'
                     }`}
@@ -216,139 +236,115 @@ export const Sidebar: React.FC<SidebarProps> = ({
           })}
         </nav>
 
-        {/* 3. Bloco Inferior Fixo: Card do Globo + Seletor de Idioma + Tema + Autenticação */}
+        {/* 3. Bloco Inferior Fixo: Card Promocional + Idioma + Tema + Autenticação */}
         <div
           id="sidebar-bottom-fixed-container"
           className="shrink-0 pt-2 border-t border-slate-100/90 flex flex-col gap-2.5 bg-white"
         >
-          {/* 1. Card Contextual: Segurança no Definições ou Globo Terrestre Geral */}
-          {currentTab === 'definicoes' ? (
-            <div
-              id="sidebar-security-card"
-              className="p-3 rounded-2xl bg-gradient-to-b from-[#F0F7FF] to-[#E5F0FF] border border-blue-100/90 text-left shadow-2xs space-y-1.5"
-            >
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-xl bg-[#2563EB] text-white flex items-center justify-center shrink-0 shadow-xs">
-                  <Key className="w-3.5 h-3.5" />
-                </div>
-                <h4 className="text-[11.5px] font-bold text-[#0F172A] font-['Outfit'] leading-tight">
-                  Acesso seguro à sua conta.
-                </h4>
-              </div>
-              <p className="text-[10.5px] text-slate-500 leading-snug">
-                Gerencie como inicia sessão e quem pode aceder à sua conta na VILA.
-              </p>
+          {/* Card Promocional Fixo (sempre idêntico em todas as páginas) */}
+          <div
+            id="sidebar-promo-card"
+            className="p-3 rounded-2xl bg-gradient-to-b from-[#F4F8FD] to-[#EDF4FD] border border-blue-100/70 relative overflow-hidden flex flex-col items-center text-center shadow-2xs"
+          >
+            {/* 3D Earth Globe Graphic com nós e malha de constelação */}
+            <div className="relative w-11 h-11 mb-1.5 flex items-center justify-center">
+              <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xs">
+                <defs>
+                  {/* Outer atmospheric radial glow */}
+                  <radialGradient id="promo-atmos-glow" cx="50%" cy="50%" r="50%">
+                    <stop offset="60%" stopColor="#3B82F6" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#2563EB" stopOpacity="0" />
+                  </radialGradient>
+
+                  {/* 3D Sphere Lighting Gradient */}
+                  <radialGradient id="promo-sphere-lighting" cx="35%" cy="30%" r="70%">
+                    <stop offset="0%" stopColor="#FFFFFF" />
+                    <stop offset="45%" stopColor="#E2E8F0" />
+                    <stop offset="80%" stopColor="#CBD5E1" />
+                    <stop offset="100%" stopColor="#94A3B8" />
+                  </radialGradient>
+
+                  {/* Ocean & Continent gradients */}
+                  <linearGradient id="promo-continent-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#3B82F6" />
+                    <stop offset="100%" stopColor="#1D4ED8" />
+                  </linearGradient>
+                  <linearGradient id="promo-continent-green" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#34D399" />
+                    <stop offset="100%" stopColor="#059669" />
+                  </linearGradient>
+                </defs>
+
+                {/* Atmospheric Glow */}
+                <circle cx="50" cy="50" r="48" fill="url(#promo-atmos-glow)" />
+
+                {/* Earth Sphere Base */}
+                <circle cx="50" cy="50" r="36" fill="url(#promo-sphere-lighting)" stroke="#E2E8F0" strokeWidth="0.8" />
+
+                {/* Curved Latitude/Longitude Wireframe */}
+                <ellipse cx="50" cy="50" rx="36" ry="12" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.4" />
+                <ellipse cx="50" cy="50" rx="14" ry="36" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.4" />
+                <path d="M14 50 Q 50 68 86 50" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.3" />
+                <path d="M14 50 Q 50 32 86 50" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.3" />
+
+                {/* Landmass Continents */}
+                <path
+                  d="M44 26 C47 24 53 25 55 28 C56 31 52 34 50 36 C49 40 52 45 54 50 C55 56 50 63 46 68 C42 67 40 60 41 54 C42 48 39 42 41 36 C41 30 42 27 44 26 Z"
+                  fill="url(#promo-continent-blue)"
+                />
+                <path
+                  d="M26 25 C29 23 33 26 31 31 C29 34 26 36 28 41 C29 44 32 47 30 53 C28 58 25 64 23 62 C21 57 23 50 22 44 C21 37 22 28 26 25 Z"
+                  fill="url(#promo-continent-green)"
+                  opacity="0.9"
+                />
+                <path
+                  d="M59 23 C66 22 74 26 76 32 C78 38 72 44 69 47 C66 49 63 44 60 40 C58 36 56 32 57 26 Z"
+                  fill="url(#promo-continent-blue)"
+                />
+                <path
+                  d="M66 54 C72 52 76 56 75 62 C72 65 67 64 65 60 C64 57 65 55 66 54 Z"
+                  fill="url(#promo-continent-green)"
+                />
+
+                {/* Constellation Connecting Lines */}
+                <path d="M28 32 Q 40 22 50 30" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.8" />
+                <path d="M50 30 Q 62 24 70 34" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.8" />
+                <path d="M50 30 Q 54 44 53 48" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.8" />
+                <path d="M28 32 Q 24 48 30 52" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.6" />
+                <path d="M70 34 Q 74 48 66 54" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.6" />
+
+                {/* Nodes */}
+                <circle cx="48" cy="30" r="3" fill="#2563EB" stroke="#FFFFFF" strokeWidth="1" />
+                <circle cx="53" cy="48" r="2.8" fill="#10B981" stroke="#FFFFFF" strokeWidth="1" />
+                <circle cx="70" cy="34" r="2.4" fill="#2563EB" stroke="#FFFFFF" strokeWidth="1" />
+                <circle cx="28" cy="32" r="2.4" fill="#10B981" stroke="#FFFFFF" strokeWidth="1" />
+                <circle cx="46" cy="62" r="2" fill="#2563EB" stroke="#FFFFFF" strokeWidth="0.8" />
+                <circle cx="66" cy="54" r="2" fill="#F59E0B" stroke="#FFFFFF" strokeWidth="0.8" />
+              </svg>
             </div>
-          ) : (
-            <div
-              id="sidebar-promo-card"
-              className="p-3 rounded-2xl bg-gradient-to-b from-[#F4F8FD] to-[#EDF4FD] border border-blue-100/60 relative overflow-hidden flex flex-col items-center text-center shadow-2xs"
-            >
-              {/* 3D Earth Globe Graphic Proportional & Centered */}
-              <div className="relative w-11 h-11 mb-1.5 flex items-center justify-center">
-                <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xs">
-                  <defs>
-                    {/* Outer atmospheric radial glow */}
-                    <radialGradient id="promo-atmos-glow" cx="50%" cy="50%" r="50%">
-                      <stop offset="60%" stopColor="#3B82F6" stopOpacity="0.25" />
-                      <stop offset="100%" stopColor="#2563EB" stopOpacity="0" />
-                    </radialGradient>
 
-                    {/* 3D Sphere Lighting Gradient */}
-                    <radialGradient id="promo-sphere-lighting" cx="35%" cy="30%" r="70%">
-                      <stop offset="0%" stopColor="#FFFFFF" />
-                      <stop offset="45%" stopColor="#E2E8F0" />
-                      <stop offset="80%" stopColor="#CBD5E1" />
-                      <stop offset="100%" stopColor="#94A3B8" />
-                    </radialGradient>
+            <h4 className="text-[12px] font-bold text-[#0F172A] leading-tight font-['Outfit']">
+              Juntos, construímos um mundo melhor.
+            </h4>
 
-                    {/* Ocean & Continent gradients */}
-                    <linearGradient id="promo-continent-blue" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#3B82F6" />
-                      <stop offset="100%" stopColor="#1D4ED8" />
-                    </linearGradient>
-                    <linearGradient id="promo-continent-green" x1="0%" y1="0%" x2="100%" y2="100%">
-                      <stop offset="0%" stopColor="#34D399" />
-                      <stop offset="100%" stopColor="#059669" />
-                    </linearGradient>
-                  </defs>
-
-                  {/* Atmospheric Glow */}
-                  <circle cx="50" cy="50" r="48" fill="url(#promo-atmos-glow)" />
-
-                  {/* Earth Sphere Base */}
-                  <circle cx="50" cy="50" r="36" fill="url(#promo-sphere-lighting)" stroke="#E2E8F0" strokeWidth="0.8" />
-
-                  {/* Curved Latitude/Longitude Wireframe */}
-                  <ellipse cx="50" cy="50" rx="36" ry="12" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.4" />
-                  <ellipse cx="50" cy="50" rx="14" ry="36" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.4" />
-                  <path d="M14 50 Q 50 68 86 50" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.3" />
-                  <path d="M14 50 Q 50 32 86 50" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.3" />
-
-                  {/* Realistic Landmass Continents */}
-                  {/* Europe & Africa */}
-                  <path
-                    d="M44 26 C47 24 53 25 55 28 C56 31 52 34 50 36 C49 40 52 45 54 50 C55 56 50 63 46 68 C42 67 40 60 41 54 C42 48 39 42 41 36 C41 30 42 27 44 26 Z"
-                    fill="url(#promo-continent-blue)"
-                  />
-                  {/* Americas */}
-                  <path
-                    d="M26 25 C29 23 33 26 31 31 C29 34 26 36 28 41 C29 44 32 47 30 53 C28 58 25 64 23 62 C21 57 23 50 22 44 C21 37 22 28 26 25 Z"
-                    fill="url(#promo-continent-green)"
-                    opacity="0.9"
-                  />
-                  {/* Asia & Pacific */}
-                  <path
-                    d="M59 23 C66 22 74 26 76 32 C78 38 72 44 69 47 C66 49 63 44 60 40 C58 36 56 32 57 26 Z"
-                    fill="url(#promo-continent-blue)"
-                  />
-                  <path
-                    d="M66 54 C72 52 76 56 75 62 C72 65 67 64 65 60 C64 57 65 55 66 54 Z"
-                    fill="url(#promo-continent-green)"
-                  />
-
-                  {/* Constellation Connecting Mesh Lines */}
-                  <path d="M28 32 Q 40 22 50 30" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.8" />
-                  <path d="M50 30 Q 62 24 70 34" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.8" />
-                  <path d="M50 30 Q 54 44 53 48" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.8" />
-                  <path d="M28 32 Q 24 48 30 52" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.6" />
-                  <path d="M70 34 Q 74 48 66 54" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.6" />
-
-                  {/* Multi-colored Active Global Signal Nodes */}
-                  <circle cx="48" cy="30" r="3" fill="#2563EB" stroke="#FFFFFF" strokeWidth="1" />
-                  <circle cx="53" cy="48" r="2.8" fill="#10B981" stroke="#FFFFFF" strokeWidth="1" />
-                  <circle cx="70" cy="34" r="2.4" fill="#2563EB" stroke="#FFFFFF" strokeWidth="1" />
-                  <circle cx="28" cy="32" r="2.4" fill="#10B981" stroke="#FFFFFF" strokeWidth="1" />
-                  <circle cx="46" cy="62" r="2" fill="#2563EB" stroke="#FFFFFF" strokeWidth="0.8" />
-                  <circle cx="66" cy="54" r="2" fill="#F59E0B" stroke="#FFFFFF" strokeWidth="0.8" />
-
-                  {/* Orbit Satellite Sparks */}
-                  <circle cx="16" cy="38" r="1.4" fill="#10B981" />
-                  <circle cx="84" cy="44" r="1.4" fill="#2563EB" />
-                  <circle cx="48" cy="14" r="1.4" fill="#3B82F6" />
-                  <circle cx="68" cy="74" r="1.2" fill="#F59E0B" />
-                </svg>
-              </div>
-
-              <p className="text-[11.5px] font-bold text-[#1E293B] leading-[1.3] font-['Outfit']">
-                Juntos, construímos um mundo melhor.
-              </p>
-
-              <button
-                type="button"
-                onClick={() => {
+            <button
+              type="button"
+              onClick={() => {
+                if (onOpenImpactModal) {
+                  onOpenImpactModal();
+                } else {
                   onSelectTab('impacto');
-                  if (onCloseMobile) onCloseMobile();
-                }}
-                className="mt-2 w-full inline-flex items-center justify-center gap-1.5 py-1 px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-[11px] font-bold text-[#0055FE] hover:text-[#0042CC] shadow-2xs transition-colors cursor-pointer group/impact"
-              >
-                <span>Ver impacto global</span>
-                <ArrowRight className="w-3 h-3 transform group-hover/impact:translate-x-0.5 transition-transform" />
-              </button>
-            </div>
-          )}
+                }
+                if (onCloseMobile) onCloseMobile();
+              }}
+              className="mt-1.5 text-[11px] font-bold text-[#0055FE] hover:text-[#0042CC] inline-flex items-center justify-center gap-1 cursor-pointer hover:underline transition-colors"
+            >
+              <span>Ver impacto global</span>
+              <ArrowRight className="w-3 h-3" />
+            </button>
+          </div>
 
-          {/* 2. Seletor de Idioma Retrátil Estilizado */}
+          {/* Seletor de Idioma Dropdown Compacto (PT/EN/ES com Bandeiras) */}
           <div className="relative w-full" ref={langDropdownRef}>
             <button
               type="button"
@@ -360,7 +356,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
             >
               <div className="flex items-center gap-2">
                 <Globe className="w-3.5 h-3.5 text-slate-500" strokeWidth={2.2} />
-                <span className="font-bold text-slate-700">{selectedLang}</span>
+                <span className="font-bold text-slate-700">
+                  {selectedLang === 'PT' && 'PT'}
+                  {selectedLang === 'EN' && 'EN'}
+                  {selectedLang === 'ES' && 'ES'}
+                </span>
               </div>
               <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isLangOpen ? 'rotate-180' : ''}`} />
             </button>
@@ -375,43 +375,47 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   role="menuitem"
                   onClick={() => { setSelectedLang('PT'); setIsLangOpen(false); }}
                   className={`w-full text-left px-3 py-1.5 text-xs font-bold rounded-lg flex items-center justify-between transition-colors cursor-pointer ${
-                    selectedLang === 'PT' ? 'text-[#2563EB] bg-blue-50' : 'text-slate-700 hover:bg-slate-50'
+                    selectedLang === 'PT' ? 'text-[#0055FE] bg-blue-50' : 'text-slate-700 hover:bg-slate-50'
                   }`}
                 >
                   <span className="flex items-center gap-2"><span>🇵🇹</span> Português</span>
-                  {selectedLang === 'PT' && <Check className="w-3.5 h-3.5 text-[#2563EB]" />}
+                  {selectedLang === 'PT' && <Check className="w-3.5 h-3.5 text-[#0055FE]" />}
                 </button>
                 <button
                   type="button"
                   role="menuitem"
                   onClick={() => { setSelectedLang('EN'); setIsLangOpen(false); }}
                   className={`w-full text-left px-3 py-1.5 text-xs font-bold rounded-lg flex items-center justify-between transition-colors cursor-pointer ${
-                    selectedLang === 'EN' ? 'text-[#2563EB] bg-blue-50' : 'text-slate-700 hover:bg-slate-50'
+                    selectedLang === 'EN' ? 'text-[#0055FE] bg-blue-50' : 'text-slate-700 hover:bg-slate-50'
                   }`}
                 >
                   <span className="flex items-center gap-2"><span>🇬🇧</span> English</span>
-                  {selectedLang === 'EN' && <Check className="w-3.5 h-3.5 text-[#2563EB]" />}
+                  {selectedLang === 'EN' && <Check className="w-3.5 h-3.5 text-[#0055FE]" />}
                 </button>
                 <button
                   type="button"
                   role="menuitem"
                   onClick={() => { setSelectedLang('ES'); setIsLangOpen(false); }}
                   className={`w-full text-left px-3 py-1.5 text-xs font-bold rounded-lg flex items-center justify-between transition-colors cursor-pointer ${
-                    selectedLang === 'ES' ? 'text-[#2563EB] bg-blue-50' : 'text-slate-700 hover:bg-slate-50'
+                    selectedLang === 'ES' ? 'text-[#0055FE] bg-blue-50' : 'text-slate-700 hover:bg-slate-50'
                   }`}
                 >
                   <span className="flex items-center gap-2"><span>🇪🇸</span> Español</span>
-                  {selectedLang === 'ES' && <Check className="w-3.5 h-3.5 text-[#2563EB]" />}
+                  {selectedLang === 'ES' && <Check className="w-3.5 h-3.5 text-[#0055FE]" />}
                 </button>
               </div>
             )}
           </div>
 
-          {/* 3. Controle de Tema (Tema Claro + Toggle Switch iOS) */}
+          {/* Toggle de Tema Claro / Escuro */}
           <div className="flex items-center justify-between w-full text-[12px] font-bold text-slate-700 px-1">
             <span className="flex items-center gap-1.5 text-slate-700">
-              <Sun className="w-3.5 h-3.5 text-slate-600" strokeWidth={2.2} />
-              Tema Claro
+              {isLightMode ? (
+                <Sun className="w-3.5 h-3.5 text-slate-600" strokeWidth={2.2} />
+              ) : (
+                <Moon className="w-3.5 h-3.5 text-slate-600" strokeWidth={2.2} />
+              )}
+              {isLightMode ? 'Tema Claro' : 'Tema Escuro'}
             </span>
             <button
               type="button"
@@ -420,11 +424,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               onClick={() => setIsLightMode(!isLightMode)}
               id="theme-toggle-switch"
               className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                isLightMode
-                  ? currentTab === 'impacto'
-                    ? 'bg-[#064E3B]'
-                    : 'bg-[#1D63FF]'
-                  : 'bg-slate-300'
+                isLightMode ? 'bg-[#0055FE]' : 'bg-slate-300'
               }`}
             >
               <span
@@ -435,31 +435,43 @@ export const Sidebar: React.FC<SidebarProps> = ({
             </button>
           </div>
 
-          {/* 4. Botões "Entrar" e "Criar Conta" */}
-          <div className="grid grid-cols-2 gap-2 w-full pt-0.5">
+          {/* Área de Autenticação: Condicional Logado vs. Deslogado */}
+          {isLoggedIn ? (
+            /* Estado Logado: Sair da plataforma */
             <button
               type="button"
-              id="sidebar-btn-login"
-              onClick={() => onOpenAuth('login')}
-              className="bg-white border border-slate-200/90 shadow-2xs rounded-xl py-1.5 px-2 text-[11.5px] font-bold text-slate-800 hover:bg-slate-50 text-center transition-colors cursor-pointer"
+              id="sidebar-btn-logout"
+              onClick={() => onLogout?.()}
+              className="w-full flex items-center justify-center gap-2 bg-white border border-slate-200/90 hover:border-rose-200 hover:bg-rose-50/70 text-slate-700 hover:text-rose-600 font-bold rounded-xl py-2 px-3 text-[11.5px] shadow-2xs transition-colors cursor-pointer"
             >
-              Entrar
+              <LogOut className="w-3.5 h-3.5" />
+              <span>Sair da plataforma</span>
             </button>
-            <button
-              type="button"
-              id="sidebar-btn-register"
-              onClick={() => onOpenAuth('register')}
-              className={`${
-                currentTab === 'impacto'
-                  ? 'bg-[#064E3B] hover:bg-[#053d2e]'
-                  : 'bg-[#0055FE] hover:bg-[#0040CC]'
-              } text-white font-bold rounded-xl py-1.5 px-2 text-[11.5px] shadow-2xs text-center transition-all cursor-pointer`}
-            >
-              Criar Conta
-            </button>
-          </div>
+          ) : (
+            /* Estado Deslogado: Botões Entrar (outline) e Criar Conta (azul sólido) */
+            <div className="grid grid-cols-2 gap-2 w-full pt-0.5">
+              <button
+                type="button"
+                id="sidebar-btn-login"
+                onClick={() => onOpenAuth('login')}
+                className="bg-white border border-slate-200/90 shadow-2xs rounded-xl py-2 px-2.5 text-[11.5px] font-bold text-slate-800 hover:bg-slate-50 text-center transition-colors cursor-pointer"
+              >
+                Entrar
+              </button>
+              <button
+                type="button"
+                id="sidebar-btn-register"
+                onClick={() => onOpenAuth('register')}
+                className="bg-[#0055FE] hover:bg-[#0040CC] text-white font-bold rounded-xl py-2 px-2.5 text-[11.5px] shadow-2xs text-center transition-all cursor-pointer"
+              >
+                Criar Conta
+              </button>
+            </div>
+          )}
         </div>
       </aside>
     </>
   );
 };
+
+export default Sidebar;

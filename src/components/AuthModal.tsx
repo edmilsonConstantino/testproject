@@ -6,9 +6,10 @@ interface AuthModalProps {
   isOpen: boolean;
   initialMode: 'login' | 'register';
   onClose: () => void;
+  onLoginSuccess?: () => void;
 }
 
-export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, initialMode, onClose }) => {
+export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, initialMode, onClose, onLoginSuccess }) => {
   const [mode, setMode] = useState<'login' | 'register'>(initialMode);
   const [submitted, setSubmitted] = useState(false);
 
@@ -19,6 +20,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, initialMode, onClo
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
+      onLoginSuccess?.();
       onClose();
     }, 1200);
   };

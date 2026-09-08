@@ -2,390 +2,1008 @@ import React, { useState } from 'react';
 import {
   Link2,
   CheckCircle2,
-  Clock,
-  Zap,
+  ChevronRight,
+  ShieldCheck,
+  MoreVertical,
+  Lock,
+  ExternalLink,
+  ArrowRight,
   RefreshCw,
   Search,
-  ExternalLink,
-  Activity,
-  Layers,
-  ArrowRight,
-  ShieldCheck,
   Check,
+  X,
+  Sliders,
+  Sparkles,
+  Plug,
+  Repeat,
+  AlertCircle,
+  HelpCircle,
 } from 'lucide-react';
 
-interface IntegrationTool {
+interface ActiveIntegration {
   id: string;
   name: string;
-  category: 'Comunicação' | 'Financeiro' | 'Marketing' | 'Produtividade' | 'Automação';
   description: string;
-  status: 'Conectado' | 'Disponível';
-  icon: string;
-  lastSync?: string;
-  actionsCount?: string;
+  category: string;
+  connectedAt: string;
+  lastSync: string;
+  logo: React.ReactNode;
+}
+
+interface AvailableIntegration {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  logo: React.ReactNode;
+}
+
+interface AutomationRule {
+  id: string;
+  title: string;
+  status: 'Ativa' | 'Pausada';
+  updatedAt: string;
+  serviceIcon: React.ReactNode;
+}
+
+interface SyncLog {
+  id: string;
+  service: string;
+  status: string;
+  timeAgo: string;
 }
 
 export const IntegrationsTab: React.FC = () => {
-  const [filterCategory, setFilterCategory] = useState<string>('Todas');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [activeSearch, setActiveSearch] = useState('');
+  const [selectedIntegration, setSelectedIntegration] = useState<ActiveIntegration | null>(null);
+  const [isManageModalOpen, setIsManageModalOpen] = useState(false);
+  const [isHistoryModalOpen, setIsHistoryModalOpen] = useState(false);
+  const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  const [tools, setTools] = useState<IntegrationTool[]>([
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3500);
+  };
+
+  // 1. Logos vetorizados exatos de alta fidelidade
+  const GoogleLogo = () => (
+    <svg className="w-5 h-5" viewBox="0 0 24 24">
+      <path
+        fill="#4285F4"
+        d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"
+      />
+      <path
+        fill="#34A853"
+        d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.16 0 9.94 0 12s.45 3.84 1.25 5.42l4.03-3.15z"
+      />
+      <path
+        fill="#EA4335"
+        d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+      />
+    </svg>
+  );
+
+  const MicrosoftLogo = () => (
+    <svg className="w-5 h-5" viewBox="0 0 24 24">
+      <rect x="2" y="2" width="9.5" height="9.5" fill="#F25022" rx="1" />
+      <rect x="12.5" y="2" width="9.5" height="9.5" fill="#7FBA00" rx="1" />
+      <rect x="2" y="12.5" width="9.5" height="9.5" fill="#00A4EF" rx="1" />
+      <rect x="12.5" y="12.5" width="9.5" height="9.5" fill="#FFB900" rx="1" />
+    </svg>
+  );
+
+  const SlackLogo = () => (
+    <svg className="w-5 h-5" viewBox="0 0 24 24">
+      <path fill="#E01E5A" d="M5.04 14.5a2.5 2.5 0 1 0 2.5 2.5v-2.5zm0-1.5h2.5a2.5 2.5 0 0 0 0-5h-2.5z" />
+      <path fill="#36C5F0" d="M9.5 5.04a2.5 2.5 0 1 0-2.5 2.5h2.5zm1.5 0v2.5a2.5 2.5 0 0 0 5 0v-2.5z" />
+      <path fill="#2EB67D" d="M18.96 9.5a2.5 2.5 0 1 0-2.5-2.5v2.5zm0 1.5h-2.5a2.5 2.5 0 0 0 0 5h2.5z" />
+      <path fill="#ECB22E" d="M14.5 18.96a2.5 2.5 0 1 0 2.5-2.5h-2.5zm-1.5 0v-2.5a2.5 2.5 0 0 0-5 0v2.5z" />
+    </svg>
+  );
+
+  const WhatsAppLogo = () => (
+    <svg className="w-5 h-5" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="11" fill="#25D366" />
+      <path
+        fill="#FFFFFF"
+        d="M17.5 14.3c-.3-.15-1.7-.84-1.96-.94-.26-.1-.45-.15-.64.15-.19.3-.74.94-.91 1.13-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.4-1.48-.89-.79-1.49-1.77-1.66-2.07-.17-.3-.02-.46.13-.61.14-.14.3-.34.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.64-1.55-.88-2.12-.23-.56-.47-.48-.64-.49h-.55c-.19 0-.5.07-.76.35-.26.29-1 1-1 2.43s1.02 2.82 1.16 3.01c.15.2 2.01 3.07 4.88 4.31.68.29 1.21.47 1.63.6.69.22 1.32.19 1.81.12.55-.08 1.7-.7 1.94-1.37.24-.67.24-1.25.17-1.37-.07-.12-.26-.2-.56-.35z"
+      />
+    </svg>
+  );
+
+  const StripeLogo = () => (
+    <svg className="w-5 h-5" viewBox="0 0 24 24">
+      <rect width="24" height="24" rx="6" fill="#635BFF" />
+      <path
+        fill="#FFFFFF"
+        d="M13.9 10.4c0-.7-.6-1.1-1.6-1.1-1.5 0-3.3.5-4.7 1.3V7.2c1.6-.7 3.3-1 4.9-1 3.9 0 6.3 1.9 6.3 5.1 0 5-6.8 4.2-6.8 6.4 0 .9.8 1.2 1.9 1.2 1.7 0 3.8-.7 5.3-1.6v3.4c-1.7.8-3.7 1.2-5.5 1.2-4.1 0-6.7-2-6.7-5.2 0-5.3 7-4.4 7-6.3z"
+      />
+    </svg>
+  );
+
+  const MailchimpLogo = () => (
+    <svg className="w-5 h-5" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="11" fill="#FFE01B" />
+      <path
+        fill="#000000"
+        d="M12 4C7.58 4 4 7.58 4 12c0 2.22.9 4.22 2.36 5.67l.15.15C7.96 19.1 9.87 20 12 20c4.42 0 8-3.58 8-8s-3.58-8-8-8zm-1.5 6a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm4 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm-2.5 6c-2.33 0-4.31-1.46-5.11-3.5h10.22c-.8 2.04-2.78 3.5-5.11 3.5z"
+      />
+    </svg>
+  );
+
+  const ZoomLogo = () => (
+    <svg className="w-5 h-5" viewBox="0 0 24 24">
+      <rect width="24" height="24" rx="6" fill="#2D8CFF" />
+      <path
+        fill="#FFFFFF"
+        d="M5 8.5C5 7.67 5.67 7 6.5 7h7c.83 0 1.5.67 1.5 1.5v7c0 .83-.67 1.5-1.5 1.5h-7C5.67 17 5 16.33 5 15.5v-7zm11.5 2.2l3.4-2.3c.4-.3 1.1 0 1.1.6v6c0 .6-.7.9-1.1.6l-3.4-2.3v-2.6z"
+      />
+    </svg>
+  );
+
+  const HubSpotLogo = () => (
+    <svg className="w-5 h-5" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="11" fill="#FF7A59" />
+      <path
+        fill="#FFFFFF"
+        d="M12 7.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zm-4.5 9a2 2 0 1 0 0-4 2 2 0 0 0 0 4zm9 0a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"
+      />
+    </svg>
+  );
+
+  const TrelloLogo = () => (
+    <svg className="w-5 h-5" viewBox="0 0 24 24">
+      <rect width="24" height="24" rx="5" fill="#0079BF" />
+      <rect x="5" y="5" width="5.5" height="12" rx="1.5" fill="#FFFFFF" />
+      <rect x="13.5" y="5" width="5.5" height="8" rx="1.5" fill="#FFFFFF" />
+    </svg>
+  );
+
+  const DropboxLogo = () => (
+    <svg className="w-5 h-5" viewBox="0 0 24 24">
+      <path
+        fill="#0061FF"
+        d="M6 3.5l6 4-6 4-6-4 6-4zm12 0l6 4-6 4-6-4 6-4zM0 15.5l6-4 6 4-6 4-6-4zm24 0l-6-4-6 4 6 4 6-4zM6 17l6 4 6-4-6-4-6 4z"
+      />
+    </svg>
+  );
+
+  const SalesforceLogo = () => (
+    <svg className="w-5 h-5" viewBox="0 0 24 24">
+      <path
+        fill="#00A1E0"
+        d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"
+      />
+    </svg>
+  );
+
+  const ZapierLogo = () => (
+    <svg className="w-5 h-5" viewBox="0 0 24 24">
+      <rect width="24" height="24" rx="5" fill="#FF4F00" />
+      <path
+        fill="#FFFFFF"
+        d="M12 4v16m-8-8h16m-13.66 5.66l11.32-11.32m0 11.32L5.66 6.34"
+        stroke="#FFFFFF"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+
+  const GmailLogo = () => (
+    <svg className="w-5 h-5" viewBox="0 0 24 24">
+      <path
+        fill="#4285F4"
+        d="M22 6.5V18a2 2 0 0 1-2 2h-2V9.5l-6 4.5-6-4.5V20H4a2 2 0 0 1-2-2V6.5l10 7.5 10-7.5z"
+      />
+      <path fill="#EA4335" d="M20 4H4a2 2 0 0 0-2 2v.5l10 7.5 10-7.5V6a2 2 0 0 0-2-2z" />
+    </svg>
+  );
+
+  const CalendarLogo = () => (
+    <svg className="w-5 h-5" viewBox="0 0 24 24">
+      <rect width="24" height="24" rx="5" fill="#1A73E8" />
+      <rect x="5" y="4" width="14" height="3" rx="1.5" fill="#FFFFFF" />
+      <text
+        x="12"
+        y="18"
+        fill="#FFFFFF"
+        fontSize="10"
+        fontWeight="bold"
+        textAnchor="middle"
+        fontFamily="sans-serif"
+      >
+        31
+      </text>
+    </svg>
+  );
+
+  // 2. Estado das 7 Integrações Ativas exatamente como no mockup
+  const [activeIntegrations, setActiveIntegrations] = useState<ActiveIntegration[]>([
+    {
+      id: 'google-workspace',
+      name: 'Google Workspace',
+      description: 'E-mails, Drive, Agenda e Contatos',
+      category: 'Produtividade',
+      connectedAt: '12 de Janeiro de 2026',
+      lastSync: 'Agora há pouco',
+      logo: <GoogleLogo />,
+    },
+    {
+      id: 'microsoft-365',
+      name: 'Microsoft 365',
+      description: 'Outlook, OneDrive, Teams e mais',
+      category: 'Produtividade',
+      connectedAt: '15 de Fevereiro de 2026',
+      lastSync: '5 min atrás',
+      logo: <MicrosoftLogo />,
+    },
     {
       id: 'slack',
       name: 'Slack',
+      description: 'Comunicação e notificações',
       category: 'Comunicação',
-      description: 'Envie notificações automáticas de novas doações e projetos para canais dedicados da equipa.',
-      status: 'Conectado',
-      icon: '💬',
-      lastSync: 'Há 4 minutos',
-      actionsCount: '340 mensagens enviadas',
+      connectedAt: '03 de Março de 2026',
+      lastSync: '12 min atrás',
+      logo: <SlackLogo />,
+    },
+    {
+      id: 'whatsapp-business',
+      name: 'WhatsApp Business',
+      description: 'Mensagens e atendimento',
+      category: 'Comunicação',
+      connectedAt: '20 de Março de 2026',
+      lastSync: '30 min atrás',
+      logo: <WhatsAppLogo />,
     },
     {
       id: 'stripe',
       name: 'Stripe',
+      description: 'Pagamentos e faturamento',
       category: 'Financeiro',
-      description: 'Processamento global de doações por cartão, Apple Pay e emissão automática de recibos fiscais.',
-      status: 'Conectado',
-      icon: '💳',
-      lastSync: 'Em tempo real (Webhook)',
-      actionsCount: '€14.280 processados',
+      connectedAt: '05 de Janeiro de 2026',
+      lastSync: '1 hora atrás',
+      logo: <StripeLogo />,
     },
     {
       id: 'mailchimp',
       name: 'Mailchimp',
+      description: 'Marketing e automações',
       category: 'Marketing',
-      description: 'Sincronização de voluntários e doadores em audiências segmentadas para envio de newsletters.',
-      status: 'Conectado',
-      icon: '🐵',
-      lastSync: 'Hoje às 04:00',
-      actionsCount: '1.240 contactos sincronizados',
+      connectedAt: '18 de Fevereiro de 2026',
+      lastSync: 'Hoje, 04:00',
+      logo: <MailchimpLogo />,
     },
     {
       id: 'zoom',
-      name: 'Zoom Video',
+      name: 'Zoom',
+      description: 'Reuniões e webinars',
       category: 'Comunicação',
-      description: 'Criação automática de salas de videoconferência para assembleias comunitárias e webinars.',
-      status: 'Conectado',
-      icon: '📹',
+      connectedAt: '22 de Março de 2026',
       lastSync: 'Ontem',
-      actionsCount: '12 reuniões agendadas',
+      logo: <ZoomLogo />,
     },
-    {
-      id: 'google-workspace',
-      name: 'Google Workspace',
-      category: 'Produtividade',
-      description: 'Sincronize relatórios de impacto no Google Drive e eventos no Google Calendar comunitário.',
-      status: 'Disponível',
-      icon: '📁',
-    },
-    {
-      id: 'microsoft-365',
-      name: 'Microsoft 365 / Teams',
-      category: 'Produtividade',
-      description: 'Integração corporativa com Microsoft Teams para alertas de governança e OneDrive.',
-      status: 'Disponível',
-      icon: '🏢',
-    },
+  ]);
+
+  // 3. Estado das 5 Integrações Disponíveis como no mockup
+  const [availableIntegrations, setAvailableIntegrations] = useState<AvailableIntegration[]>([
     {
       id: 'hubspot',
-      name: 'HubSpot CRM',
+      name: 'HubSpot',
+      description: 'CRM, marketing e automação de vendas',
       category: 'Marketing',
-      description: 'Gestão de relacionamento institucional com grandes doadores, fundações e parceiros corporativos.',
-      status: 'Disponível',
-      icon: '🟧',
+      logo: <HubSpotLogo />,
     },
     {
       id: 'trello',
       name: 'Trello',
+      description: 'Gestão de projetos e tarefas',
       category: 'Produtividade',
-      description: 'Crie cartões de tarefas automáticas quando novos voluntários aderirem a uma iniciativa.',
-      status: 'Disponível',
-      icon: '📋',
+      logo: <TrelloLogo />,
     },
     {
       id: 'dropbox',
       name: 'Dropbox',
+      description: 'Armazenamento e compartilhamento de arquivos',
       category: 'Produtividade',
-      description: 'Armazenamento em nuvem para arquivos fotográficos de evidência de campo e auditorias.',
-      status: 'Disponível',
-      icon: '📦',
+      logo: <DropboxLogo />,
     },
     {
       id: 'salesforce',
-      name: 'Salesforce Non-Profit',
-      category: 'Marketing',
-      description: 'Pacote de sucesso para ONGs (NPSP) para acompanhamento aprofundado de donativos.',
-      status: 'Disponível',
-      icon: '☁️',
+      name: 'Salesforce',
+      description: 'CRM e gestão de relacionamento',
+      category: 'CRM',
+      logo: <SalesforceLogo />,
     },
     {
       id: 'zapier',
       name: 'Zapier',
+      description: 'Automatize fluxos entre apps',
       category: 'Automação',
-      description: 'Conecte a API da VILA com mais de 5.000 aplicações com fluxos no-code customizáveis.',
-      status: 'Disponível',
-      icon: '⚡',
+      logo: <ZapierLogo />,
     },
   ]);
 
-  const toggleConnection = (toolId: string) => {
-    setTools((prev) =>
-      prev.map((t) =>
-        t.id === toolId
-          ? {
-              ...t,
-              status: t.status === 'Conectado' ? 'Disponível' : 'Conectado',
-              lastSync: t.status === 'Conectado' ? undefined : 'Agora mesmo',
-            }
-          : t
-      )
-    );
+  // 4. Automatizações Recentes
+  const [automations, setAutomations] = useState<AutomationRule[]>([
+    {
+      id: 'auto-1',
+      title: 'Salvar anexos do Gmail no Google Drive',
+      status: 'Ativa',
+      updatedAt: 'Atualizado há 2h',
+      serviceIcon: <GmailLogo />,
+    },
+    {
+      id: 'auto-2',
+      title: 'Enviar notificações do VILA para o Slack',
+      status: 'Ativa',
+      updatedAt: 'Atualizado há 1d',
+      serviceIcon: <SlackLogo />,
+    },
+    {
+      id: 'auto-3',
+      title: 'Criar evento no Google Agenda',
+      status: 'Ativa',
+      updatedAt: 'Atualizado há 3d',
+      serviceIcon: <CalendarLogo />,
+    },
+  ]);
+
+  // 5. Logs de Sincronização
+  const syncLogs: SyncLog[] = [
+    {
+      id: 'sync-1',
+      service: 'Google Workspace',
+      status: 'Sincronizado com sucesso',
+      timeAgo: 'Agora há pouco',
+    },
+    {
+      id: 'sync-2',
+      service: 'Microsoft 365',
+      status: 'Sincronizado com sucesso',
+      timeAgo: '5 min atrás',
+    },
+    {
+      id: 'sync-3',
+      service: 'Slack',
+      status: 'Sincronizado com sucesso',
+      timeAgo: '12 min atrás',
+    },
+    {
+      id: 'sync-4',
+      service: 'Stripe Webhooks',
+      status: 'Sincronizado com sucesso',
+      timeAgo: '1 hora atrás',
+    },
+  ];
+
+  // Ação para conectar nova ferramenta
+  const handleConnectAvailable = (tool: AvailableIntegration) => {
+    // Transfere para ativas
+    setAvailableIntegrations((prev) => prev.filter((i) => i.id !== tool.id));
+    setActiveIntegrations((prev) => [
+      ...prev,
+      {
+        id: tool.id,
+        name: tool.name,
+        description: tool.description,
+        category: tool.category,
+        connectedAt: 'Hoje',
+        lastSync: 'Agora há pouco',
+        logo: tool.logo,
+      },
+    ]);
+    showToast(`${tool.name} foi conectado com sucesso à sua conta VILA!`);
   };
 
-  const connectedCount = tools.filter((t) => t.status === 'Conectado').length;
-  const availableCount = tools.filter((t) => t.status === 'Disponível').length;
+  // Ação para desconectar
+  const handleDisconnect = (toolId: string) => {
+    const item = activeIntegrations.find((i) => i.id === toolId);
+    if (!item) return;
 
-  const filteredTools = tools.filter((tool) => {
-    const matchesCategory =
-      filterCategory === 'Todas' || tool.category === filterCategory;
-    const matchesSearch =
-      tool.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      tool.description.toLowerCase().includes(searchTerm.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+    setActiveIntegrations((prev) => prev.filter((i) => i.id !== toolId));
+    setAvailableIntegrations((prev) => [
+      ...prev,
+      {
+        id: item.id,
+        name: item.name,
+        description: item.description,
+        category: item.category,
+        logo: item.logo,
+      },
+    ]);
+    setSelectedIntegration(null);
+    setIsManageModalOpen(false);
+    showToast(`${item.name} foi desconectado.`);
+  };
 
   return (
-    <div className="w-full space-y-6">
-      {/* 1. Métricas Gerais das Ferramentas de Produtividade */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-sm">
-            {connectedCount}
+    <div className="w-full space-y-6 pb-6">
+      {/* Toast de Notificação */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 bg-[#0F172A] text-white px-4 py-3 rounded-2xl shadow-xl flex items-center gap-3 border border-slate-700 animate-in fade-in slide-in-from-bottom-2 duration-200">
+          <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+          <span className="text-xs font-medium">{toastMessage}</span>
+          <button
+            type="button"
+            onClick={() => setToastMessage(null)}
+            className="text-slate-400 hover:text-white ml-2 cursor-pointer"
+          >
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
+
+      {/* 1. SEÇÃO: VISÃO GERAL (4 CARDS DE MÉTRICAS EXATOS) */}
+      <section className="space-y-3">
+        <h2 className="text-xs font-bold text-[#0F172A] uppercase tracking-wider">
+          Visão geral
+        </h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {/* Card 1: 7 Integrações ativas */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-4.5 shadow-2xs flex items-center gap-3.5 transition-all hover:border-blue-200">
+            <div className="w-11 h-11 rounded-full bg-[#EFF6FF] text-[#2563EB] flex items-center justify-center shrink-0">
+              <Link2 className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-[#0F172A] font-['Outfit'] leading-none mb-1">
+                {activeIntegrations.length}
+              </div>
+              <h3 className="text-xs font-bold text-[#0F172A]">Integrações ativas</h3>
+              <p className="text-[11px] text-slate-400">Conectadas e funcionando</p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-xs font-bold text-[#0F172A]">Ativas</h3>
-            <p className="text-[11px] text-slate-500">Ferramentas sincronizadas</p>
+
+          {/* Card 2: 3 Disponíveis para conectar */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-4.5 shadow-2xs flex items-center gap-3.5 transition-all hover:border-emerald-200">
+            <div className="w-11 h-11 rounded-full bg-[#ECFDF5] text-[#10B981] flex items-center justify-center shrink-0">
+              <Plug className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-[#0F172A] font-['Outfit'] leading-none mb-1">
+                {availableIntegrations.length}
+              </div>
+              <h3 className="text-xs font-bold text-[#0F172A]">Disponíveis para conectar</h3>
+              <p className="text-[11px] text-slate-400">Encontre novas integrações</p>
+            </div>
+          </div>
+
+          {/* Card 3: 12 Automatizações */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-4.5 shadow-2xs flex items-center gap-3.5 transition-all hover:border-indigo-200">
+            <div className="w-11 h-11 rounded-full bg-[#EEF2FF] text-[#6366F1] flex items-center justify-center shrink-0">
+              <Repeat className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-[#0F172A] font-['Outfit'] leading-none mb-1">
+                12
+              </div>
+              <h3 className="text-xs font-bold text-[#0F172A]">Automatizações</h3>
+              <p className="text-[11px] text-slate-400">Regras e fluxos ativos</p>
+            </div>
+          </div>
+
+          {/* Card 4: 100% Segurança garantida */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-4.5 shadow-2xs flex items-center gap-3.5 transition-all hover:border-amber-200">
+            <div className="w-11 h-11 rounded-full bg-[#FFFBEB] text-[#F59E0B] flex items-center justify-center shrink-0">
+              <ShieldCheck className="w-5 h-5" />
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-[#0F172A] font-['Outfit'] leading-none mb-1">
+                100%
+              </div>
+              <h3 className="text-xs font-bold text-[#0F172A]">Segurança garantida</h3>
+              <p className="text-[11px] text-slate-400">Dados protegidos</p>
+            </div>
           </div>
         </div>
+      </section>
 
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm">
-            {availableCount}
-          </div>
-          <div>
-            <h3 className="text-xs font-bold text-[#0F172A]">Disponíveis</h3>
-            <p className="text-[11px] text-slate-500">Prontas para conectar</p>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm">
-            1.420
-          </div>
-          <div>
-            <h3 className="text-xs font-bold text-[#0F172A]">Automações</h3>
-            <p className="text-[11px] text-slate-500">Executadas este mês</p>
-          </div>
-        </div>
-
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-sm">
-            99.8%
-          </div>
-          <div>
-            <h3 className="text-xs font-bold text-[#0F172A]">Uptime Sinc</h3>
-            <p className="text-[11px] text-slate-500">Taxa de sucesso</p>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. Catálogo de Ferramentas de Produtividade */}
-      <section className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs space-y-5">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-          <div>
-            <h2 className="text-base font-bold text-[#0F172A] font-['Outfit']">
-              Catálogo de Ferramentas de Produtividade & Workflow
-            </h2>
-            <p className="text-xs text-slate-500">
-              Conecte ferramentas de trabalho externas para automatizar processos e sincronizar dados com a VILA.
-            </p>
-          </div>
-
-          {/* Busca e Filtro */}
-          <div className="flex flex-col sm:flex-row items-center gap-2.5">
-            <div className="relative w-full sm:w-56">
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Filtrar ferramentas..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-50 text-xs text-slate-800 pl-8 pr-3 py-1.5 rounded-xl border border-slate-200 focus:border-blue-600 outline-none"
-              />
+      {/* 2. GRID PRINCIPAL DE 2 COLUNAS IDÊNTICO AO MOCKUP */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        {/* ========================================================
+            COLUNA ESQUERDA: Integrações ativas + Logs de sincronização
+           ======================================================== */}
+        <div className="space-y-6">
+          {/* CARD A: Integrações ativas (7 itens) */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs space-y-4">
+            <div className="flex items-center justify-between gap-2 pb-1">
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-[#0F172A] font-['Outfit']">
+                  Integrações ativas
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Serviços conectados à sua conta VILA.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsManageModalOpen(true)}
+                className="text-xs font-medium text-[#2563EB] hover:underline flex items-center gap-1 cursor-pointer shrink-0"
+              >
+                <span>Gerenciar todas</span>
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
             </div>
 
-            <div className="flex gap-1 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0">
-              {['Todas', 'Comunicação', 'Financeiro', 'Marketing', 'Produtividade', 'Automação'].map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setFilterCategory(cat)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors cursor-pointer ${
-                    filterCategory === cat
-                      ? 'bg-[#2563EB] text-white'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200/70'
-                  }`}
+            {/* Lista dos 7 itens conectados */}
+            <div className="divide-y divide-slate-100">
+              {activeIntegrations.map((item) => (
+                <div
+                  key={item.id}
+                  onClick={() => {
+                    setSelectedIntegration(item);
+                    setIsManageModalOpen(true);
+                  }}
+                  className="py-3 sm:py-3.5 flex items-center justify-between gap-3 hover:bg-slate-50/70 rounded-xl px-2.5 -mx-2.5 transition-colors cursor-pointer group"
                 >
-                  {cat}
-                </button>
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-2xs">
+                      {item.logo}
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="text-xs font-bold text-[#0F172A] truncate">
+                        {item.name}
+                      </h4>
+                      <p className="text-[11px] text-slate-400 truncate">
+                        {item.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="text-[10.5px] font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200/60">
+                      Conectado
+                    </span>
+                    <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-slate-700 transition-colors" />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Rodapé: Link Ver todas as integrações ativas */}
+            <div className="pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setIsManageModalOpen(true)}
+                className="text-xs font-bold text-[#2563EB] hover:text-blue-700 flex items-center gap-1.5 cursor-pointer"
+              >
+                <span>Ver todas as integrações ativas</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          </div>
+
+          {/* CARD B: Logs de sincronização (Abaixo de Integrações ativas) */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs space-y-4">
+            <div className="flex items-center justify-between gap-2 pb-1">
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-[#0F172A] font-['Outfit']">
+                  Logs de sincronização
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Acompanhe o status das sincronizações.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsHistoryModalOpen(true)}
+                className="text-xs font-medium text-[#2563EB] hover:underline cursor-pointer shrink-0"
+              >
+                Ver histórico
+              </button>
+            </div>
+
+            <div className="divide-y divide-slate-100">
+              {syncLogs.slice(0, 2).map((log) => (
+                <div
+                  key={log.id}
+                  onClick={() => setIsHistoryModalOpen(true)}
+                  className="py-3 flex items-center justify-between gap-3 hover:bg-slate-50/70 rounded-xl px-2 -mx-2 transition-colors cursor-pointer group"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="w-6 h-6 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center shrink-0">
+                      <Check className="w-3.5 h-3.5 stroke-[2.5]" />
+                    </div>
+                    <div>
+                      <h4 className="text-xs font-bold text-[#0F172A]">
+                        {log.service}
+                      </h4>
+                      <p className="text-[11px] text-slate-400">
+                        {log.status}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1 text-[11px] text-slate-500 font-medium group-hover:text-blue-600 transition-colors">
+                    <span>{log.timeAgo}</span>
+                    <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-blue-600" />
+                  </div>
+                </div>
               ))}
             </div>
           </div>
         </div>
 
-        {/* Grid de Ferramentas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredTools.map((tool) => {
-            const isConnected = tool.status === 'Conectado';
-            return (
-              <div
-                key={tool.id}
-                className={`p-4 rounded-xl border transition-all flex flex-col justify-between ${
-                  isConnected
-                    ? 'border-blue-200 bg-blue-50/20 shadow-2xs'
-                    : 'border-slate-200 hover:border-slate-300 bg-white'
-                }`}
+        {/* ========================================================
+            COLUNA DIREITA: Integrações disponíveis + Automatizações recentes + Banner de Segurança
+           ======================================================== */}
+        <div className="space-y-6">
+          {/* CARD C: Integrações disponíveis (5 itens) */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs space-y-4">
+            <div className="flex items-center justify-between gap-2 pb-1">
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-[#0F172A] font-['Outfit']">
+                  Integrações disponíveis
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Descubra novas ferramentas para conectar.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => showToast('Exibindo catálogo completo de integrações disponíveis.')}
+                className="text-xs font-medium text-[#2563EB] hover:underline cursor-pointer shrink-0"
               >
-                <div>
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <div className="flex items-center gap-2.5">
-                      <span className="text-2xl">{tool.icon}</span>
-                      <div>
-                        <h3 className="text-xs font-bold text-[#0F172A]">{tool.name}</h3>
-                        <span className="text-[10px] text-slate-400 font-medium">{tool.category}</span>
-                      </div>
+                Ver todas
+              </button>
+            </div>
+
+            <div className="divide-y divide-slate-100">
+              {availableIntegrations.map((tool) => (
+                <div
+                  key={tool.id}
+                  className="py-3 sm:py-3.5 flex items-center justify-between gap-3 hover:bg-slate-50/70 rounded-xl px-2.5 -mx-2.5 transition-colors"
+                >
+                  <div className="flex items-center gap-3.5 min-w-0">
+                    <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 shadow-2xs">
+                      {tool.logo}
                     </div>
-                    <span
-                      className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                        isConnected
-                          ? 'bg-emerald-100 text-emerald-800'
-                          : 'bg-slate-100 text-slate-600'
-                      }`}
-                    >
-                      {tool.status}
-                    </span>
+                    <div className="min-w-0">
+                      <h4 className="text-xs font-bold text-[#0F172A] truncate">
+                        {tool.name}
+                      </h4>
+                      <p className="text-[11px] text-slate-400 truncate">
+                        {tool.description}
+                      </p>
+                    </div>
                   </div>
 
-                  <p className="text-[11px] text-slate-500 leading-relaxed line-clamp-3">
-                    {tool.description}
-                  </p>
-
-                  {tool.lastSync && (
-                    <div className="mt-3 pt-2 border-t border-slate-100/80 text-[10px] text-slate-400 space-y-0.5">
-                      <div className="flex items-center gap-1">
-                        <RefreshCw className="w-3 h-3 text-blue-500" />
-                        <span>Sinc: {tool.lastSync}</span>
-                      </div>
-                      {tool.actionsCount && (
-                        <p className="text-slate-600 font-semibold">{tool.actionsCount}</p>
-                      )}
-                    </div>
-                  )}
-                </div>
-
-                <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
                   <button
                     type="button"
-                    onClick={() => toggleConnection(tool.id)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                      isConnected
-                        ? 'border border-red-200 text-red-600 hover:bg-red-50'
-                        : 'bg-[#2563EB] text-white hover:bg-blue-700'
-                    }`}
+                    onClick={() => handleConnectAvailable(tool)}
+                    className="shrink-0 px-3.5 py-1 rounded-lg border border-[#2563EB] text-[#2563EB] hover:bg-blue-50 text-xs font-semibold transition-colors cursor-pointer"
                   >
-                    {isConnected ? 'Desconectar' : 'Conectar'}
+                    Conectar
                   </button>
+                </div>
+              ))}
+            </div>
+          </div>
 
-                  {isConnected && (
+          {/* CARD D: Automatizações recentes (3 itens) */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs space-y-4">
+            <div className="flex items-center justify-between gap-2 pb-1">
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-[#0F172A] font-['Outfit']">
+                  Automatizações recentes
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Fluxos e regras que você criou.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => showToast('Painel de fluxos e regras ativas.')}
+                className="text-xs font-medium text-[#2563EB] hover:underline cursor-pointer shrink-0"
+              >
+                Ver todas
+              </button>
+            </div>
+
+            <div className="divide-y divide-slate-100">
+              {automations.map((rule) => (
+                <div
+                  key={rule.id}
+                  className="py-3 flex items-center justify-between gap-3 hover:bg-slate-50/70 rounded-xl px-2 -mx-2 transition-colors"
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-8 h-8 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 shadow-2xs">
+                      {rule.serviceIcon}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h4 className="text-xs font-bold text-[#0F172A] truncate">
+                          {rule.title}
+                        </h4>
+                        <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60 shrink-0">
+                          {rule.status}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 mt-0.5">
+                        {rule.updatedAt}
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => showToast(`Opções de automação para: ${rule.title}`)}
+                    className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
+                    title="Mais opções"
+                  >
+                    <MoreVertical className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* CARD E: Banner de Segurança Inferior */}
+          <div className="bg-[#F0F7FF] rounded-2xl border border-blue-100/90 p-4 sm:p-4.5 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="w-9 h-9 rounded-xl bg-blue-100 text-[#2563EB] flex items-center justify-center shrink-0">
+                <Lock className="w-4.5 h-4.5" />
+              </div>
+              <div className="min-w-0">
+                <h4 className="text-xs font-bold text-[#0F172A]">
+                  A segurança dos seus dados é nossa prioridade.
+                </h4>
+                <p className="text-[11px] text-slate-500">
+                  Usamos criptografia de ponta a ponta e seguimos os mais altos padrões de segurança.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsSecurityModalOpen(true)}
+              className="px-3.5 py-1.5 bg-white border border-blue-200 text-xs font-semibold text-[#2563EB] hover:bg-blue-50 rounded-xl transition-colors shrink-0 flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+            >
+              <span>Saiba mais</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* ========================================================
+          MODAL INTERATIVO: GERENCIAR INTEGRAÇÃO ESPECÍFICA / TODAS
+         ======================================================== */}
+      {isManageModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-5 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-3">
+                {selectedIntegration ? (
+                  <>
+                    <div className="w-9 h-9 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center">
+                      {selectedIntegration.logo}
+                    </div>
+                    <div>
+                      <h3 className="text-base font-bold text-[#0F172A] font-['Outfit']">
+                        {selectedIntegration.name}
+                      </h3>
+                      <p className="text-xs text-slate-400">
+                        {selectedIntegration.category} • Conectado
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <div>
+                    <h3 className="text-base font-bold text-[#0F172A] font-['Outfit']">
+                      Gerenciar Todas as Integrações Ativas
+                    </h3>
+                    <p className="text-xs text-slate-400">
+                      {activeIntegrations.length} serviços integrados à VILA
+                    </p>
+                  </div>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsManageModalOpen(false);
+                  setSelectedIntegration(null);
+                }}
+                className="p-1.5 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {selectedIntegration ? (
+              <div className="space-y-4">
+                <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-100 space-y-2 text-xs">
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-500">Status de Sincronização:</span>
+                    <span className="font-bold text-emerald-600 flex items-center gap-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" /> Ativo e Operacional
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-500">Última Sincronização:</span>
+                    <span className="font-medium text-slate-800">{selectedIntegration.lastSync}</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-500">Data de Vinculação:</span>
+                    <span className="font-medium text-slate-800">{selectedIntegration.connectedAt}</span>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <h4 className="text-xs font-bold text-[#0F172A]">Permissões concedidas:</h4>
+                  <ul className="text-xs text-slate-600 space-y-1.5 pl-4 list-disc">
+                    <li>Leitura e escrita de eventos autorizados pela organização</li>
+                    <li>Sincronização de webhooks de status de mensagens e alertas</li>
+                    <li>Acesso a relatórios de auditoria e logs seguros</li>
+                  </ul>
+                </div>
+
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
+                  <button
+                    type="button"
+                    onClick={() => handleDisconnect(selectedIntegration.id)}
+                    className="px-4 py-2 rounded-xl text-xs font-bold text-red-600 hover:bg-red-50 border border-red-200 transition-colors cursor-pointer"
+                  >
+                    Desconectar integração
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      showToast(`Sincronização manual com ${selectedIntegration.name} iniciada.`);
+                      setIsManageModalOpen(false);
+                      setSelectedIntegration(null);
+                    }}
+                    className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#2563EB] hover:bg-blue-700 transition-colors cursor-pointer flex items-center gap-1.5"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    Sincronizar agora
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-3 max-h-80 overflow-y-auto pr-1">
+                {activeIntegrations.map((item) => (
+                  <div
+                    key={item.id}
+                    className="p-3 rounded-xl border border-slate-100 bg-slate-50/50 flex items-center justify-between gap-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center shrink-0">
+                        {item.logo}
+                      </div>
+                      <div>
+                        <h4 className="text-xs font-bold text-[#0F172A]">{item.name}</h4>
+                        <p className="text-[11px] text-slate-400">{item.description}</p>
+                      </div>
+                    </div>
+
                     <button
                       type="button"
-                      onClick={() => alert(`Configurações de integração com ${tool.name}`)}
-                      className="text-xs font-semibold text-slate-500 hover:text-slate-800 cursor-pointer"
+                      onClick={() => handleDisconnect(item.id)}
+                      className="text-xs font-semibold text-red-600 hover:underline cursor-pointer shrink-0"
                     >
-                      Configurar →
+                      Desconectar
                     </button>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* 3. Feed de Logs de Sincronização Recente */}
-      <section className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
-          <div className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-emerald-600" />
-            <h2 className="text-base font-bold text-[#0F172A] font-['Outfit']">
-              Registo Recente de Automações
-            </h2>
-          </div>
-          <span className="text-[11px] text-slate-500">Últimas 24 horas</span>
-        </div>
-
-        <div className="space-y-2.5 text-xs">
-          {[
-            {
-              time: 'Há 4 min',
-              icon: '💬',
-              tool: 'Slack',
-              text: 'Alerta enviado para #impacto-algarve sobre 12 novas subscrições de voluntariado.',
-              status: 'Sucesso',
-            },
-            {
-              time: 'Há 28 min',
-              icon: '💳',
-              tool: 'Stripe',
-              text: 'Donativo recorrente de €50 recebido com sucesso de membro de Coimbra.',
-              status: 'Sucesso',
-            },
-            {
-              time: 'Hoje, 04:00',
-              icon: '🐵',
-              tool: 'Mailchimp',
-              text: 'Lista sincronizada: 14 novos membros adicionados à audiência "Clima & Oceanos".',
-              status: 'Sucesso',
-            },
-            {
-              time: 'Ontem, 18:30',
-              icon: '📹',
-              tool: 'Zoom',
-              text: 'Reunião de alinhamento com líderes regionais gerada com link único.',
-              status: 'Sucesso',
-            },
-          ].map((log, i) => (
-            <div
-              key={i}
-              className="p-3 rounded-xl bg-slate-50 flex items-center justify-between gap-3"
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-base">{log.icon}</span>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-[#0F172A]">{log.tool}</span>
-                    <span className="text-[10px] text-slate-400">• {log.time}</span>
                   </div>
-                  <p className="text-[11px] text-slate-600 mt-0.5">{log.text}</p>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================
+          MODAL INTERATIVO: HISTÓRICO COMPLETO DE LOGS
+         ======================================================== */}
+      {isHistoryModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-md w-full p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <div>
+                <h3 className="text-base font-bold text-[#0F172A] font-['Outfit']">
+                  Histórico de Sincronizações
+                </h3>
+                <p className="text-xs text-slate-400">
+                  Registos recentes de sincronização de dados
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsHistoryModalOpen(false)}
+                className="p-1.5 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="divide-y divide-slate-100">
+              {syncLogs.map((log) => (
+                <div key={log.id} className="py-3 flex items-center justify-between gap-3 text-xs">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 stroke-[2.5]" />
+                    </div>
+                    <div>
+                      <p className="font-bold text-[#0F172A]">{log.service}</p>
+                      <p className="text-[11px] text-slate-400">{log.status}</p>
+                    </div>
+                  </div>
+                  <span className="text-[11px] text-slate-500 font-medium">{log.timeAgo}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-2 border-t border-slate-100 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setIsHistoryModalOpen(false)}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 cursor-pointer"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================
+          MODAL INTERATIVO: SEGURANÇA E PRIVACIDADE DE DADOS
+         ======================================================== */}
+      {isSecurityModalOpen && (
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-xl bg-blue-100 text-[#2563EB] flex items-center justify-center">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-[#0F172A] font-['Outfit']">
+                    Padrões de Segurança VILA
+                  </h3>
+                  <p className="text-xs text-slate-400">Proteção de ponta a ponta</p>
                 </div>
               </div>
-              <span className="text-[10px] font-bold text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded-full shrink-0">
-                {log.status}
-              </span>
+              <button
+                type="button"
+                onClick={() => setIsSecurityModalOpen(false)}
+                className="p-1.5 rounded-full text-slate-400 hover:text-slate-600 hover:bg-slate-100 cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
-          ))}
+
+            <div className="space-y-3 text-xs text-slate-600">
+              <p>
+                A plataforma VILA opera sob os mais rigorosos protocolos de proteção de dados (RGPD e SOC 2 Type II). Todas as credenciais de terceiros são armazenadas com cifras AES-256 e transmitidas exclusivamente através de túneis TLS 1.3.
+              </p>
+              <div className="p-3 bg-blue-50/60 rounded-xl border border-blue-100 space-y-1">
+                <h5 className="font-bold text-[#0F172A]">Chaves criptográficas isoladas</h5>
+                <p className="text-[11px] text-slate-500">
+                  Os tokens de acesso OAuth concedidos às ferramentas conectadas nunca expõem senhas mestras e podem ser revogados a qualquer instante.
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-2 border-t border-slate-100 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setIsSecurityModalOpen(false)}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-white bg-[#2563EB] hover:bg-blue-700 cursor-pointer"
+              >
+                Entendido
+              </button>
+            </div>
+          </div>
         </div>
-      </section>
+      )}
     </div>
   );
 };

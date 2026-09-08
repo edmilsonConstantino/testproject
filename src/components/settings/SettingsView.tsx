@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   Users,
   Link2,
+  Clock,
   Info,
   Menu,
   Sparkles,
@@ -31,7 +32,7 @@ interface SettingsViewProps {
 }
 
 export const SettingsView: React.FC<SettingsViewProps> = ({
-  initialTab = 'contas',
+  initialTab = 'sobre',
   onOpenMobileMenu,
   onNavigateToTab,
   onOpenAiAssistant,
@@ -48,7 +49,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     }
   }, [initialTab]);
 
-  // Tab definitions in exact specified order matching UI CONTAS E ACESSOS
+  // Tab definitions in exact specified order matching UI CONTAS E ACESSOS and UI INTEGRACOES
   const tabs: { id: SettingsTabId; label: string; icon: React.FC<{ className?: string }> }[] = [
     { id: 'perfil', label: 'Perfil', icon: User },
     { id: 'preferencias', label: 'Preferências', icon: Sliders },
@@ -71,17 +72,17 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     },
     preferencias: {
       title: 'Preferências',
-      subtitle: 'Configure a experiência da plataforma, idioma, tema e acessibilidade.',
+      subtitle: 'Personalize a sua experiência na VILA.',
       breadcrumb: 'Preferências',
     },
     notificacoes: {
       title: 'Notificações',
-      subtitle: 'Gerencie os canais de comunicação e as preferências de alertas.',
+      subtitle: 'Escolha como e quando deseja receber notificações da VILA.',
       breadcrumb: 'Notificações',
     },
     privacidade: {
       title: 'Privacidade e Segurança',
-      subtitle: 'Controle a visibilidade dos seus dados e a segurança da sua conta.',
+      subtitle: 'Controle como os seus dados são usados e mantenha a sua conta segura.',
       breadcrumb: 'Privacidade e Segurança',
     },
     contas: {
@@ -91,12 +92,12 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     },
     integracoes: {
       title: 'Integrações',
-      subtitle: 'Conecte serviços externos e automatize o seu fluxo de trabalho.',
+      subtitle: 'Conecte a VILA com as ferramentas e serviços que você já usa.',
       breadcrumb: 'Integrações',
     },
     sobre: {
-      title: 'Sobre',
-      subtitle: 'Informações institucionais, missão, visão e impacto global da VILA.',
+      title: 'Sobre a VILA',
+      subtitle: 'Conheça mais sobre a nossa missão, visão e o propósito que nos move.',
       breadcrumb: 'Sobre',
     },
   };

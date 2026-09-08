@@ -60,14 +60,14 @@ const getInitialTab = (): string => {
     return 'impacto';
   } else if (target === 'sobre' || target === 'sobre-a-vila' || target.includes('sobre')) {
     return 'sobre';
-  } else if (target === 'definicoes' || target === 'settings' || target === 'preferencias' || target === 'configuracoes') {
+  } else if (target === 'definicoes' || target === 'settings' || target === 'preferencias' || target === 'configuracoes' || target === 'privacidade' || target === 'seguranca') {
     return 'definicoes';
   } else if (target === 'inicio') {
     return 'inicio';
   } else if (target === 'comunidade' || target === 'comunidade-global') {
     return 'comunidade';
   }
-  return 'sobre';
+  return 'definicoes';
 };
 
 export default function App() {
@@ -85,6 +85,7 @@ export default function App() {
     isOpen: false,
     mode: 'login',
   });
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   // URL hash, query parameter and pathname router sync
   useEffect(() => {
@@ -161,6 +162,10 @@ export default function App() {
       <AppLayout
         currentTab={currentTab}
         onSelectTab={(tabId) => {
+          if (tabId === 'ia') {
+            setIsAiModalOpen(true);
+            return;
+          }
           setCurrentTab(tabId);
           window.location.hash = tabId;
           window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -171,6 +176,8 @@ export default function App() {
         onCloseMobileSidebar={() => setIsMobileSidebarOpen(false)}
         onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
         onOpenSearchModal={() => setIsSearchModalOpen(true)}
+        isLoggedIn={isLoggedIn}
+        onLogout={() => setIsLoggedIn(false)}
         searchPlaceholder={
           currentTab === 'comunidade'
             ? 'Pesquisar pessoas, comunidades, temas, organizações...'
@@ -303,8 +310,9 @@ export default function App() {
             }}
           />
         ) : (currentTab === 'sobre' || currentTab === 'sobre-a-vila') ? (
-          /* Sobre a VILA View matching exact reference 9 UI VILA SOBRE */
-          <AboutVilaView
+          /* Sobre a VILA View matching exact reference UI SOBRE.png */
+          <SettingsView
+            initialTab="sobre"
             onOpenMobileMenu={() => setIsMobileSidebarOpen(true)}
             onNavigateToTab={(tabId) => {
               setCurrentTab(tabId);
@@ -313,9 +321,10 @@ export default function App() {
             onOpenAiAssistant={() => setIsAiModalOpen(true)}
             onOpenAuth={(mode) => setAuthModal({ isOpen: true, mode })}
           />
-        ) : (currentTab === 'definicoes' || currentTab === 'preferencias' || currentTab === 'settings' || currentTab === 'configuracoes') ? (
+        ) : (currentTab === 'definicoes' || currentTab === 'preferencias' || currentTab === 'settings' || currentTab === 'configuracoes' || currentTab === 'privacidade' || currentTab === 'seguranca') ? (
           /* Definições / Preferências Master Section matching PERFIL.png and 7 Tabs Specification */
           <SettingsView
+            initialTab="sobre"
             onOpenMobileMenu={() => setIsMobileSidebarOpen(true)}
             onNavigateToTab={(tabId) => {
               setCurrentTab(tabId);
@@ -447,6 +456,7 @@ export default function App() {
         isOpen={authModal.isOpen}
         initialMode={authModal.mode}
         onClose={() => setAuthModal({ isOpen: false, mode: 'login' })}
+        onLoginSuccess={() => setIsLoggedIn(true)}
       />
 
       <ImpactModal
