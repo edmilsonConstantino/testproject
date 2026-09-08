@@ -1,520 +1,1028 @@
 import React, { useState } from 'react';
 import {
-  Users,
-  Key,
+  Camera,
+  Pencil,
+  Mail,
   Shield,
+  Key,
+  ChevronRight,
+  Plus,
+  ShieldCheck,
+  Sliders,
+  MoreVertical,
+  Monitor,
   Smartphone,
   Laptop,
   CheckCircle2,
-  Plus,
-  Trash2,
-  Mail,
-  UserCheck,
+  Lock,
+  ExternalLink,
+  X,
+  User,
   Clock,
-  LogOut,
-  Fingerprint,
-  ChevronDown,
+  Trash2,
 } from 'lucide-react';
+import { SettingsTabId } from './types';
 
-interface TeamMember {
-  id: string;
-  name: string;
-  email: string;
-  role: 'Proprietário' | 'Editor' | 'Visualizador';
-  status: 'Ativo' | 'Pendente';
-  addedDate: string;
-  avatar?: string;
+interface AccountsAccessTabProps {
+  onNavigateTab?: (tabId: SettingsTabId) => void;
 }
 
-interface ActiveSession {
-  id: string;
-  device: string;
-  browser: string;
-  location: string;
-  ip: string;
-  lastActive: string;
-  isCurrent: boolean;
-}
+export const AccountsAccessTab: React.FC<AccountsAccessTabProps> = ({ onNavigateTab }) => {
+  // Modal states for interactive feel
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [showEditInfoModal, setShowEditInfoModal] = useState(false);
+  const [showAllMembersModal, setShowAllMembersModal] = useState(false);
+  const [showAllSessionsModal, setShowAllSessionsModal] = useState(false);
+  const [showAuditModal, setShowAuditModal] = useState(false);
+  const [showAuthMethodsModal, setShowAuthMethodsModal] = useState(false);
 
-export const AccountsAccessTab: React.FC = () => {
-  // OAuth Connected Accounts (Social Login)
-  const [socialLogins, setSocialLogins] = useState([
-    {
-      provider: 'Google',
-      connected: true,
-      email: 'divan.mellert@gmail.com',
-      icon: '🌐',
-    },
-    {
-      provider: 'Microsoft',
-      connected: false,
-      email: '',
-      icon: '🪟',
-    },
-    {
-      provider: 'Apple ID',
-      connected: false,
-      email: '',
-      icon: '🍎',
-    },
-    {
-      provider: 'LinkedIn',
-      connected: true,
-      email: 'divan-mellert',
-      icon: '💼',
-    },
+  // Profile data
+  const [userInfo, setUserInfo] = useState({
+    name: 'Divan Mellert',
+    email: 'divan@vilaglobal.org',
+    role: 'Administrador',
+    memberSince: '15 de março de 2024',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80',
+  });
+
+  // Connected accounts state
+  const [connectedServices, setConnectedServices] = useState([
+    { id: 'google', name: 'Google', connected: true },
+    { id: 'microsoft', name: 'Microsoft', connected: true },
+    { id: 'apple', name: 'Apple', connected: false },
+    { id: 'linkedin', name: 'LinkedIn', connected: false },
   ]);
 
-  // Team Access (Multi-user)
-  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([
+  // Team members state
+  const [teamMembers, setTeamMembers] = useState([
     {
       id: '1',
-      name: 'Divan Mellert',
+      name: 'Divan Mellert (Você)',
       email: 'divan@vilaglobal.org',
       role: 'Proprietário',
-      status: 'Ativo',
-      addedDate: 'Criador da Conta',
+      rolePill: 'Proprietário',
+      accessType: 'Acesso total',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80',
+      pillClass: 'bg-emerald-50 text-emerald-700 border border-emerald-200/60',
     },
     {
       id: '2',
-      name: 'Beatriz Vasconcelos',
-      email: 'beatriz.v@vilaglobal.org',
+      name: 'Zulmira Mellert',
+      email: 'zulmira@vilaglobal.org',
       role: 'Editor',
-      status: 'Ativo',
-      addedDate: '14 Jan 2026',
+      rolePill: 'Editor',
+      accessType: 'Acesso padrão',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80',
+      pillClass: 'bg-blue-50 text-blue-700 border border-blue-200/60',
     },
     {
       id: '3',
-      name: 'Carlos Ndlovu',
-      email: 'carlos.impact@ong.org',
+      name: 'Carlos Tomás',
+      email: 'carlos@vilaglobal.org',
       role: 'Visualizador',
-      status: 'Pendente',
-      addedDate: '02 Fev 2026',
+      rolePill: 'Visualizador',
+      accessType: 'Acesso limitado',
+      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=80',
+      pillClass: 'bg-purple-50 text-purple-700 border border-purple-200/60',
     },
   ]);
 
-  // Modal para convidar membro
-  const [showInviteModal, setShowInviteModal] = useState(false);
-  const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteRole, setInviteRole] = useState<'Editor' | 'Visualizador'>('Editor');
+  // Additional 3 members for the "+3 Mais utilizadores" view
+  const additionalMembers = [
+    {
+      id: '4',
+      name: 'Ana Sofia Ramos',
+      email: 'ana.ramos@vilaglobal.org',
+      role: 'Editor',
+      accessType: 'Acesso padrão',
+      avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80',
+    },
+    {
+      id: '5',
+      name: 'João Pedro Mendonça',
+      email: 'joao.m@vilaglobal.org',
+      role: 'Visualizador',
+      accessType: 'Acesso limitado',
+      avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=100&auto=format&fit=crop&q=80',
+    },
+    {
+      id: '6',
+      name: 'Mariana Costa',
+      email: 'mariana.costa@vilaglobal.org',
+      role: 'Editor',
+      accessType: 'Acesso padrão',
+      avatar: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100&auto=format&fit=crop&q=80',
+    },
+  ];
 
-  // Sessões ativas
-  const [activeSessions, setActiveSessions] = useState<ActiveSession[]>([
+  // Active sessions state
+  const [sessions, setSessions] = useState([
     {
       id: 'sess-1',
-      device: 'MacBook Pro 16"',
-      browser: 'Chrome 124 (macOS Sonoma)',
-      location: 'Faro, Portugal',
-      ip: '194.65.12.89',
-      lastActive: 'Sessão atual (Ativa agora)',
+      device: 'Windows • Chrome',
       isCurrent: true,
+      location: 'Lisboa, Portugal • Este dispositivo',
+      icon: Monitor,
     },
     {
       id: 'sess-2',
-      device: 'iPhone 15 Pro',
-      browser: 'VILA App iOS 18.2',
-      location: 'Lisboa, Portugal',
-      ip: '85.240.110.4',
-      lastActive: 'Há 2 horas',
+      device: 'iPhone 14 • Safari',
       isCurrent: false,
+      location: 'Lisboa, Portugal • Há 2 horas',
+      icon: Smartphone,
+    },
+    {
+      id: 'sess-3',
+      device: 'MacBook Pro • Chrome',
+      isCurrent: false,
+      location: 'Porto, Portugal • Ontem, 18:24',
+      icon: Laptop,
     },
   ]);
 
-  // Passkeys & 2FA
-  const [passkeysEnabled, setPasskeysEnabled] = useState(true);
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(true);
+  // Invite member form inputs
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteRole, setInviteRole] = useState<'Editor' | 'Visualizador'>('Editor');
 
-  const toggleSocialLogin = (provider: string) => {
-    setSocialLogins((prev) =>
-      prev.map((item) =>
-        item.provider === provider
-          ? {
-              ...item,
-              connected: !item.connected,
-              email: !item.connected ? `${provider.toLowerCase()}@user.com` : '',
-            }
-          : item
-      )
+  const toggleConnection = (id: string) => {
+    setConnectedServices((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, connected: !item.connected } : item))
     );
+  };
+
+  const handleEndSession = (id: string) => {
+    setSessions((prev) => prev.filter((s) => s.id !== id));
   };
 
   const handleInviteSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inviteEmail) return;
-    setTeamMembers((prev) => [
-      ...prev,
-      {
-        id: String(Date.now()),
-        name: inviteEmail.split('@')[0],
-        email: inviteEmail,
-        role: inviteRole,
-        status: 'Pendente',
-        addedDate: 'Hoje',
-      },
-    ]);
+    const newMember = {
+      id: String(Date.now()),
+      name: inviteEmail.split('@')[0],
+      email: inviteEmail,
+      role: inviteRole,
+      rolePill: inviteRole,
+      accessType: inviteRole === 'Editor' ? 'Acesso padrão' : 'Acesso limitado',
+      avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80',
+      pillClass:
+        inviteRole === 'Editor'
+          ? 'bg-blue-50 text-blue-700 border border-blue-200/60'
+          : 'bg-purple-50 text-purple-700 border border-purple-200/60',
+    };
+    setTeamMembers((prev) => [...prev, newMember]);
     setInviteEmail('');
     setShowInviteModal(false);
   };
 
-  const handleRevokeSession = (sessionId: string) => {
-    setActiveSessions((prev) => prev.filter((s) => s.id !== sessionId));
-  };
-
   return (
-    <div className="w-full space-y-6">
-      {/* 1. Métodos de Autenticação Pessoal */}
-      <section className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs">
-        <div className="flex items-center gap-2.5 mb-5 pb-3 border-b border-slate-100">
-          <div className="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center">
-            <Key className="w-4 h-4" />
-          </div>
+    <div className="w-full space-y-6 animate-in fade-in duration-150">
+      {/* ========================================================
+          ROW 1: 3 Equal Columns (Informações, Métodos de Sessão, Contas Conectadas)
+         ======================================================== */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+        {/* Card 1: Informações da conta */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs flex flex-col justify-between">
           <div>
-            <h2 className="text-base font-bold text-[#0F172A] font-['Outfit']">
-              Métodos de Autenticação Pessoal
+            <h2 className="text-base font-bold text-[#0F172A] font-['Outfit'] mb-5">
+              Informações da conta
             </h2>
-            <p className="text-xs text-slate-500">
-              Configure credenciais de acesso, palavras-passe e chaves biométricas (Passkeys).
-            </p>
-          </div>
-        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {/* E-mail & Palavra-passe */}
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold text-[#0F172A]">E-mail & Palavra-passe</span>
-                <span className="text-[10px] font-bold bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
-                  Principal
-                </span>
+            <div className="flex items-start gap-4">
+              {/* Avatar com botão circular de câmera */}
+              <div className="relative shrink-0">
+                <img
+                  src={userInfo.avatar}
+                  alt={userInfo.name}
+                  className="w-20 h-20 rounded-full object-cover ring-2 ring-slate-100 shadow-xs"
+                />
+                <button
+                  type="button"
+                  onClick={() => alert('Selecione uma nova fotografia para o seu avatar')}
+                  title="Alterar fotografia"
+                  className="absolute bottom-0 right-0 p-1.5 bg-white rounded-full border border-slate-200 shadow-sm text-slate-600 hover:text-[#2563EB] hover:bg-slate-50 transition-colors cursor-pointer"
+                >
+                  <Camera className="w-3.5 h-3.5" />
+                </button>
               </div>
-              <p className="text-[11px] text-slate-500">
-                Utilizado para acesso padrão. Última alteração há 32 dias.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => alert('Formulário de alteração de senha')}
-              className="mt-3 text-xs font-semibold text-blue-600 hover:underline text-left cursor-pointer"
-            >
-              Alterar palavra-passe →
-            </button>
-          </div>
 
-          {/* Autenticação de Dois Fatores (2FA) */}
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold text-[#0F172A]">2FA (App Autenticador)</span>
-                <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full">
-                  Ativado
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-500">
-                Códigos de 6 dígitos via Google Authenticator ou 1Password.
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => setTwoFactorEnabled(!twoFactorEnabled)}
-              className="mt-3 text-xs font-semibold text-blue-600 hover:underline text-left cursor-pointer"
-            >
-              Gerir chaves de backup →
-            </button>
-          </div>
-
-          {/* Passkeys / Biometria */}
-          <div className="p-4 rounded-xl border border-slate-200 bg-slate-50/50 flex flex-col justify-between">
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold text-[#0F172A]">Passkeys / Biometria</span>
-                <span className="text-[10px] font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">
-                  Touch ID / Windows
-                </span>
-              </div>
-              <p className="text-[11px] text-slate-500">
-                Entrada sem palavra-passe com hardware biométrico seguro (FIDO2).
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => alert('Passkey registada com sucesso!')}
-              className="mt-3 text-xs font-semibold text-blue-600 hover:underline text-left cursor-pointer"
-            >
-              Adicionar nova Passkey →
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* 2. Contas Conectadas via OAuth (Login Social) */}
-      <section className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs">
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
-          <div>
-            <h2 className="text-base font-bold text-[#0F172A] font-['Outfit']">
-              Contas Conectadas (Login Social OAuth)
-            </h2>
-            <p className="text-xs text-slate-500">
-              Utilizadas exclusivamente para início de sessão rápido com provedores de identidade confiáveis.
-            </p>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {socialLogins.map((item) => (
-            <div
-              key={item.provider}
-              className="p-3.5 rounded-xl border border-slate-200 flex items-center justify-between gap-3 hover:bg-slate-50/50 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <span className="text-xl">{item.icon}</span>
+              {/* Informações detalhadas */}
+              <div className="flex-1 min-w-0 space-y-2">
                 <div>
-                  <h4 className="text-xs font-bold text-[#0F172A]">{item.provider}</h4>
-                  <p className="text-[11px] text-slate-500">
-                    {item.connected ? item.email : 'Não associado'}
-                  </p>
+                  <p className="text-[11px] font-medium text-slate-400 leading-none">Nome</p>
+                  <p className="text-sm font-bold text-[#0F172A] mt-0.5 truncate">{userInfo.name}</p>
+                </div>
+
+                <div>
+                  <p className="text-[11px] font-medium text-slate-400 leading-none">E-mail</p>
+                  <div className="flex items-center gap-1.5 flex-wrap mt-0.5">
+                    <span className="text-xs font-medium text-slate-700 truncate">
+                      {userInfo.email}
+                    </span>
+                    <span className="bg-emerald-50 text-emerald-700 text-[10px] font-semibold px-2 py-0.5 rounded-md border border-emerald-200/60">
+                      Verificado
+                    </span>
+                  </div>
+                </div>
+
+                <div>
+                  <p className="text-[11px] font-medium text-slate-400 leading-none">Cargo</p>
+                  <p className="text-xs font-medium text-slate-700 mt-0.5">{userInfo.role}</p>
+                </div>
+
+                <div>
+                  <p className="text-[11px] font-medium text-slate-400 leading-none">Membro desde</p>
+                  <p className="text-xs font-medium text-slate-700 mt-0.5">{userInfo.memberSince}</p>
                 </div>
               </div>
-              <button
-                type="button"
-                onClick={() => toggleSocialLogin(item.provider)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
-                  item.connected
-                    ? 'border border-red-200 text-red-600 hover:bg-red-50'
-                    : 'bg-[#2563EB] text-white hover:bg-blue-700'
-                }`}
-              >
-                {item.connected ? 'Desconectar' : 'Conectar'}
-              </button>
             </div>
-          ))}
-        </div>
-      </section>
+          </div>
 
-      {/* 3. Gestão de Acessos de Equipa (Multi-usuário) */}
-      <section className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 mb-4">
+          {/* Botão de rodapé: Editar informações */}
+          <button
+            type="button"
+            onClick={() => setShowEditInfoModal(true)}
+            className="w-full mt-6 py-2.5 px-4 rounded-xl border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
+          >
+            <Pencil className="w-3.5 h-3.5 text-slate-400" />
+            <span>Editar informações</span>
+          </button>
+        </div>
+
+        {/* Card 2: Métodos de início de sessão */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs flex flex-col justify-between">
           <div>
             <h2 className="text-base font-bold text-[#0F172A] font-['Outfit']">
-              Gestão de Acessos de Equipa (Multi-usuário)
+              Métodos de início de sessão
             </h2>
-            <p className="text-xs text-slate-500">
-              Conceda permissões a colaboradores para gerir iniciativas e relatórios na plataforma.
+            <p className="text-xs text-slate-500 mt-0.5 mb-4">
+              Gerencie as formas de aceder à sua conta.
             </p>
+
+            <div className="space-y-3">
+              {/* Item 1: E-mail e palavra-passe */}
+              <div
+                onClick={() => setShowAuthMethodsModal(true)}
+                className="p-3 rounded-xl border border-slate-100 hover:border-slate-200 bg-slate-50/40 hover:bg-slate-50/90 transition-colors flex items-center justify-between gap-3 cursor-pointer group"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center shrink-0">
+                    <Mail className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-xs font-bold text-[#0F172A] group-hover:text-blue-600 transition-colors">
+                      E-mail e palavra-passe
+                    </h3>
+                    <p className="text-[11px] text-slate-500 truncate">{userInfo.email}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="bg-emerald-50 text-emerald-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-emerald-200/60">
+                    Ativo
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </div>
+
+              {/* Item 2: Autenticação de dois fatores (2FA) */}
+              <div
+                onClick={() => setShowAuthMethodsModal(true)}
+                className="p-3 rounded-xl border border-slate-100 hover:border-slate-200 bg-slate-50/40 hover:bg-slate-50/90 transition-colors flex items-center justify-between gap-3 cursor-pointer group"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center shrink-0">
+                    <Shield className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-xs font-bold text-[#0F172A] group-hover:text-blue-600 transition-colors">
+                      Autenticação de dois fatores (2FA)
+                    </h3>
+                    <p className="text-[11px] text-slate-500 truncate">
+                      Proteção extra para a sua conta
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="bg-emerald-50 text-emerald-700 text-[10px] font-semibold px-2 py-0.5 rounded-full border border-emerald-200/60">
+                    Ativado
+                  </span>
+                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </div>
+
+              {/* Item 3: Chaves de acesso (Passkeys) */}
+              <div
+                onClick={() => setShowAuthMethodsModal(true)}
+                className="p-3 rounded-xl border border-slate-100 hover:border-slate-200 bg-slate-50/40 hover:bg-slate-50/90 transition-colors flex items-center justify-between gap-3 cursor-pointer group"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#2563EB] flex items-center justify-center shrink-0">
+                    <Key className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="text-xs font-bold text-[#0F172A] group-hover:text-blue-600 transition-colors">
+                      Chaves de acesso (Passkeys)
+                    </h3>
+                    <p className="text-[11px] text-slate-500 truncate">
+                      Inicie sessão sem palavra-passe
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="text-xs font-semibold text-[#2563EB]">1 chave</span>
+                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                </div>
+              </div>
+            </div>
           </div>
+
+          {/* Link de rodapé: Gerir métodos de acesso */}
+          <button
+            type="button"
+            onClick={() => setShowAuthMethodsModal(true)}
+            className="mt-6 pt-3 text-xs font-bold text-[#2563EB] hover:underline flex items-center gap-1 cursor-pointer self-start"
+          >
+            <span>Gerir métodos de acesso</span>
+            <span>→</span>
+          </button>
+        </div>
+
+        {/* Card 3: Contas conectadas */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs flex flex-col justify-between">
+          <div>
+            <h2 className="text-base font-bold text-[#0F172A] font-['Outfit']">Contas conectadas</h2>
+            <p className="text-xs text-slate-500 mt-0.5 mb-4">
+              Conecte serviços externos à sua conta VILA.
+            </p>
+
+            <div className="space-y-3">
+              {/* 1. Google */}
+              <div className="p-3 rounded-xl border border-slate-100 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5" viewBox="0 0 24 24">
+                      <path
+                        fill="#4285F4"
+                        d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.26v3.15C3.25 21.36 7.33 24 12 24z"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.26C.46 8.16 0 9.94 0 12s.46 3.84 1.26 5.42l4.02-3.15z"
+                      />
+                      <path
+                        fill="#EA4335"
+                        d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.25 2.64 1.26 6.58l4.02 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-bold text-[#0F172A]">Google</h3>
+                    <p className="text-[11px] text-emerald-600 font-medium">Conectado</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => toggleConnection('google')}
+                  className="px-3 py-1 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                >
+                  Gerir
+                </button>
+              </div>
+
+              {/* 2. Microsoft */}
+              <div className="p-3 rounded-xl border border-slate-100 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5" viewBox="0 0 24 24">
+                      <rect x="1" y="1" width="10" height="10" fill="#F25022" />
+                      <rect x="13" y="1" width="10" height="10" fill="#7FBA00" />
+                      <rect x="1" y="13" width="10" height="10" fill="#00A4EF" />
+                      <rect x="13" y="13" width="10" height="10" fill="#FFB900" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-bold text-[#0F172A]">Microsoft</h3>
+                    <p className="text-[11px] text-emerald-600 font-medium">Conectado</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => toggleConnection('microsoft')}
+                  className="px-3 py-1 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                >
+                  Gerir
+                </button>
+              </div>
+
+              {/* 3. Apple */}
+              <div className="p-3 rounded-xl border border-slate-100 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 fill-current text-slate-900" viewBox="0 0 24 24">
+                      <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.38c.62-.75 1.04-1.8 0.92-2.85-.9.04-2 .6-2.65 1.35-.58.67-1.08 1.74-.95 2.77 1 .08 2.05-.52 2.68-1.27z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-bold text-[#0F172A]">Apple</h3>
+                    <p className="text-[11px] text-slate-400 font-medium">Não conectado</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => toggleConnection('apple')}
+                  className="px-3 py-1 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                >
+                  Conectar
+                </button>
+              </div>
+
+              {/* 4. LinkedIn */}
+              <div className="p-3 rounded-xl border border-slate-100 flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-6 h-6 flex items-center justify-center shrink-0">
+                    <svg className="w-5 h-5 fill-[#0A66C2]" viewBox="0 0 24 24">
+                      <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-xs font-bold text-[#0F172A]">LinkedIn</h3>
+                    <p className="text-[11px] text-slate-400 font-medium">Não conectado</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => toggleConnection('linkedin')}
+                  className="px-3 py-1 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer"
+                >
+                  Conectar
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Link de rodapé: Ver mais integrações */}
+          <button
+            type="button"
+            onClick={() => onNavigateTab?.('integracoes')}
+            className="mt-6 pt-3 text-xs font-bold text-[#2563EB] hover:underline flex items-center gap-1 cursor-pointer self-start"
+          >
+            <span>Ver mais integrações</span>
+            <span>→</span>
+          </button>
+        </div>
+      </div>
+
+      {/* ========================================================
+          ROW 2: 2 Columns (Gestão de Acessos vs Sessões Ativas + Atividade)
+         ======================================================== */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Coluna Esquerda: Gestão de acessos */}
+        <div className="lg:col-span-7 bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs">
+          <h2 className="text-base font-bold text-[#0F172A] font-['Outfit']">Gestão de acessos</h2>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Controle quem pode aceder à sua conta e com que permissões.
+          </p>
+
+          {/* Botão Primário: + Convidar utilizador */}
           <button
             type="button"
             onClick={() => setShowInviteModal(true)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs cursor-pointer self-start sm:self-auto"
+            className="mt-4 mb-4 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
           >
             <Plus className="w-4 h-4" />
-            Convidar utilizador
+            <span>Convidar utilizador</span>
           </button>
-        </div>
 
-        {/* Modal de Convite */}
-        {showInviteModal && (
-          <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl border border-slate-200 max-w-md w-full p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
-              <h3 className="text-base font-bold text-[#0F172A]">Convidar novo membro para a equipa</h3>
-              <p className="text-xs text-slate-500">
-                O utilizador receberá um convite por e-mail com instruções para ativar o acesso.
-              </p>
-              <form onSubmit={handleInviteSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    E-mail corporativo ou pessoal
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="exemplo@organizacao.org"
-                    value={inviteEmail}
-                    onChange={(e) => setInviteEmail(e.target.value)}
-                    className="w-full px-3.5 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-blue-600 outline-none"
+          {/* Lista de Membros da Equipa */}
+          <div className="divide-y divide-slate-100">
+            {teamMembers.map((member) => (
+              <div
+                key={member.id}
+                className="py-3.5 flex items-center justify-between gap-3 hover:bg-slate-50/50 rounded-xl px-2 -mx-2 transition-colors"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <img
+                    src={member.avatar}
+                    alt={member.name}
+                    className="w-9 h-9 rounded-full object-cover shrink-0 ring-1 ring-slate-100"
                   />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
-                    Papel / Nível de Acesso
-                  </label>
-                  <div className="relative">
-                    <select
-                      value={inviteRole}
-                      onChange={(e) => setInviteRole(e.target.value as any)}
-                      className="w-full appearance-none px-3.5 py-2 text-xs sm:text-sm rounded-xl border border-slate-200 focus:border-blue-600 outline-none cursor-pointer"
-                    >
-                      <option value="Editor">Editor (Pode criar projetos, publicar eventos e gerir voluntários)</option>
-                      <option value="Visualizador">Visualizador (Apenas leitura e visualização de dados)</option>
-                    </select>
-                    <ChevronDown className="w-4 h-4 text-slate-400 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="text-xs font-bold text-[#0F172A]">{member.name}</h3>
+                      <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${member.pillClass}`}>
+                        {member.rolePill}
+                      </span>
+                    </div>
+                    <p className="text-[11px] text-slate-500 truncate">{member.email}</p>
                   </div>
                 </div>
-                <div className="flex justify-end gap-2 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowInviteModal(false)}
-                    className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100"
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 rounded-xl text-xs font-bold bg-[#2563EB] text-white hover:bg-blue-700"
-                  >
-                    Enviar Convite
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
 
-        {/* Tabela de Membros */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse min-w-[580px]">
-            <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/50 text-[11px] uppercase tracking-wider text-slate-500">
-                <th className="py-2.5 px-3 font-bold">Membro</th>
-                <th className="py-2.5 px-3 font-bold">Papel</th>
-                <th className="py-2.5 px-3 font-bold">Estado</th>
-                <th className="py-2.5 px-3 font-bold">Data</th>
-                <th className="py-2.5 px-3 text-right font-bold">Ações</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 text-xs">
-              {teamMembers.map((member) => (
-                <tr key={member.id} className="hover:bg-slate-50/50">
-                  <td className="py-3 px-3">
-                    <div className="flex items-center gap-2.5">
-                      {member.avatar ? (
-                        <img
-                          src={member.avatar}
-                          alt={member.name}
-                          className="w-7 h-7 rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-7 h-7 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center font-bold text-xs">
-                          {member.name[0]}
-                        </div>
-                      )}
-                      <div>
-                        <p className="font-bold text-[#0F172A]">{member.name}</p>
-                        <p className="text-[11px] text-slate-500">{member.email}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-3 px-3">
-                    <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
-                      member.role === 'Proprietário'
-                        ? 'bg-purple-100 text-purple-800'
-                        : member.role === 'Editor'
-                        ? 'bg-blue-100 text-blue-800'
-                        : 'bg-slate-100 text-slate-700'
-                    }`}>
-                      {member.role}
-                    </span>
-                  </td>
-                  <td className="py-3 px-3">
-                    <span className={`text-[11px] font-semibold ${
-                      member.status === 'Ativo' ? 'text-emerald-600' : 'text-amber-600'
-                    }`}>
-                      ● {member.status}
-                    </span>
-                  </td>
-                  <td className="py-3 px-3 text-slate-500 text-[11px]">{member.addedDate}</td>
-                  <td className="py-3 px-3 text-right">
-                    {member.role !== 'Proprietário' && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          if (confirm(`Remover acesso de ${member.name}?`)) {
-                            setTeamMembers((prev) => prev.filter((m) => m.id !== member.id));
-                          }
-                        }}
-                        className="text-slate-400 hover:text-red-600 transition-colors p-1"
-                        title="Remover utilizador"
-                      >
-                        <Trash2 className="w-3.5 h-3.5 inline" />
-                      </button>
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className="flex items-center gap-1.5 text-slate-600 text-xs font-medium">
+                    {member.role === 'Proprietário' ? (
+                      <ShieldCheck className="w-4 h-4 text-slate-400" />
+                    ) : (
+                      <Sliders className="w-4 h-4 text-slate-400" />
                     )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </section>
+                    <span className="hidden sm:inline">{member.accessType}</span>
+                  </div>
 
-      {/* 4. Sessões Ativas por Dispositivo */}
-      <section className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100 mb-4">
-          <div>
-            <h2 className="text-base font-bold text-[#0F172A] font-['Outfit']">
-              Sessões Ativas por Dispositivo
-            </h2>
-            <p className="text-xs text-slate-500">
-              Dispositivos com acesso concedido à sua conta pessoal da VILA.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => {
-              if (confirm('Deseja encerrar todas as outras sessões com exceção da atual?')) {
-                setActiveSessions((prev) => prev.filter((s) => s.isCurrent));
-              }
-            }}
-            className="text-xs font-bold text-red-600 hover:underline cursor-pointer self-start sm:self-auto"
-          >
-            Encerrar todas as outras sessões
-          </button>
-        </div>
-
-        <div className="space-y-3">
-          {activeSessions.map((sess) => (
-            <div
-              key={sess.id}
-              className="p-3.5 rounded-xl border border-slate-200 flex items-center justify-between gap-3"
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shrink-0">
-                  {sess.device.includes('iPhone') ? (
-                    <Smartphone className="w-4 h-4" />
-                  ) : (
-                    <Laptop className="w-4 h-4" />
+                  {member.role !== 'Proprietário' && (
+                    <button
+                      type="button"
+                      onClick={() => alert(`Gerir permissões de ${member.name}`)}
+                      className="text-slate-400 hover:text-slate-700 p-1 cursor-pointer"
+                      title="Opções"
+                    >
+                      <MoreVertical className="w-4 h-4" />
+                    </button>
                   )}
                 </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className="text-xs font-bold text-[#0F172A]">{sess.device}</h4>
-                    {sess.isCurrent && (
-                      <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                        Esta Sessão
-                      </span>
+              </div>
+            ))}
+          </div>
+
+          {/* Stack indicador de mais utilizadores */}
+          <div className="flex items-center justify-between pt-3 pb-2 border-t border-slate-100 mt-2">
+            <div className="flex items-center gap-3">
+              <div className="w-7 h-7 rounded-full bg-blue-100 text-[#2563EB] text-xs font-bold flex items-center justify-center">
+                +3
+              </div>
+              <span className="text-xs font-bold text-slate-800">Mais 3 utilizadores</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowAllMembersModal(true)}
+              className="text-xs font-bold text-[#2563EB] hover:underline flex items-center gap-1 cursor-pointer"
+            >
+              <span>Ver todos</span>
+              <span>→</span>
+            </button>
+          </div>
+
+          {/* Link final de histórico */}
+          <div className="pt-3 border-t border-slate-100 mt-2">
+            <button
+              type="button"
+              onClick={() => setShowAuditModal(true)}
+              className="text-xs font-bold text-[#2563EB] hover:underline flex items-center gap-1.5 cursor-pointer"
+            >
+              <span>Ver histórico de acessos</span>
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Coluna Direita: Sessões Ativas & Atividade da Conta */}
+        <div className="lg:col-span-5 space-y-6">
+          {/* Card A: Sessões ativas */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs">
+            <div className="flex items-center justify-between mb-1">
+              <h2 className="text-base font-bold text-[#0F172A] font-['Outfit']">Sessões ativas</h2>
+              <button
+                type="button"
+                onClick={() => setShowAllSessionsModal(true)}
+                className="text-xs font-bold text-[#2563EB] hover:underline cursor-pointer"
+              >
+                Ver todas
+              </button>
+            </div>
+            <p className="text-xs text-slate-500 mb-4">
+              Dispositivos onde a sua conta está conectada.
+            </p>
+
+            <div className="space-y-3.5">
+              {sessions.map((sess) => {
+                const IconComponent = sess.icon;
+                return (
+                  <div
+                    key={sess.id}
+                    className="flex items-center justify-between gap-3 p-2 rounded-xl hover:bg-slate-50/50 transition-colors"
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center shrink-0">
+                        <IconComponent className="w-4 h-4 text-slate-500" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-xs font-bold text-[#0F172A] truncate">{sess.device}</h3>
+                          {sess.isCurrent && (
+                            <span className="bg-purple-100 text-purple-700 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                              Atual
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-[11px] text-slate-500 truncate">{sess.location}</p>
+                      </div>
+                    </div>
+
+                    {!sess.isCurrent && (
+                      <button
+                        type="button"
+                        onClick={() => handleEndSession(sess.id)}
+                        className="px-3 py-1 rounded-xl border border-slate-200 text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer shrink-0"
+                      >
+                        Terminar sessão
+                      </button>
                     )}
                   </div>
-                  <p className="text-[11px] text-slate-500">
-                    {sess.browser} • {sess.location} (IP: {sess.ip})
-                  </p>
-                  <p className="text-[10px] text-slate-400 mt-0.5">{sess.lastActive}</p>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Card B: Atividade da conta */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs">
+            <div className="flex items-center justify-between mb-1">
+              <h2 className="text-base font-bold text-[#0F172A] font-['Outfit']">Atividade da conta</h2>
+              <button
+                type="button"
+                onClick={() => setShowAuditModal(true)}
+                className="text-xs font-bold text-[#2563EB] hover:underline cursor-pointer"
+              >
+                Ver todas
+              </button>
+            </div>
+            <p className="text-xs text-slate-500 mb-4">
+              Revisão recente de atividades relacionadas à sua conta.
+            </p>
+
+            <div className="space-y-3.5">
+              {/* Atividade 1 */}
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                  <CheckCircle2 className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-xs font-bold text-[#0F172A]">Início de sessão bem-sucedido</h3>
+                  <p className="text-[11px] text-slate-400">Lisboa, Portugal • 15 mai 2024, 10:24</p>
                 </div>
               </div>
 
-              {!sess.isCurrent && (
+              {/* Atividade 2 */}
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                  <Key className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-xs font-bold text-[#0F172A]">Palavra-passe alterada</h3>
+                  <p className="text-[11px] text-slate-400">Lisboa, Portugal • 10 mai 2024, 09:15</p>
+                </div>
+              </div>
+
+              {/* Atividade 3 */}
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                  <Shield className="w-4 h-4" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-xs font-bold text-[#0F172A]">Novo método 2FA adicionado</h3>
+                  <p className="text-[11px] text-slate-400">Lisboa, Portugal • 05 mai 2024, 16:40</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ========================================================
+          ROW 3: Full-Width Bottom Security Tip Banner
+         ======================================================== */}
+      <div className="w-full bg-blue-50/70 border border-blue-100 rounded-2xl p-3.5 sm:p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs shadow-2xs">
+        <div className="flex items-center gap-3">
+          <div className="w-7 h-7 rounded-lg bg-blue-100/80 text-[#2563EB] flex items-center justify-center shrink-0">
+            <Lock className="w-4 h-4" />
+          </div>
+          <p className="text-slate-700 text-xs font-medium">
+            <strong className="font-bold text-[#0F172A]">Dica de segurança:</strong> Utilize uma
+            palavra-passe forte e mantenha a autenticação de dois fatores ativada para proteger a sua
+            conta.
+          </p>
+        </div>
+        <a
+          href="#centro-de-ajuda"
+          onClick={(e) => {
+            e.preventDefault();
+            alert('Centro de Ajuda da VILA: Guias de segurança e gestão de acessos.');
+          }}
+          className="text-[#2563EB] font-bold hover:underline flex items-center gap-1.5 shrink-0"
+        >
+          <span>Centro de ajuda</span>
+          <ExternalLink className="w-3.5 h-3.5" />
+        </a>
+      </div>
+
+      {/* ========================================================
+          MODALS DE INTERAÇÃO
+         ======================================================== */}
+
+      {/* 1. Modal Convidar Utilizador */}
+      {showInviteModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl border border-slate-200 max-w-md w-full p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <h3 className="text-base font-bold text-[#0F172A]">Convidar novo membro para a equipa</h3>
+              <button
+                type="button"
+                onClick={() => setShowInviteModal(false)}
+                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="text-xs text-slate-500">
+              O utilizador receberá um convite por e-mail com instruções para ativar o seu acesso à organização.
+            </p>
+            <form onSubmit={handleInviteSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  E-mail institucional ou pessoal
+                </label>
+                <input
+                  type="email"
+                  required
+                  placeholder="exemplo@organizacao.org"
+                  value={inviteEmail}
+                  onChange={(e) => setInviteEmail(e.target.value)}
+                  className="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-200 focus:border-blue-600 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  Papel de Acesso
+                </label>
+                <select
+                  value={inviteRole}
+                  onChange={(e) => setInviteRole(e.target.value as any)}
+                  className="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-200 focus:border-blue-600 outline-none cursor-pointer"
+                >
+                  <option value="Editor">Editor (Pode criar projetos, publicar eventos e gerir iniciativas)</option>
+                  <option value="Visualizador">Visualizador (Apenas consulta de relatórios e indicadores)</option>
+                </select>
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
                 <button
                   type="button"
-                  onClick={() => handleRevokeSession(sess.id)}
-                  className="px-3 py-1.5 rounded-lg border border-red-200 text-red-600 hover:bg-red-50 text-xs font-semibold cursor-pointer"
+                  onClick={() => setShowInviteModal(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
                 >
-                  Encerrar
+                  Cancelar
                 </button>
-              )}
-            </div>
-          ))}
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-[#2563EB] text-white hover:bg-blue-700 cursor-pointer"
+                >
+                  Enviar convite
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </section>
+      )}
+
+      {/* 2. Modal Editar Informações */}
+      {showEditInfoModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl border border-slate-200 max-w-md w-full p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <h3 className="text-base font-bold text-[#0F172A]">Editar Informações da Conta</h3>
+              <button
+                type="button"
+                onClick={() => setShowEditInfoModal(false)}
+                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                setShowEditInfoModal(false);
+              }}
+              className="space-y-3"
+            >
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Nome completo</label>
+                <input
+                  type="text"
+                  value={userInfo.name}
+                  onChange={(e) => setUserInfo({ ...userInfo, name: e.target.value })}
+                  className="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-200 focus:border-blue-600 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">E-mail</label>
+                <input
+                  type="email"
+                  value={userInfo.email}
+                  onChange={(e) => setUserInfo({ ...userInfo, email: e.target.value })}
+                  className="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-200 focus:border-blue-600 outline-none"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-700 mb-1">Cargo</label>
+                <input
+                  type="text"
+                  value={userInfo.role}
+                  onChange={(e) => setUserInfo({ ...userInfo, role: e.target.value })}
+                  className="w-full px-3.5 py-2 text-xs rounded-xl border border-slate-200 focus:border-blue-600 outline-none"
+                />
+              </div>
+              <div className="flex justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowEditInfoModal(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 hover:bg-slate-100 cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-[#2563EB] text-white hover:bg-blue-700 cursor-pointer"
+                >
+                  Guardar alterações
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* 3. Modal Ver Todos os Utilizadores */}
+      {showAllMembersModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl border border-slate-200 max-w-lg w-full p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <h3 className="text-base font-bold text-[#0F172A]">Todos os Utilizadores da Conta (6)</h3>
+              <button
+                type="button"
+                onClick={() => setShowAllMembersModal(false)}
+                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="divide-y divide-slate-100 max-h-80 overflow-y-auto pr-1">
+              {[...teamMembers, ...additionalMembers].map((member) => (
+                <div key={member.id} className="py-2.5 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <img
+                      src={member.avatar}
+                      alt={member.name}
+                      className="w-8 h-8 rounded-full object-cover shrink-0"
+                    />
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-[#0F172A] truncate">{member.name}</p>
+                      <p className="text-[11px] text-slate-500 truncate">{member.email}</p>
+                    </div>
+                  </div>
+                  <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700">
+                    {member.role}
+                  </span>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-end pt-2">
+              <button
+                type="button"
+                onClick={() => setShowAllMembersModal(false)}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-[#2563EB] text-white hover:bg-blue-700 cursor-pointer"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 4. Modal Histórico de Acessos / Auditoria */}
+      {showAuditModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl border border-slate-200 max-w-lg w-full p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <h3 className="text-base font-bold text-[#0F172A]">Histórico Completo de Auditoria</h3>
+              <button
+                type="button"
+                onClick={() => setShowAuditModal(false)}
+                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="space-y-3 max-h-80 overflow-y-auto pr-1 text-xs">
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <p className="font-bold text-[#0F172A]">Sessão iniciada via Google OAuth</p>
+                <p className="text-[11px] text-slate-500">IP: 194.65.12.89 • Lisboa, Portugal</p>
+                <p className="text-[10px] text-slate-400 mt-0.5">15 de maio de 2024 às 10:24</p>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <p className="font-bold text-[#0F172A]">Palavra-passe mestra alterada</p>
+                <p className="text-[11px] text-slate-500">IP: 194.65.12.89 • Lisboa, Portugal</p>
+                <p className="text-[10px] text-slate-400 mt-0.5">10 de maio de 2024 às 09:15</p>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <p className="font-bold text-[#0F172A]">Novo autenticador TOTP ativado</p>
+                <p className="text-[11px] text-slate-500">IP: 85.240.110.4 • Lisboa, Portugal</p>
+                <p className="text-[10px] text-slate-400 mt-0.5">05 de maio de 2024 às 16:40</p>
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-100">
+                <p className="font-bold text-[#0F172A]">Passkey Biométrica registada (Touch ID)</p>
+                <p className="text-[11px] text-slate-500">Dispositivo: MacBook Pro • Porto, Portugal</p>
+                <p className="text-[10px] text-slate-400 mt-0.5">28 de abril de 2024 às 14:12</p>
+              </div>
+            </div>
+            <div className="flex justify-end pt-2">
+              <button
+                type="button"
+                onClick={() => setShowAuditModal(false)}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-[#2563EB] text-white hover:bg-blue-700 cursor-pointer"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 5. Modal Gerir Métodos de Acesso */}
+      {showAuthMethodsModal && (
+        <div className="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl border border-slate-200 max-w-md w-full p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <h3 className="text-base font-bold text-[#0F172A]">Gerir Métodos de Acesso</h3>
+              <button
+                type="button"
+                onClick={() => setShowAuthMethodsModal(false)}
+                className="p-1 text-slate-400 hover:text-slate-600 rounded-lg cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <p className="text-xs text-slate-500">
+              Personalize a sua palavra-passe, configure chaves de segurança FIDO2 ou regenere chaves de recuperação de dois fatores.
+            </p>
+            <div className="space-y-2 pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  alert('Instruções de redefinição de palavra-passe enviadas para divan@vilaglobal.org');
+                  setShowAuthMethodsModal(false);
+                }}
+                className="w-full text-left p-3 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-between cursor-pointer"
+              >
+                <div>
+                  <p className="text-xs font-bold text-[#0F172A]">Alterar palavra-passe</p>
+                  <p className="text-[11px] text-slate-500">Última atualização há 3 meses</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-400" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  alert('Nova Passkey biométrica registada com sucesso!');
+                  setShowAuthMethodsModal(false);
+                }}
+                className="w-full text-left p-3 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-between cursor-pointer"
+              >
+                <div>
+                  <p className="text-xs font-bold text-[#0F172A]">Adicionar nova Passkey</p>
+                  <p className="text-[11px] text-slate-500">Touch ID, Face ID ou Windows Hello</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-400" />
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  alert('Códigos de recuperação de 2FA gerados e copiados!');
+                  setShowAuthMethodsModal(false);
+                }}
+                className="w-full text-left p-3 rounded-xl border border-slate-200 hover:bg-slate-50 flex items-center justify-between cursor-pointer"
+              >
+                <div>
+                  <p className="text-xs font-bold text-[#0F172A]">Códigos de backup 2FA</p>
+                  <p className="text-[11px] text-slate-500">8 códigos de emergência restantes</p>
+                </div>
+                <ChevronRight className="w-4 h-4 text-slate-400" />
+              </button>
+            </div>
+            <div className="flex justify-end pt-2">
+              <button
+                type="button"
+                onClick={() => setShowAuthMethodsModal(false)}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer"
+              >
+                Concluído
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

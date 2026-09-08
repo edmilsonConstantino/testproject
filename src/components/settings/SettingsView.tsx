@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import {
-  Home,
   ChevronRight,
   Search,
   Bell,
@@ -32,7 +31,7 @@ interface SettingsViewProps {
 }
 
 export const SettingsView: React.FC<SettingsViewProps> = ({
-  initialTab = 'perfil',
+  initialTab = 'contas',
   onOpenMobileMenu,
   onNavigateToTab,
   onOpenAiAssistant,
@@ -49,7 +48,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     }
   }, [initialTab]);
 
-  // Tab definitions in exact specified order
+  // Tab definitions in exact specified order matching UI CONTAS E ACESSOS
   const tabs: { id: SettingsTabId; label: string; icon: React.FC<{ className?: string }> }[] = [
     { id: 'perfil', label: 'Perfil', icon: User },
     { id: 'preferencias', label: 'Preferências', icon: Sliders },
@@ -60,12 +59,54 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     { id: 'sobre', label: 'Sobre', icon: Info },
   ];
 
+  // Dynamic titles and subtitles per tab matching mockup
+  const tabMetadata: Record<
+    SettingsTabId,
+    { title: string; subtitle: string; breadcrumb: string }
+  > = {
+    perfil: {
+      title: 'Perfil',
+      subtitle: 'Consulte o seu resumo pessoal, conquistas e atalhos de configuração.',
+      breadcrumb: 'Perfil',
+    },
+    preferencias: {
+      title: 'Preferências',
+      subtitle: 'Configure a experiência da plataforma, idioma, tema e acessibilidade.',
+      breadcrumb: 'Preferências',
+    },
+    notificacoes: {
+      title: 'Notificações',
+      subtitle: 'Gerencie os canais de comunicação e as preferências de alertas.',
+      breadcrumb: 'Notificações',
+    },
+    privacidade: {
+      title: 'Privacidade e Segurança',
+      subtitle: 'Controle a visibilidade dos seus dados e a segurança da sua conta.',
+      breadcrumb: 'Privacidade e Segurança',
+    },
+    contas: {
+      title: 'Contas e Acessos',
+      subtitle: 'Gerencie as suas credenciais, métodos de acesso e dispositivos conectados.',
+      breadcrumb: 'Contas e Acessos',
+    },
+    integracoes: {
+      title: 'Integrações',
+      subtitle: 'Conecte serviços externos e automatize o seu fluxo de trabalho.',
+      breadcrumb: 'Integrações',
+    },
+    sobre: {
+      title: 'Sobre',
+      subtitle: 'Informações institucionais, missão, visão e impacto global da VILA.',
+      breadcrumb: 'Sobre',
+    },
+  };
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-16">
       {/* 1. Header / Topbar da Área de Definições */}
       <header className="bg-white border-b border-slate-200/80 sticky top-0 z-30">
         <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-          {/* Esquerda: Menu Mobile e Breadcrumb */}
+          {/* Esquerda: Menu Mobile e Breadcrumb exato "Preferências > Contas e Acessos" */}
           <div className="flex items-center gap-3 min-w-0">
             {onOpenMobileMenu && (
               <button
@@ -78,63 +119,65 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               </button>
             )}
 
-            {/* Breadcrumb: Comunidade Global > Definições */}
+            {/* Breadcrumb idêntico à imagem: Ícone + Preferências > [Nome da Aba] */}
             <nav className="flex items-center gap-2 text-xs text-slate-500 min-w-0">
               <button
                 type="button"
                 onClick={() => onNavigateToTab?.('inicio')}
-                className="hover:text-blue-600 flex items-center gap-1 cursor-pointer shrink-0"
+                className="text-[#2563EB] hover:underline flex items-center gap-1.5 cursor-pointer shrink-0 font-medium"
               >
-                <Home className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Comunidade Global</span>
+                <Sliders className="w-3.5 h-3.5 text-[#2563EB]" />
+                <span>Preferências</span>
               </button>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-300 shrink-0" />
-              <span className="font-semibold text-[#0F172A] truncate">Definições</span>
+              <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+              <span className="font-bold text-[#0F172A] truncate">
+                {tabMetadata[activeTab].breadcrumb}
+              </span>
             </nav>
           </div>
 
-          {/* Direita: Pesquisa, Notificações e Perfil */}
+          {/* Direita: Pesquisa, Notificações com Badge e Perfil Divan Mellert */}
           <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-            {/* Input de Pesquisa */}
+            {/* Input de Pesquisa Pill */}
             <div className="relative hidden md:block w-48 lg:w-64">
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
                 type="text"
                 placeholder="Pesquisar..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-slate-50/80 hover:bg-slate-50 text-xs text-slate-800 pl-9 pr-3 py-2 rounded-full border border-slate-200 focus:border-blue-600 focus:bg-white outline-none transition-all"
+                className="w-full bg-slate-50/80 hover:bg-slate-50 text-xs text-slate-800 pl-9 pr-3 py-2 rounded-full border border-slate-200 focus:border-blue-600 focus:bg-white outline-none transition-all shadow-2xs"
               />
             </div>
 
-            {/* Botão Notificações com Badge */}
+            {/* Botão Notificações com Badge Azul "3" */}
             <button
               type="button"
               onClick={() => setActiveTab('notificacoes')}
               className="relative p-2 rounded-full text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
               title="Notificações"
             >
-              <Bell className="w-4 h-4" />
+              <Bell className="w-4.5 h-4.5 text-slate-700" />
               <span className="absolute top-1 right-1 w-4 h-4 bg-[#2563EB] text-white text-[10px] font-bold rounded-full flex items-center justify-center ring-2 ring-white">
                 3
               </span>
             </button>
 
-            {/* Menu de Perfil Divan Mellert */}
+            {/* Menu de Perfil Divan Mellert com Chevron */}
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                className="flex items-center gap-2 p-1.5 sm:px-2 sm:py-1.5 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
+                className="flex items-center gap-2 p-1.5 sm:px-2.5 sm:py-1.5 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
               >
                 <img
                   src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80"
                   alt="Divan Mellert"
-                  className="w-8 h-8 rounded-full object-cover ring-2 ring-slate-100"
+                  className="w-8 h-8 rounded-full object-cover ring-1 ring-slate-200"
                 />
                 <div className="hidden sm:block text-left">
                   <p className="text-xs font-bold text-[#0F172A] leading-tight">Divan Mellert</p>
-                  <p className="text-[11px] text-slate-500 leading-tight">Administrador</p>
+                  <p className="text-[11px] text-slate-400 leading-tight">Administrador</p>
                 </div>
                 <ChevronDown className="w-3.5 h-3.5 text-slate-400 hidden sm:block" />
               </button>
@@ -152,7 +195,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                       setActiveTab('perfil');
                       setIsUserMenuOpen(false);
                     }}
-                    className="w-full text-left px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg flex items-center gap-2"
+                    className="w-full text-left px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg flex items-center gap-2 cursor-pointer"
                   >
                     <User className="w-3.5 h-3.5 text-slate-400" />
                     O meu perfil
@@ -160,10 +203,21 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                   <button
                     type="button"
                     onClick={() => {
+                      setActiveTab('contas');
+                      setIsUserMenuOpen(false);
+                    }}
+                    className="w-full text-left px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg flex items-center gap-2 cursor-pointer"
+                  >
+                    <Users className="w-3.5 h-3.5 text-slate-400" />
+                    Contas e Acessos
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
                       setActiveTab('preferencias');
                       setIsUserMenuOpen(false);
                     }}
-                    className="w-full text-left px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg flex items-center gap-2"
+                    className="w-full text-left px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 rounded-lg flex items-center gap-2 cursor-pointer"
                   >
                     <Sliders className="w-3.5 h-3.5 text-slate-400" />
                     Preferências
@@ -174,7 +228,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                       onOpenAiAssistant?.();
                       setIsUserMenuOpen(false);
                     }}
-                    className="w-full text-left px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-lg flex items-center gap-2"
+                    className="w-full text-left px-3 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded-lg flex items-center gap-2 cursor-pointer"
                   >
                     <Sparkles className="w-3.5 h-3.5" />
                     Assistente VILA AI
@@ -188,19 +242,19 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
       {/* 2. Conteúdo Principal */}
       <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-6 sm:pt-8 space-y-6">
-        {/* Título & Subtítulo da Secção de Definições */}
+        {/* Título & Subtítulo dinâmico da Aba Ativa (exatamente como em UI CONTAS E ACESSOS) */}
         <div className="space-y-1">
-          <h1 className="text-2xl sm:text-3xl font-black text-[#0F172A] font-['Outfit'] tracking-tight">
-            Definições
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight">
+            {tabMetadata[activeTab].title}
           </h1>
           <p className="text-xs sm:text-sm text-[#64748B]">
-            Gerir a sua conta, preferências e segurança.
+            {tabMetadata[activeTab].subtitle}
           </p>
         </div>
 
-        {/* 3. Barra de Navegação das 7 Abas (com scroll horizontal em ecrãs pequenos) */}
+        {/* 3. Barra de Navegação das 7 Abas na ordem exata */}
         <div className="border-b border-slate-200/90 overflow-x-auto no-scrollbar">
-          <div className="flex items-center gap-2 sm:gap-6 min-w-max">
+          <div className="flex items-center gap-4 sm:gap-7 min-w-max">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
@@ -247,7 +301,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           )}
 
           {activeTab === 'contas' && (
-            <AccountsAccessTab />
+            <AccountsAccessTab onNavigateTab={(tabId) => setActiveTab(tabId)} />
           )}
 
           {activeTab === 'integracoes' && (

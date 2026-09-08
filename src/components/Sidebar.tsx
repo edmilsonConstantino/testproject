@@ -19,7 +19,8 @@ import {
   Leaf,
   Home,
   HelpCircle,
-  Rocket
+  Rocket,
+  Key
 } from 'lucide-react';
 import { Logo } from './Logo';
 
@@ -220,113 +221,132 @@ export const Sidebar: React.FC<SidebarProps> = ({
           id="sidebar-bottom-fixed-container"
           className="shrink-0 pt-2 border-t border-slate-100/90 flex flex-col gap-2.5 bg-white"
         >
-          {/* 1. Card do Globo Terrestre com Constelação e Nós de Conexão */}
-          <div
-            id="sidebar-promo-card"
-            className="p-3 rounded-2xl bg-gradient-to-b from-[#F4F8FD] to-[#EDF4FD] border border-blue-100/60 relative overflow-hidden flex flex-col items-center text-center shadow-2xs"
-          >
-            {/* 3D Earth Globe Graphic Proportional & Centered */}
-            <div className="relative w-11 h-11 mb-1.5 flex items-center justify-center">
-              <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xs">
-                <defs>
-                  {/* Outer atmospheric radial glow */}
-                  <radialGradient id="promo-atmos-glow" cx="50%" cy="50%" r="50%">
-                    <stop offset="60%" stopColor="#3B82F6" stopOpacity="0.25" />
-                    <stop offset="100%" stopColor="#2563EB" stopOpacity="0" />
-                  </radialGradient>
-
-                  {/* 3D Sphere Lighting Gradient */}
-                  <radialGradient id="promo-sphere-lighting" cx="35%" cy="30%" r="70%">
-                    <stop offset="0%" stopColor="#FFFFFF" />
-                    <stop offset="45%" stopColor="#E2E8F0" />
-                    <stop offset="80%" stopColor="#CBD5E1" />
-                    <stop offset="100%" stopColor="#94A3B8" />
-                  </radialGradient>
-
-                  {/* Ocean & Continent gradients */}
-                  <linearGradient id="promo-continent-blue" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#3B82F6" />
-                    <stop offset="100%" stopColor="#1D4ED8" />
-                  </linearGradient>
-                  <linearGradient id="promo-continent-green" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#34D399" />
-                    <stop offset="100%" stopColor="#059669" />
-                  </linearGradient>
-                </defs>
-
-                {/* Atmospheric Glow */}
-                <circle cx="50" cy="50" r="48" fill="url(#promo-atmos-glow)" />
-
-                {/* Earth Sphere Base */}
-                <circle cx="50" cy="50" r="36" fill="url(#promo-sphere-lighting)" stroke="#E2E8F0" strokeWidth="0.8" />
-
-                {/* Curved Latitude/Longitude Wireframe */}
-                <ellipse cx="50" cy="50" rx="36" ry="12" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.4" />
-                <ellipse cx="50" cy="50" rx="14" ry="36" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.4" />
-                <path d="M14 50 Q 50 68 86 50" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.3" />
-                <path d="M14 50 Q 50 32 86 50" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.3" />
-
-                {/* Realistic Landmass Continents */}
-                {/* Europe & Africa */}
-                <path
-                  d="M44 26 C47 24 53 25 55 28 C56 31 52 34 50 36 C49 40 52 45 54 50 C55 56 50 63 46 68 C42 67 40 60 41 54 C42 48 39 42 41 36 C41 30 42 27 44 26 Z"
-                  fill="url(#promo-continent-blue)"
-                />
-                {/* Americas */}
-                <path
-                  d="M26 25 C29 23 33 26 31 31 C29 34 26 36 28 41 C29 44 32 47 30 53 C28 58 25 64 23 62 C21 57 23 50 22 44 C21 37 22 28 26 25 Z"
-                  fill="url(#promo-continent-green)"
-                  opacity="0.9"
-                />
-                {/* Asia & Pacific */}
-                <path
-                  d="M59 23 C66 22 74 26 76 32 C78 38 72 44 69 47 C66 49 63 44 60 40 C58 36 56 32 57 26 Z"
-                  fill="url(#promo-continent-blue)"
-                />
-                <path
-                  d="M66 54 C72 52 76 56 75 62 C72 65 67 64 65 60 C64 57 65 55 66 54 Z"
-                  fill="url(#promo-continent-green)"
-                />
-
-                {/* Constellation Connecting Mesh Lines */}
-                <path d="M28 32 Q 40 22 50 30" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.8" />
-                <path d="M50 30 Q 62 24 70 34" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.8" />
-                <path d="M50 30 Q 54 44 53 48" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.8" />
-                <path d="M28 32 Q 24 48 30 52" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.6" />
-                <path d="M70 34 Q 74 48 66 54" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.6" />
-
-                {/* Multi-colored Active Global Signal Nodes */}
-                <circle cx="48" cy="30" r="3" fill="#2563EB" stroke="#FFFFFF" strokeWidth="1" />
-                <circle cx="53" cy="48" r="2.8" fill="#10B981" stroke="#FFFFFF" strokeWidth="1" />
-                <circle cx="70" cy="34" r="2.4" fill="#2563EB" stroke="#FFFFFF" strokeWidth="1" />
-                <circle cx="28" cy="32" r="2.4" fill="#10B981" stroke="#FFFFFF" strokeWidth="1" />
-                <circle cx="46" cy="62" r="2" fill="#2563EB" stroke="#FFFFFF" strokeWidth="0.8" />
-                <circle cx="66" cy="54" r="2" fill="#F59E0B" stroke="#FFFFFF" strokeWidth="0.8" />
-
-                {/* Orbit Satellite Sparks */}
-                <circle cx="16" cy="38" r="1.4" fill="#10B981" />
-                <circle cx="84" cy="44" r="1.4" fill="#2563EB" />
-                <circle cx="48" cy="14" r="1.4" fill="#3B82F6" />
-                <circle cx="68" cy="74" r="1.2" fill="#F59E0B" />
-              </svg>
-            </div>
-
-            <p className="text-[11.5px] font-bold text-[#1E293B] leading-[1.3] font-['Outfit']">
-              Juntos, construímos um mundo melhor.
-            </p>
-
-            <button
-              type="button"
-              onClick={() => {
-                onSelectTab('impacto');
-                if (onCloseMobile) onCloseMobile();
-              }}
-              className="mt-2 w-full inline-flex items-center justify-center gap-1.5 py-1 px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-[11px] font-bold text-[#0055FE] hover:text-[#0042CC] shadow-2xs transition-colors cursor-pointer group/impact"
+          {/* 1. Card Contextual: Segurança no Definições ou Globo Terrestre Geral */}
+          {currentTab === 'definicoes' ? (
+            <div
+              id="sidebar-security-card"
+              className="p-3 rounded-2xl bg-gradient-to-b from-[#F0F7FF] to-[#E5F0FF] border border-blue-100/90 text-left shadow-2xs space-y-1.5"
             >
-              <span>Ver impacto global</span>
-              <ArrowRight className="w-3 h-3 transform group-hover/impact:translate-x-0.5 transition-transform" />
-            </button>
-          </div>
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-xl bg-[#2563EB] text-white flex items-center justify-center shrink-0 shadow-xs">
+                  <Key className="w-3.5 h-3.5" />
+                </div>
+                <h4 className="text-[11.5px] font-bold text-[#0F172A] font-['Outfit'] leading-tight">
+                  Acesso seguro à sua conta.
+                </h4>
+              </div>
+              <p className="text-[10.5px] text-slate-500 leading-snug">
+                Gerencie como inicia sessão e quem pode aceder à sua conta na VILA.
+              </p>
+            </div>
+          ) : (
+            <div
+              id="sidebar-promo-card"
+              className="p-3 rounded-2xl bg-gradient-to-b from-[#F4F8FD] to-[#EDF4FD] border border-blue-100/60 relative overflow-hidden flex flex-col items-center text-center shadow-2xs"
+            >
+              {/* 3D Earth Globe Graphic Proportional & Centered */}
+              <div className="relative w-11 h-11 mb-1.5 flex items-center justify-center">
+                <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-xs">
+                  <defs>
+                    {/* Outer atmospheric radial glow */}
+                    <radialGradient id="promo-atmos-glow" cx="50%" cy="50%" r="50%">
+                      <stop offset="60%" stopColor="#3B82F6" stopOpacity="0.25" />
+                      <stop offset="100%" stopColor="#2563EB" stopOpacity="0" />
+                    </radialGradient>
+
+                    {/* 3D Sphere Lighting Gradient */}
+                    <radialGradient id="promo-sphere-lighting" cx="35%" cy="30%" r="70%">
+                      <stop offset="0%" stopColor="#FFFFFF" />
+                      <stop offset="45%" stopColor="#E2E8F0" />
+                      <stop offset="80%" stopColor="#CBD5E1" />
+                      <stop offset="100%" stopColor="#94A3B8" />
+                    </radialGradient>
+
+                    {/* Ocean & Continent gradients */}
+                    <linearGradient id="promo-continent-blue" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#3B82F6" />
+                      <stop offset="100%" stopColor="#1D4ED8" />
+                    </linearGradient>
+                    <linearGradient id="promo-continent-green" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stopColor="#34D399" />
+                      <stop offset="100%" stopColor="#059669" />
+                    </linearGradient>
+                  </defs>
+
+                  {/* Atmospheric Glow */}
+                  <circle cx="50" cy="50" r="48" fill="url(#promo-atmos-glow)" />
+
+                  {/* Earth Sphere Base */}
+                  <circle cx="50" cy="50" r="36" fill="url(#promo-sphere-lighting)" stroke="#E2E8F0" strokeWidth="0.8" />
+
+                  {/* Curved Latitude/Longitude Wireframe */}
+                  <ellipse cx="50" cy="50" rx="36" ry="12" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.4" />
+                  <ellipse cx="50" cy="50" rx="14" ry="36" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.4" />
+                  <path d="M14 50 Q 50 68 86 50" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.3" />
+                  <path d="M14 50 Q 50 32 86 50" fill="none" stroke="#94A3B8" strokeWidth="0.5" strokeDasharray="2 2" opacity="0.3" />
+
+                  {/* Realistic Landmass Continents */}
+                  {/* Europe & Africa */}
+                  <path
+                    d="M44 26 C47 24 53 25 55 28 C56 31 52 34 50 36 C49 40 52 45 54 50 C55 56 50 63 46 68 C42 67 40 60 41 54 C42 48 39 42 41 36 C41 30 42 27 44 26 Z"
+                    fill="url(#promo-continent-blue)"
+                  />
+                  {/* Americas */}
+                  <path
+                    d="M26 25 C29 23 33 26 31 31 C29 34 26 36 28 41 C29 44 32 47 30 53 C28 58 25 64 23 62 C21 57 23 50 22 44 C21 37 22 28 26 25 Z"
+                    fill="url(#promo-continent-green)"
+                    opacity="0.9"
+                  />
+                  {/* Asia & Pacific */}
+                  <path
+                    d="M59 23 C66 22 74 26 76 32 C78 38 72 44 69 47 C66 49 63 44 60 40 C58 36 56 32 57 26 Z"
+                    fill="url(#promo-continent-blue)"
+                  />
+                  <path
+                    d="M66 54 C72 52 76 56 75 62 C72 65 67 64 65 60 C64 57 65 55 66 54 Z"
+                    fill="url(#promo-continent-green)"
+                  />
+
+                  {/* Constellation Connecting Mesh Lines */}
+                  <path d="M28 32 Q 40 22 50 30" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.8" />
+                  <path d="M50 30 Q 62 24 70 34" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.8" />
+                  <path d="M50 30 Q 54 44 53 48" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.8" />
+                  <path d="M28 32 Q 24 48 30 52" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.6" />
+                  <path d="M70 34 Q 74 48 66 54" fill="none" stroke="#60A5FA" strokeWidth="0.8" strokeDasharray="1.5 1.5" opacity="0.6" />
+
+                  {/* Multi-colored Active Global Signal Nodes */}
+                  <circle cx="48" cy="30" r="3" fill="#2563EB" stroke="#FFFFFF" strokeWidth="1" />
+                  <circle cx="53" cy="48" r="2.8" fill="#10B981" stroke="#FFFFFF" strokeWidth="1" />
+                  <circle cx="70" cy="34" r="2.4" fill="#2563EB" stroke="#FFFFFF" strokeWidth="1" />
+                  <circle cx="28" cy="32" r="2.4" fill="#10B981" stroke="#FFFFFF" strokeWidth="1" />
+                  <circle cx="46" cy="62" r="2" fill="#2563EB" stroke="#FFFFFF" strokeWidth="0.8" />
+                  <circle cx="66" cy="54" r="2" fill="#F59E0B" stroke="#FFFFFF" strokeWidth="0.8" />
+
+                  {/* Orbit Satellite Sparks */}
+                  <circle cx="16" cy="38" r="1.4" fill="#10B981" />
+                  <circle cx="84" cy="44" r="1.4" fill="#2563EB" />
+                  <circle cx="48" cy="14" r="1.4" fill="#3B82F6" />
+                  <circle cx="68" cy="74" r="1.2" fill="#F59E0B" />
+                </svg>
+              </div>
+
+              <p className="text-[11.5px] font-bold text-[#1E293B] leading-[1.3] font-['Outfit']">
+                Juntos, construímos um mundo melhor.
+              </p>
+
+              <button
+                type="button"
+                onClick={() => {
+                  onSelectTab('impacto');
+                  if (onCloseMobile) onCloseMobile();
+                }}
+                className="mt-2 w-full inline-flex items-center justify-center gap-1.5 py-1 px-2.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-[11px] font-bold text-[#0055FE] hover:text-[#0042CC] shadow-2xs transition-colors cursor-pointer group/impact"
+              >
+                <span>Ver impacto global</span>
+                <ArrowRight className="w-3 h-3 transform group-hover/impact:translate-x-0.5 transition-transform" />
+              </button>
+            </div>
+          )}
 
           {/* 2. Seletor de Idioma Retrátil Estilizado */}
           <div className="relative w-full" ref={langDropdownRef}>
