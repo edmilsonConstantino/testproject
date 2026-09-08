@@ -50,6 +50,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             onOpenSearchModal={onOpenSearchModal}
             onOpenMobileMenu={onOpenMobileSidebar}
             onOpenAuth={onOpenAuth}
+            onNavigateToTab={onSelectTab}
           />
         )}
 

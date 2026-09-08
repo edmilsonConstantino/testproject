@@ -10,6 +10,7 @@ import { GlobalEventsView } from './components/GlobalEventsView';
 import { GlobalCommunityView } from './components/GlobalCommunityView';
 import { GlobalImpactView } from './components/GlobalImpactView';
 import { AboutVilaView } from './components/AboutVilaView';
+import { SettingsView } from './components/SettingsView';
 import { CountryDetailModal } from './components/CountryDetailModal';
 import { VideoModal } from './components/VideoModal';
 import { SearchCommandModal } from './components/SearchCommandModal';
@@ -59,6 +60,8 @@ const getInitialTab = (): string => {
     return 'impacto';
   } else if (target === 'sobre' || target === 'sobre-a-vila' || target.includes('sobre')) {
     return 'sobre';
+  } else if (target === 'definicoes' || target === 'settings' || target === 'preferencias' || target === 'configuracoes') {
+    return 'definicoes';
   } else if (target === 'inicio') {
     return 'inicio';
   } else if (target === 'comunidade' || target === 'comunidade-global') {
@@ -112,6 +115,8 @@ export default function App() {
         setCurrentTab('impacto');
       } else if (target === 'sobre' || target === 'sobre-a-vila' || target.includes('sobre')) {
         setCurrentTab('sobre');
+      } else if (target === 'definicoes' || target === 'settings' || target === 'preferencias' || target === 'configuracoes') {
+        setCurrentTab('definicoes');
       } else if (target === 'inicio' || target === 'home' || target === '') {
         setCurrentTab('inicio');
       }
@@ -308,6 +313,17 @@ export default function App() {
             onOpenAiAssistant={() => setIsAiModalOpen(true)}
             onOpenAuth={(mode) => setAuthModal({ isOpen: true, mode })}
           />
+        ) : (currentTab === 'definicoes' || currentTab === 'preferencias' || currentTab === 'settings' || currentTab === 'configuracoes') ? (
+          /* Definições / Preferências Master Section matching PERFIL.png and 7 Tabs Specification */
+          <SettingsView
+            onOpenMobileMenu={() => setIsMobileSidebarOpen(true)}
+            onNavigateToTab={(tabId) => {
+              setCurrentTab(tabId);
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onOpenAiAssistant={() => setIsAiModalOpen(true)}
+            onOpenAuth={(mode) => setAuthModal({ isOpen: true, mode })}
+          />
         ) : (
           /* Subview Render for Other Sidebar Tabs */
           <div className="px-3.5 sm:px-5 lg:px-6 pt-4 sm:pt-6 pb-10 max-w-[1600px] mx-auto space-y-6 animate-in fade-in duration-200 overflow-y-auto pr-1">
@@ -356,7 +372,7 @@ export default function App() {
               </div>
             )}
 
-            {['comunidade', 'impacto', 'parceiros', 'sobre', 'definicoes'].includes(
+            {['comunidade', 'impacto', 'parceiros', 'sobre'].includes(
               currentTab
             ) &&
               currentTab !== 'ia' &&

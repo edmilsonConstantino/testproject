@@ -15,6 +15,7 @@ export interface TopbarProps {
   onOpenMobileMenu?: () => void;
   onOpenAuth?: (mode: 'login' | 'register') => void;
   onMarkAllNotificationsRead?: () => void;
+  onNavigateToTab?: (tabId: string) => void;
 }
 
 export const Topbar: React.FC<TopbarProps> = ({
@@ -29,6 +30,7 @@ export const Topbar: React.FC<TopbarProps> = ({
   onOpenMobileMenu,
   onOpenAuth,
   onMarkAllNotificationsRead,
+  onNavigateToTab,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLanguage, setSelectedLanguage] = useState<'PT' | 'EN' | 'ES'>(currentLanguage);
@@ -409,7 +411,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                   role="menuitem"
                   onClick={() => {
                     setIsAvatarMenuOpen(false);
-                    onOpenAuth?.('login');
+                    onNavigateToTab?.('definicoes');
                   }}
                   className="w-full px-4 py-2 text-left text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 transition-colors cursor-pointer"
                 >
@@ -422,7 +424,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                   role="menuitem"
                   onClick={() => {
                     setIsAvatarMenuOpen(false);
-                    onOpenAuth?.('login');
+                    onNavigateToTab?.('definicoes');
                   }}
                   className="w-full px-4 py-2 text-left text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 transition-colors cursor-pointer"
                 >
@@ -435,6 +437,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                   role="menuitem"
                   onClick={() => {
                     setIsAvatarMenuOpen(false);
+                    onNavigateToTab?.('definicoes');
                   }}
                   className="w-full px-4 py-2 text-left text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 transition-colors cursor-pointer"
                 >
