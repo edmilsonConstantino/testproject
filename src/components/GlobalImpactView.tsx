@@ -4,9 +4,11 @@ import { EnvironmentImpactView, EnvironmentImpactViewProps } from './Environment
 import { HealthImpactView } from './HealthImpactView';
 import { TechnologyImpactView } from './TechnologyImpactView';
 import { EntrepreneurshipImpactView } from './EntrepreneurshipImpactView';
+import { BreadcrumbItem } from './Topbar';
 
 export interface GlobalImpactViewProps extends EnvironmentImpactViewProps {
   initialSubView?: 'todas' | 'ambiente' | 'saude' | 'tecnologia' | 'empreendedorismo';
+  onBreadcrumbChange?: (items: BreadcrumbItem[]) => void;
 }
 
 export const GlobalImpactView: React.FC<GlobalImpactViewProps> = ({
@@ -18,6 +20,7 @@ export const GlobalImpactView: React.FC<GlobalImpactViewProps> = ({
   onOpenAuth,
   onNavigateToTab,
   onNavigateToCategory,
+  onBreadcrumbChange,
   ...restProps
 }) => {
   const [currentSubView, setCurrentSubView] = useState<'todas' | 'ambiente' | 'saude' | 'tecnologia' | 'empreendedorismo'>(initialSubView);
@@ -27,6 +30,38 @@ export const GlobalImpactView: React.FC<GlobalImpactViewProps> = ({
       setCurrentSubView(initialSubView);
     }
   }, [initialSubView]);
+
+  // Emitir breadcrumb para o Topbar compartilhado conforme a subview ativa
+  useEffect(() => {
+    const goToTodas = () => {
+      setCurrentSubView('todas');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const CATEGORY_LABELS: Record<string, string> = {
+      ambiente: 'Ambiente',
+      saude: 'Saúde',
+      tecnologia: 'Tecnologia',
+      empreendedorismo: 'Empreendedorismo',
+    };
+
+    // Trilha confirmada pelo mockup de referência (UI TECNOLOGIA.png etc.): Impacto Global é sempre
+    // exibido como parte de Comunidade Global no breadcrumb, mesmo tendo item próprio na sidebar.
+    const goToComunidade = () => onNavigateToTab?.('comunidade');
+
+    if (currentSubView === 'todas') {
+      onBreadcrumbChange?.([
+        { label: 'Comunidade Global', onClick: goToComunidade },
+        { label: 'Impacto Global' },
+      ]);
+    } else {
+      onBreadcrumbChange?.([
+        { label: 'Comunidade Global', onClick: goToComunidade },
+        { label: 'Impacto Global', onClick: goToTodas },
+        { label: CATEGORY_LABELS[currentSubView] },
+      ]);
+    }
+  }, [currentSubView, onBreadcrumbChange, onNavigateToTab]);
 
   const handleCategoryNavigation = (categoryId: string) => {
     if (categoryId === 'todas' || categoryId === 'impacto' || categoryId === 'impacto-global') {

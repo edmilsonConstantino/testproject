@@ -1,7 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Globe, ChevronDown, Bell, Menu, X, Check, User, Settings, LogOut, ShieldCheck } from 'lucide-react';
+import { Search, Globe, ChevronDown, ChevronRight, Bell, Menu, X, Check, User, Settings, LogOut, ShieldCheck, Home } from 'lucide-react';
 import { Logo } from './Logo';
 import { GLOBAL_NOTIFICATIONS } from '../data/countriesData';
+
+export interface BreadcrumbItem {
+  label: string;
+  onClick?: () => void;
+}
 
 export interface TopbarProps {
   userName?: string;
@@ -9,6 +14,7 @@ export interface TopbarProps {
   notificationCount?: number;
   currentLanguage?: 'PT' | 'EN' | 'ES';
   searchPlaceholder?: string;
+  breadcrumb?: BreadcrumbItem[];
   onLanguageChange?: (lang: 'PT' | 'EN' | 'ES') => void;
   onSearch?: (query: string) => void;
   onOpenSearchModal?: () => void;
@@ -24,6 +30,7 @@ export const Topbar: React.FC<TopbarProps> = ({
   notificationCount,
   currentLanguage = 'PT',
   searchPlaceholder = 'Pesquisar países, regiões, cidades, projetos, comunidades...',
+  breadcrumb,
   onLanguageChange,
   onSearch,
   onOpenSearchModal,
@@ -130,6 +137,38 @@ export const Topbar: React.FC<TopbarProps> = ({
         )}
         <Logo showTagline={false} size="sm" />
       </div>
+
+      {/* Breadcrumb Contextual (Desktop) */}
+      {breadcrumb && breadcrumb.length > 0 && (
+        <nav
+          id="topbar-breadcrumb"
+          className="hidden lg:flex items-center gap-2 text-[13px] font-medium shrink-0 max-w-xs truncate"
+          aria-label="Breadcrumb"
+        >
+          <Home className="w-4 h-4 text-[#0055FE] shrink-0" />
+          {breadcrumb.map((item, idx) => {
+            const isLast = idx === breadcrumb.length - 1;
+            return (
+              <React.Fragment key={`${item.label}-${idx}`}>
+                {idx > 0 && <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" strokeWidth={2.5} />}
+                {item.onClick && !isLast ? (
+                  <button
+                    type="button"
+                    onClick={item.onClick}
+                    className="text-slate-700 hover:text-[#0055FE] font-semibold truncate transition-colors cursor-pointer"
+                  >
+                    {item.label}
+                  </button>
+                ) : (
+                  <span className={`truncate ${isLast ? 'font-bold text-[#0F1E3D]' : 'text-slate-700 font-semibold'}`}>
+                    {item.label}
+                  </span>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </nav>
+      )}
 
       {/* 1. Input de Busca Centralizado */}
       <div className="hidden md:flex flex-1 max-w-xl mx-auto" id="topbar-search-container">

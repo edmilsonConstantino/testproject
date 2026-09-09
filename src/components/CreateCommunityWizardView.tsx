@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import {
-  ArrowLeft,
   ArrowRight,
-  Search,
   Globe,
-  Bell,
   Check,
   Upload,
   Leaf,
@@ -82,11 +79,6 @@ export const CreateCommunityWizardView: React.FC<CreateCommunityWizardViewProps>
   const [privacy, setPrivacy] = useState<'public' | 'restricted' | 'private'>('public');
   const [membershipApproval, setMembershipApproval] = useState<boolean>(false);
 
-  // Topbar Controls
-  const [currentLang, setCurrentLang] = useState<string>('PT');
-  const [isLangOpen, setIsLangOpen] = useState<boolean>(false);
-  const [searchQuery, setSearchQuery] = useState<string>('');
-
   // Publicação concluída modal
   const [isPublished, setIsPublished] = useState<boolean>(false);
 
@@ -150,113 +142,7 @@ export const CreateCommunityWizardView: React.FC<CreateCommunityWizardViewProps>
 
   return (
     <div id="create-community-wizard" className="w-full bg-[#F8FAFC] min-h-screen text-[#0F172A] flex flex-col">
-      {/* 1. Barra Superior com Breadcrumb, Pesquisa Central e Controles de Usuário */}
-      <div className="w-full bg-white border-b border-slate-200/80 sticky top-0 z-30 shadow-2xs">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-4">
-          {/* Trilha de Navegação Breadcrumb */}
-          <div className="flex items-center gap-2 min-w-0">
-            <button
-              type="button"
-              onClick={onBackToCommunity}
-              title="Voltar à Comunidade Global"
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-
-            <nav className="flex items-center gap-1.5 text-[13px] text-[#64748B] whitespace-nowrap overflow-hidden text-ellipsis">
-              <button
-                type="button"
-                onClick={onBackToCommunity}
-                className="hover:text-slate-900 transition-colors cursor-pointer"
-              >
-                Comunidade Global
-              </button>
-              <ArrowRight className="w-3 h-3 text-slate-400 shrink-0" />
-              <span className="font-bold text-[#0F172A]">Criar Comunidade</span>
-            </nav>
-          </div>
-
-          {/* Campo de Pesquisa Central Arredondado */}
-          <div className="flex-1 max-w-xl mx-2 hidden md:block">
-            <div className="relative w-full">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Pesquisar comunidades, temas, organizações..."
-                className="w-full bg-[#F1F5F9]/80 hover:bg-[#F1F5F9] focus:bg-white text-[13px] text-slate-800 placeholder:text-slate-400 pl-10 pr-14 py-2 rounded-full border border-transparent focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all outline-none"
-              />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none">
-                <span className="bg-white border border-slate-200/90 text-slate-400 text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded shadow-2xs">
-                  ⌘ K
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Controles de Idioma, Notificações e Avatar */}
-          <div className="flex items-center gap-3 shrink-0">
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setIsLangOpen(!isLangOpen)}
-                className="flex items-center gap-1.5 text-[12px] font-bold text-slate-700 hover:text-slate-900 px-2 py-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
-              >
-                <Globe className="w-4 h-4 text-slate-500" strokeWidth={2} />
-                <span>{currentLang}</span>
-                <span className="text-slate-400 text-[10px]">▼</span>
-              </button>
-
-              {isLangOpen && (
-                <div className="absolute right-0 mt-1 w-28 bg-white border border-slate-200 rounded-xl shadow-lg py-1 z-40 text-xs font-semibold">
-                  {['PT', 'EN', 'ES'].map((l) => (
-                    <button
-                      key={l}
-                      type="button"
-                      onClick={() => {
-                        setCurrentLang(l);
-                        setIsLangOpen(false);
-                      }}
-                      className="w-full px-3 py-1.5 text-left hover:bg-slate-50 flex items-center justify-between text-slate-700"
-                    >
-                      <span>{l}</span>
-                      {currentLang === l && <Check className="w-3 h-3 text-blue-600" />}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            <button
-              type="button"
-              className="relative w-8 h-8 rounded-full flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
-            >
-              <Bell className="w-4 h-4" strokeWidth={2} />
-              <span className="absolute top-0.5 right-0.5 w-4 h-4 bg-[#EF4444] text-white text-[9.5px] font-bold rounded-full flex items-center justify-center ring-2 ring-white">
-                3
-              </span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onOpenAuth && onOpenAuth('login')}
-              className="relative cursor-pointer group"
-              title="Meu Perfil"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
-                alt="Avatar"
-                className="w-8 h-8 rounded-full object-cover ring-2 ring-blue-500/40 group-hover:ring-blue-500 transition-all"
-              />
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#10B981] rounded-full ring-1.5 ring-white" />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Conteúdo Principal */}
+      {/* Conteúdo Principal (busca/idioma/notificações/perfil/breadcrumb já vêm do Topbar compartilhado no AppLayout) */}
       <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-6">
         {/* 2. Título e Subtítulo da Página */}
         <div>

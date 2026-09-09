@@ -5,6 +5,7 @@ import { CommunityEducationView } from './CommunityEducationView';
 import { CommunityHumanRightsView } from './CommunityHumanRightsView';
 import { CommunityCultureView } from './CommunityCultureView';
 import { CreateCommunityWizardView } from './CreateCommunityWizardView';
+import { BreadcrumbItem } from './Topbar';
 
 export interface GlobalCommunityViewProps {
   initialSubView?: 'official' | 'ambiente' | 'educacao' | 'direitos-humanos' | 'cultura' | 'criar-comunidade';
@@ -15,6 +16,7 @@ export interface GlobalCommunityViewProps {
   onExploreWorld?: () => void;
   onExploreMap?: () => void;
   onOpenCreateCommunityModal?: () => void;
+  onBreadcrumbChange?: (items: BreadcrumbItem[]) => void;
 }
 
 export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
@@ -26,6 +28,7 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
   onExploreWorld,
   onExploreMap,
   onOpenCreateCommunityModal,
+  onBreadcrumbChange,
 }) => {
   const [currentSubView, setCurrentSubView] = useState<'official' | 'ambiente' | 'educacao' | 'direitos-humanos' | 'cultura' | 'criar-comunidade'>(initialSubView);
 
@@ -35,6 +38,42 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
       setCurrentSubView(initialSubView);
     }
   }, [initialSubView]);
+
+  // Emitir breadcrumb para o Topbar compartilhado conforme a subview ativa
+  // Trilha confirmada pelo mockup de referência (UI AMBIENTE.png etc.): as páginas de categoria
+  // ficam sob "Explorar Comunidade", entre o hub e o nome da categoria.
+  useEffect(() => {
+    const goToOfficial = () => {
+      setCurrentSubView('official');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    const goToExplorar = () => {
+      setCurrentSubView('ambiente');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const CATEGORY_LABELS: Record<string, string> = {
+      ambiente: 'Ambiente',
+      educacao: 'Educação',
+      'direitos-humanos': 'Direitos Humanos',
+      cultura: 'Cultura',
+    };
+
+    if (currentSubView === 'official') {
+      onBreadcrumbChange?.([]);
+    } else if (currentSubView === 'criar-comunidade') {
+      onBreadcrumbChange?.([
+        { label: 'Comunidade Global', onClick: goToOfficial },
+        { label: 'Criar Comunidade' },
+      ]);
+    } else {
+      onBreadcrumbChange?.([
+        { label: 'Comunidade Global', onClick: goToOfficial },
+        { label: 'Explorar Comunidade', onClick: goToExplorar },
+        { label: CATEGORY_LABELS[currentSubView] },
+      ]);
+    }
+  }, [currentSubView, onBreadcrumbChange]);
 
   const handleNavigateCategory = (catId: string) => {
     if (catId === 'ambiente') {

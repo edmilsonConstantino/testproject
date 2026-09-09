@@ -1,6 +1,6 @@
 import React from 'react';
 import { Sidebar } from './Sidebar';
-import { Topbar } from './Topbar';
+import { Topbar, BreadcrumbItem } from './Topbar';
 
 export interface AppLayoutProps {
   currentTab?: string;
@@ -12,6 +12,7 @@ export interface AppLayoutProps {
   onOpenMobileSidebar?: () => void;
   onOpenSearchModal?: () => void;
   searchPlaceholder?: string;
+  breadcrumb?: BreadcrumbItem[];
   showTopbar?: boolean;
   isLoggedIn?: boolean;
   onLogout?: () => void;
@@ -28,6 +29,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onOpenMobileSidebar = () => {},
   onOpenSearchModal = () => {},
   searchPlaceholder,
+  breadcrumb,
   showTopbar = true,
   isLoggedIn = false,
   onLogout,
@@ -53,6 +55,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         {showTopbar && (
           <Topbar
             searchPlaceholder={searchPlaceholder}
+            breadcrumb={breadcrumb}
             onOpenSearchModal={onOpenSearchModal}
             onOpenMobileMenu={onOpenMobileSidebar}
             onOpenAuth={onOpenAuth}

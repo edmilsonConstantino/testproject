@@ -1,12 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import {
-  Search,
   Globe,
-  Bell,
   Leaf,
   Plus,
   ArrowRight,
-  ArrowLeft,
   ChevronDown,
   ChevronRight,
   Users,
@@ -356,12 +353,6 @@ export const CommunityEnvironmentView: React.FC<CommunityEnvironmentViewProps> =
   const [isLocationOpen, setIsLocationOpen] = useState<boolean>(false);
   const [isLanguageOpen, setIsLanguageOpen] = useState<boolean>(false);
 
-  // Topbar dropdowns
-  const [isLangSelectorOpen, setIsLangSelectorOpen] = useState<boolean>(false);
-  const [currentLang, setCurrentLang] = useState<string>('PT');
-  const [isNotificationsOpen, setIsNotificationsOpen] = useState<boolean>(false);
-  const [unreadNotifications, setUnreadNotifications] = useState<number>(3);
-
   // Modais interativos
   const [isCreateModalOpen, setIsCreateModalOpen] = useState<boolean>(false);
   const [selectedCommunityModal, setSelectedCommunityModal] = useState<FeaturedCommunityItem | null>(null);
@@ -461,165 +452,7 @@ export const CommunityEnvironmentView: React.FC<CommunityEnvironmentViewProps> =
 
   return (
     <div id="community-environment-view" className="w-full bg-[#F8FAFC] min-h-screen text-[#0F172A] flex flex-col">
-      {/* 1. Barra Superior com Breadcrumb, Pesquisa Central e Ações de Perfil */}
-      <div className="w-full bg-white border-b border-slate-200/80 sticky top-0 z-30 shadow-2xs">
-        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-between gap-4">
-          {/* Breadcrumb Trilha de Navegação */}
-          <div className="flex items-center gap-2 min-w-0">
-            <button
-              type="button"
-              onClick={() => {
-                if (onBackToOfficial) onBackToOfficial();
-                else if (onNavigateToTab) onNavigateToTab('comunidade');
-              }}
-              title="Voltar à Página Oficial da Comunidade"
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer shrink-0"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </button>
-
-            <nav className="flex items-center gap-1.5 text-[13px] text-[#64748B] whitespace-nowrap overflow-hidden text-ellipsis">
-              <button
-                type="button"
-                onClick={() => {
-                  if (onBackToOfficial) onBackToOfficial();
-                  else if (onNavigateToTab) onNavigateToTab('comunidade');
-                }}
-                className="hover:text-slate-900 transition-colors cursor-pointer"
-              >
-                Comunidade Global
-              </button>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-              <button
-                type="button"
-                onClick={() => setSelectedCategory('todas')}
-                className="hover:text-slate-900 transition-colors cursor-pointer hidden sm:inline"
-              >
-                Explorar Comunidade
-              </button>
-              <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0 hidden sm:inline" />
-              <span className="font-bold text-[#0F172A]">Ambiente</span>
-            </nav>
-          </div>
-
-          {/* Barra de Pesquisa Central Arredondada (com atalho ⌘ K) */}
-          <div className="flex-1 max-w-xl mx-2 hidden md:block">
-            <div className="relative w-full">
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-              <input
-                type="text"
-                id="search-communities-input"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Pesquisar comunidades, temas, organizações..."
-                className="w-full bg-[#F1F5F9]/80 hover:bg-[#F1F5F9] focus:bg-white text-[13px] text-slate-800 placeholder:text-slate-400 pl-10 pr-14 py-2 rounded-full border border-transparent focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all outline-none"
-              />
-              <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 pointer-events-none">
-                <span className="bg-white border border-slate-200/90 text-slate-400 text-[10px] font-mono font-semibold px-1.5 py-0.5 rounded shadow-2xs">
-                  ⌘ K
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {/* Controles do Usuário (Idioma, Notificações, Avatar) */}
-          <div className="flex items-center gap-3 shrink-0">
-            {/* Seletor de Idioma */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setIsLangSelectorOpen(!isLangSelectorOpen)}
-                id="header-lang-btn"
-                className="flex items-center gap-1.5 text-[12px] font-bold text-slate-700 hover:text-slate-900 px-2 py-1.5 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
-              >
-                <Globe className="w-4 h-4 text-slate-500" strokeWidth={2} />
-                <span>{currentLang}</span>
-                <ChevronDown className="w-3 h-3 text-slate-400" />
-              </button>
-
-              {isLangSelectorOpen && (
-                <div className="absolute right-0 mt-1 w-28 bg-white border border-slate-200 rounded-xl shadow-lg py-1 z-40 text-xs font-semibold">
-                  {['PT', 'EN', 'ES'].map((lang) => (
-                    <button
-                      key={lang}
-                      type="button"
-                      onClick={() => {
-                        setCurrentLang(lang);
-                        setIsLangSelectorOpen(false);
-                      }}
-                      className="w-full px-3 py-1.5 text-left hover:bg-slate-50 flex items-center justify-between text-slate-700 hover:text-slate-900"
-                    >
-                      <span>{lang}</span>
-                      {currentLang === lang && <Check className="w-3 h-3 text-emerald-600" />}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Notificações com Badge "3" */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsNotificationsOpen(!isNotificationsOpen);
-                  setUnreadNotifications(0);
-                }}
-                id="header-notifications-btn"
-                className="relative w-8 h-8 rounded-full flex items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors cursor-pointer"
-              >
-                <Bell className="w-4 h-4" strokeWidth={2} />
-                {unreadNotifications > 0 && (
-                  <span className="absolute 0 top-0.5 right-0.5 w-4 h-4 bg-[#EF4444] text-white text-[9.5px] font-bold rounded-full flex items-center justify-center ring-2 ring-white">
-                    {unreadNotifications}
-                  </span>
-                )}
-              </button>
-
-              {isNotificationsOpen && (
-                <div className="absolute right-0 mt-2 w-72 bg-white border border-slate-200 rounded-2xl shadow-xl p-3 z-40">
-                  <div className="flex items-center justify-between pb-2 border-b border-slate-100 text-xs font-bold text-slate-800">
-                    <span>Notificações</span>
-                    <span className="text-emerald-600 cursor-pointer text-[11px]">Marcar lidas</span>
-                  </div>
-                  <div className="divide-y divide-slate-100 text-xs mt-1">
-                    <div className="py-2">
-                      <p className="font-semibold text-slate-800">Novo evento em Planeta Verde</p>
-                      <span className="text-[10px] text-slate-400">Há 25 minutos</span>
-                    </div>
-                    <div className="py-2">
-                      <p className="font-semibold text-slate-800">Maria Silva comentou na publicação</p>
-                      <span className="text-[10px] text-slate-400">Há 1 hora</span>
-                    </div>
-                    <div className="py-2">
-                      <p className="font-semibold text-slate-800">12 novos voluntários em Reflorestar</p>
-                      <span className="text-[10px] text-slate-400">Há 3 horas</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Avatar do Usuário com Indicador Verde */}
-            <button
-              type="button"
-              onClick={() => onOpenAuth && onOpenAuth('login')}
-              id="header-user-avatar-btn"
-              className="relative cursor-pointer group"
-              title="Perfil do Usuário"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80"
-                alt="Avatar do Usuário"
-                className="w-8 h-8 rounded-full object-cover ring-2 ring-emerald-500/40 group-hover:ring-emerald-500 transition-all"
-              />
-              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#10B981] rounded-full ring-1.5 ring-white" />
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Conteúdo Central */}
+      {/* Conteúdo Central (busca/idioma/notificações/perfil/breadcrumb já vêm do Topbar compartilhado no AppLayout) */}
       <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col gap-5">
         {/* 2. Cabeçalho da Categoria "Ambiente" com Ícone de Folha e Métricas */}
         <section id="ambiente-header" className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

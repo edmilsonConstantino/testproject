@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { AppLayout } from './components/AppLayout';
 import { Sidebar } from './components/Sidebar';
-import { Topbar } from './components/Topbar';
+import { Topbar, BreadcrumbItem } from './components/Topbar';
 import { MapHeroSection } from './components/MapHeroSection';
 import { FeaturedCountriesSection } from './components/FeaturedCountriesSection';
 import { ExploreWorldView } from './components/ExploreWorldView';
@@ -33,6 +33,10 @@ import {
   Filter,
   Flame,
 } from 'lucide-react';
+
+// Abas que renderizam GlobalCommunityView / GlobalImpactView (mantidas em sincronia com os ramos condicionais abaixo)
+const COMMUNITY_TABS = ['comunidade', 'comunidade-global', 'ambiente', 'educacao', 'direitos-humanos', 'cultura', 'criar-comunidade', 'explorar-comunidade'];
+const IMPACT_TABS = ['impacto', 'impacto-global', 'saude', 'tecnologia', 'empreendedorismo'];
 
 const getInitialTab = (): string => {
   if (typeof window === 'undefined') return 'inicio';
@@ -74,6 +78,7 @@ export default function App() {
   const [currentTab, setCurrentTab] = useState(getInitialTab);
   const [selectedCountry, setSelectedCountry] = useState<CountryData>(COUNTRIES_DATA[0]); // Portugal by default
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [breadcrumb, setBreadcrumb] = useState<BreadcrumbItem[]>([]);
 
   // Modals state
   const [isCountryModalOpen, setIsCountryModalOpen] = useState(false);
@@ -86,6 +91,13 @@ export default function App() {
     mode: 'login',
   });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Limpa o breadcrumb do Topbar ao sair das áreas de Comunidade/Impacto (que o alimentam via onBreadcrumbChange)
+  useEffect(() => {
+    if (!COMMUNITY_TABS.includes(currentTab) && !IMPACT_TABS.includes(currentTab)) {
+      setBreadcrumb([]);
+    }
+  }, [currentTab]);
 
   // URL hash, query parameter and pathname router sync
   useEffect(() => {
@@ -179,20 +191,24 @@ export default function App() {
         isLoggedIn={isLoggedIn}
         onLogout={() => setIsLoggedIn(false)}
         searchPlaceholder={
-          currentTab === 'comunidade'
+          COMMUNITY_TABS.includes(currentTab)
             ? 'Pesquisar pessoas, comunidades, temas, organizações...'
+            : IMPACT_TABS.includes(currentTab)
+            ? 'Pesquisar iniciativas, temas, organizações...'
             : currentTab === 'eventos'
             ? 'Pesquisar eventos, temas, locais, organizações...'
             : currentTab === 'noticias' || currentTab === 'movimento'
             ? 'Pesquisar temas, países, pessoas, organizações...'
             : 'Pesquisar países, regiões, cidades, projetos, comunidades...'
         }
+        breadcrumb={breadcrumb}
         showTopbar={
           currentTab === 'inicio' ||
           currentTab === 'noticias' ||
           currentTab === 'movimento' ||
           currentTab === 'eventos' ||
-          currentTab === 'comunidade'
+          COMMUNITY_TABS.includes(currentTab) ||
+          IMPACT_TABS.includes(currentTab)
         }
       >
         {currentTab === 'inicio' ? (
@@ -254,7 +270,7 @@ export default function App() {
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
           />
-        ) : (currentTab === 'comunidade' || currentTab === 'comunidade-global' || currentTab === 'ambiente' || currentTab === 'educacao' || currentTab === 'direitos-humanos' || currentTab === 'cultura' || currentTab === 'criar-comunidade' || currentTab === 'explorar-comunidade') ? (
+        ) : COMMUNITY_TABS.includes(currentTab) ? (
           /* Comunidade Global (Página Oficial, Categorias e Criar Comunidade UI CRIAR COMUNIDADE.png) */
           <GlobalCommunityView
             initialSubView={
@@ -288,8 +304,9 @@ export default function App() {
             onOpenCreateCommunityModal={() => {
               setAuthModal({ isOpen: true, mode: 'register' });
             }}
+            onBreadcrumbChange={setBreadcrumb}
           />
-        ) : (currentTab === 'impacto' || currentTab === 'impacto-global' || currentTab === 'saude' || currentTab === 'tecnologia' || currentTab === 'empreendedorismo' || currentTab === 'ambiente') ? (
+        ) : IMPACT_TABS.includes(currentTab) ? (
           /* Impacto Global (UI IMPACTO GLOBAL.png) / Ambiente / Saúde / Tecnologia / Empreendedorismo */
           <GlobalImpactView
             initialSubView={currentTab === 'empreendedorismo' ? 'empreendedorismo' : currentTab === 'tecnologia' ? 'tecnologia' : currentTab === 'saude' ? 'saude' : currentTab === 'ambiente' ? 'ambiente' : 'todas'}
@@ -308,6 +325,7 @@ export default function App() {
               setCurrentTab('comunidade');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
+            onBreadcrumbChange={setBreadcrumb}
           />
         ) : (currentTab === 'sobre' || currentTab === 'sobre-a-vila') ? (
           /* Sobre a VILA View matching exact reference UI SOBRE.png */
