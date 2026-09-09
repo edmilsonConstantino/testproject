@@ -4,10 +4,13 @@ import { EnvironmentImpactView, EnvironmentImpactViewProps } from './Environment
 import { HealthImpactView } from './HealthImpactView';
 import { TechnologyImpactView } from './TechnologyImpactView';
 import { EntrepreneurshipImpactView } from './EntrepreneurshipImpactView';
+import { HumanRightsImpactView } from './HumanRightsImpactView';
+import { EducationImpactView } from './EducationImpactView';
+import { CultureImpactView } from './CultureImpactView';
 import { BreadcrumbItem } from './Topbar';
 
 export interface GlobalImpactViewProps extends EnvironmentImpactViewProps {
-  initialSubView?: 'todas' | 'ambiente' | 'saude' | 'tecnologia' | 'empreendedorismo';
+  initialSubView?: 'todas' | 'ambiente' | 'saude' | 'tecnologia' | 'empreendedorismo' | 'direitos-humanos' | 'educacao' | 'cultura';
   onBreadcrumbChange?: (items: BreadcrumbItem[]) => void;
 }
 
@@ -23,7 +26,7 @@ export const GlobalImpactView: React.FC<GlobalImpactViewProps> = ({
   onBreadcrumbChange,
   ...restProps
 }) => {
-  const [currentSubView, setCurrentSubView] = useState<'todas' | 'ambiente' | 'saude' | 'tecnologia' | 'empreendedorismo'>(initialSubView);
+  const [currentSubView, setCurrentSubView] = useState<'todas' | 'ambiente' | 'saude' | 'tecnologia' | 'empreendedorismo' | 'direitos-humanos' | 'educacao' | 'cultura'>(initialSubView);
 
   useEffect(() => {
     if (initialSubView) {
@@ -43,6 +46,9 @@ export const GlobalImpactView: React.FC<GlobalImpactViewProps> = ({
       saude: 'Saúde',
       tecnologia: 'Tecnologia',
       empreendedorismo: 'Empreendedorismo',
+      'direitos-humanos': 'Direitos Humanos',
+      educacao: 'Educação',
+      cultura: 'Cultura',
     };
 
     // Trilha confirmada pelo mockup de referência (UI TECNOLOGIA.png etc.): Impacto Global é sempre
@@ -79,10 +85,15 @@ export const GlobalImpactView: React.FC<GlobalImpactViewProps> = ({
     } else if (categoryId === 'ambiente') {
       setCurrentSubView('ambiente');
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else if (categoryId === 'cultura' || categoryId === 'educacao' || categoryId === 'direitos-humanos') {
-      if (onNavigateToTab) {
-        onNavigateToTab(categoryId);
-      }
+    } else if (categoryId === 'direitos-humanos') {
+      setCurrentSubView('direitos-humanos');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (categoryId === 'educacao') {
+      setCurrentSubView('educacao');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (categoryId === 'cultura') {
+      setCurrentSubView('cultura');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (onNavigateToCategory) {
       onNavigateToCategory(categoryId);
     }
@@ -132,6 +143,48 @@ export const GlobalImpactView: React.FC<GlobalImpactViewProps> = ({
         onOpenAuth={onOpenAuth}
         onOpenAiAssistant={onOpenAiAssistant}
         onOpenMobileMenu={onOpenMobileMenu}
+      />
+    );
+  }
+
+  if (currentSubView === 'educacao') {
+    return (
+      <EducationImpactView
+        onOpenAiAssistant={onOpenAiAssistant}
+        onExploreWorld={onExploreWorld}
+        onExploreCommunity={onExploreCommunity}
+        onOpenMobileMenu={onOpenMobileMenu}
+        onOpenAuth={onOpenAuth}
+        onNavigateToTab={onNavigateToTab}
+        onNavigateToCategory={handleCategoryNavigation}
+      />
+    );
+  }
+
+  if (currentSubView === 'cultura') {
+    return (
+      <CultureImpactView
+        onOpenAiAssistant={onOpenAiAssistant}
+        onExploreWorld={onExploreWorld}
+        onExploreCommunity={onExploreCommunity}
+        onOpenMobileMenu={onOpenMobileMenu}
+        onOpenAuth={onOpenAuth}
+        onNavigateToTab={onNavigateToTab}
+        onNavigateToCategory={handleCategoryNavigation}
+      />
+    );
+  }
+
+  if (currentSubView === 'direitos-humanos') {
+    return (
+      <HumanRightsImpactView
+        onOpenAiAssistant={onOpenAiAssistant}
+        onExploreWorld={onExploreWorld}
+        onExploreCommunity={onExploreCommunity}
+        onOpenMobileMenu={onOpenMobileMenu}
+        onOpenAuth={onOpenAuth}
+        onNavigateToTab={onNavigateToTab}
+        onNavigateToCategory={handleCategoryNavigation}
       />
     );
   }

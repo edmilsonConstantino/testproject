@@ -4,11 +4,14 @@ import { CommunityEnvironmentView } from './CommunityEnvironmentView';
 import { CommunityEducationView } from './CommunityEducationView';
 import { CommunityHumanRightsView } from './CommunityHumanRightsView';
 import { CommunityCultureView } from './CommunityCultureView';
+import { CommunityHealthView } from './CommunityHealthView';
+import { CommunityTechnologyView } from './CommunityTechnologyView';
+import { CommunityEntrepreneurshipView } from './CommunityEntrepreneurshipView';
 import { CreateCommunityWizardView } from './CreateCommunityWizardView';
 import { BreadcrumbItem } from './Topbar';
 
 export interface GlobalCommunityViewProps {
-  initialSubView?: 'official' | 'ambiente' | 'educacao' | 'direitos-humanos' | 'cultura' | 'criar-comunidade';
+  initialSubView?: 'official' | 'ambiente' | 'educacao' | 'direitos-humanos' | 'cultura' | 'saude' | 'tecnologia' | 'empreendedorismo' | 'criar-comunidade';
   onNavigateToTab?: (tabId: string) => void;
   onOpenAuth?: (mode: 'login' | 'register') => void;
   onOpenAiAssistant?: () => void;
@@ -30,7 +33,7 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
   onOpenCreateCommunityModal,
   onBreadcrumbChange,
 }) => {
-  const [currentSubView, setCurrentSubView] = useState<'official' | 'ambiente' | 'educacao' | 'direitos-humanos' | 'cultura' | 'criar-comunidade'>(initialSubView);
+  const [currentSubView, setCurrentSubView] = useState<'official' | 'ambiente' | 'educacao' | 'direitos-humanos' | 'cultura' | 'saude' | 'tecnologia' | 'empreendedorismo' | 'criar-comunidade'>(initialSubView);
 
   // Sincronizar se initialSubView mudar
   useEffect(() => {
@@ -57,6 +60,9 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
       educacao: 'Educação',
       'direitos-humanos': 'Direitos Humanos',
       cultura: 'Cultura',
+      saude: 'Saúde',
+      tecnologia: 'Tecnologia',
+      empreendedorismo: 'Empreendedorismo',
     };
 
     if (currentSubView === 'official') {
@@ -88,6 +94,15 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
     } else if (catId === 'cultura') {
       setCurrentSubView('cultura');
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (catId === 'saude') {
+      setCurrentSubView('saude');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (catId === 'tecnologia') {
+      setCurrentSubView('tecnologia');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (catId === 'empreendedorismo') {
+      setCurrentSubView('empreendedorismo');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (catId === 'todas') {
       setCurrentSubView('official');
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -117,6 +132,60 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
   if (currentSubView === 'cultura') {
     return (
       <CommunityCultureView
+        onBackToOfficial={() => {
+          setCurrentSubView('official');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onNavigateToCategory={handleNavigateCategory}
+        onNavigateToTab={onNavigateToTab}
+        onOpenAuth={onOpenAuth}
+        onOpenAiAssistant={onOpenAiAssistant}
+        onOpenMobileMenu={onOpenMobileMenu}
+        onOpenCreateCommunity={handleOpenCreateCommunity}
+      />
+    );
+  }
+
+  // Categoria 5: Saúde (UI SAUDE.png)
+  if (currentSubView === 'saude') {
+    return (
+      <CommunityHealthView
+        onBackToOfficial={() => {
+          setCurrentSubView('official');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onNavigateToCategory={handleNavigateCategory}
+        onNavigateToTab={onNavigateToTab}
+        onOpenAuth={onOpenAuth}
+        onOpenAiAssistant={onOpenAiAssistant}
+        onOpenMobileMenu={onOpenMobileMenu}
+        onOpenCreateCommunity={handleOpenCreateCommunity}
+      />
+    );
+  }
+
+  // Categoria 6: Tecnologia (UI TECNOLOGIA.png)
+  if (currentSubView === 'tecnologia') {
+    return (
+      <CommunityTechnologyView
+        onBackToOfficial={() => {
+          setCurrentSubView('official');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onNavigateToCategory={handleNavigateCategory}
+        onNavigateToTab={onNavigateToTab}
+        onOpenAuth={onOpenAuth}
+        onOpenAiAssistant={onOpenAiAssistant}
+        onOpenMobileMenu={onOpenMobileMenu}
+        onOpenCreateCommunity={handleOpenCreateCommunity}
+      />
+    );
+  }
+
+  // Categoria 7: Empreendedorismo (UI EMPREENDEDORISMO.png)
+  if (currentSubView === 'empreendedorismo') {
+    return (
+      <CommunityEntrepreneurshipView
         onBackToOfficial={() => {
           setCurrentSubView('official');
           window.scrollTo({ top: 0, behavior: 'smooth' });

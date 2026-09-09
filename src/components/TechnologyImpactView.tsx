@@ -488,7 +488,7 @@ export const TechnologyImpactView: React.FC<TechnologyImpactViewProps> = ({
               {/* Imagem de Fundo com Conexões Tecnológicas e Planeta */}
               <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1400&auto=format&fit=crop&q=85"
+                  src="/imagens-paginas/06-impacto-global/tecnologia/tech1.png"
                   alt="Tecnologia e inovação conectando o mundo"
                   className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-700 opacity-30"
                   referrerPolicy="no-referrer"

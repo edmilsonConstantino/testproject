@@ -61,7 +61,7 @@ export const CreateCommunityWizardView: React.FC<CreateCommunityWizardViewProps>
   const [scope, setScope] = useState<ScopeId>('global');
   const [description, setDescription] = useState<string>('');
   const [coverImage, setCoverImage] = useState<string>(
-    'https://images.unsplash.com/photo-1511497584788-87676104235f?w=1200&auto=format&fit=crop&q=80'
+    '/imagens-paginas/05-comunidade-global/criar-comunidade/Principal.png'
   );
   const [iconImage, setIconImage] = useState<string>('');
 

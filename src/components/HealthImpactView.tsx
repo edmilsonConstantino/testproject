@@ -496,7 +496,7 @@ export const HealthImpactView: React.FC<HealthImpactViewProps> = ({
               {/* Imagem de Fundo com Profissional de Saúde e Família Sorrindo */}
               <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=1400&auto=format&fit=crop&q=85"
+                  src="/imagens-paginas/06-impacto-global/saude/1saude.png"
                   alt="Profissional de saúde atendendo família"
                   className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-700"
                   referrerPolicy="no-referrer"

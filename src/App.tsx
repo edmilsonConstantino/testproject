@@ -35,7 +35,7 @@ import {
 } from 'lucide-react';
 
 // Abas que renderizam GlobalCommunityView / GlobalImpactView (mantidas em sincronia com os ramos condicionais abaixo)
-const COMMUNITY_TABS = ['comunidade', 'comunidade-global', 'ambiente', 'educacao', 'direitos-humanos', 'cultura', 'criar-comunidade', 'explorar-comunidade'];
+const COMMUNITY_TABS = ['comunidade', 'comunidade-global', 'ambiente', 'educacao', 'direitos-humanos', 'cultura', 'saude', 'tecnologia', 'criar-comunidade', 'explorar-comunidade'];
 const IMPACT_TABS = ['impacto', 'impacto-global', 'saude', 'tecnologia', 'empreendedorismo'];
 
 const getInitialTab = (): string => {
@@ -282,6 +282,10 @@ export default function App() {
                 ? 'direitos-humanos'
                 : currentTab === 'cultura'
                 ? 'cultura'
+                : currentTab === 'saude'
+                ? 'saude'
+                : currentTab === 'tecnologia'
+                ? 'tecnologia'
                 : currentTab === 'criar-comunidade'
                 ? 'criar-comunidade'
                 : 'official'

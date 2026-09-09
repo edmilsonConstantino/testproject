@@ -634,7 +634,7 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
               {/* Imagem de Fundo com Estudantes e Laptop */}
               <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1577896851231-70ef18881754?w=1400&auto=format&fit=crop&q=85"
+                  src="/imagens-paginas/05-comunidade-global/educacao/PrincipalCard.png"
                   alt="Estudantes e professores em sala de aula"
                   className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-700"
                   referrerPolicy="no-referrer"

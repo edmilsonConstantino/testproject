@@ -521,7 +521,7 @@ export const CommunityEnvironmentView: React.FC<CommunityEnvironmentViewProps> =
                 key={cat.id}
                 type="button"
                 onClick={() => {
-                  if (onNavigateToCategory && (cat.id === 'educacao' || cat.id === 'direitos-humanos' || cat.id === 'cultura' || cat.id === 'todas')) {
+                  if (onNavigateToCategory && (cat.id === 'educacao' || cat.id === 'direitos-humanos' || cat.id === 'cultura' || cat.id === 'saude' || cat.id === 'tecnologia' || cat.id === 'empreendedorismo' || cat.id === 'todas')) {
                     onNavigateToCategory(cat.id);
                   } else {
                     setSelectedCategory(cat.id);
@@ -721,7 +721,7 @@ export const CommunityEnvironmentView: React.FC<CommunityEnvironmentViewProps> =
               {/* Imagem de Fundo de Floresta com Luz Solar */}
               <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1448375240586-882707db888b?w=1400&auto=format&fit=crop&q=85"
+                  src="/imagens-paginas/05-comunidade-global/ambiente/1ambiente.png"
                   alt="Trilha na floresta verde banhada pelo sol"
                   className="w-full h-full object-cover object-center scale-102 group-hover:scale-105 transition-transform duration-700"
                   referrerPolicy="no-referrer"
