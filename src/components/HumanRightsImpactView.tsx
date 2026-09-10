@@ -300,50 +300,50 @@ export const HumanRightsImpactView: React.FC<HumanRightsImpactViewProps> = ({
       id: 'guia',
       title: 'Guia de Direitos Humanos',
       description: 'Aprenda sobre direitos fundamentais',
-      icon: <BookOpen className="w-4 h-4 text-violet-600" />,
-      bg: 'bg-violet-50 border-violet-100',
+      icon: <BookOpen className="w-4 h-4 text-[#6366F1]" />,
+      bg: 'bg-indigo-50/80 border-indigo-100',
     },
     {
       id: 'monitor',
       title: 'Ferramenta de Monitorização',
       description: 'Acompanhe violações e alertas',
-      icon: <ShieldAlert className="w-4 h-4 text-rose-600" />,
-      bg: 'bg-rose-50 border-rose-100',
+      icon: <ShieldAlert className="w-4 h-4 text-[#4F46E5]" />,
+      bg: 'bg-violet-50/80 border-violet-100',
     },
     {
       id: 'base',
       title: 'Base de Dados de Organizações',
       description: 'Encontre ONGs e defensores',
-      icon: <Database className="w-4 h-4 text-blue-600" />,
-      bg: 'bg-blue-50 border-blue-100',
+      icon: <Database className="w-4 h-4 text-[#2563EB]" />,
+      bg: 'bg-blue-50/80 border-blue-100',
     },
     {
       id: 'financiamento',
       title: 'Financiamento e Doações',
       description: 'Apoie causas de direitos humanos',
-      icon: <Coins className="w-4 h-4 text-emerald-600" />,
-      bg: 'bg-emerald-50 border-emerald-100',
+      icon: <Coins className="w-4 h-4 text-[#D97706]" />,
+      bg: 'bg-amber-50/80 border-amber-100',
     },
     {
       id: 'cursos',
       title: 'Cursos e Capacitações',
       description: 'Formação em direitos humanos',
-      icon: <GraduationCap className="w-4 h-4 text-amber-600" />,
-      bg: 'bg-amber-50 border-amber-100',
+      icon: <GraduationCap className="w-4 h-4 text-[#059669]" />,
+      bg: 'bg-emerald-50/80 border-emerald-100',
     },
     {
       id: 'webinars',
       title: 'Webinars e Debates',
       description: 'Participe de eventos e discussões',
-      icon: <Video className="w-4 h-4 text-cyan-600" />,
-      bg: 'bg-cyan-50 border-cyan-100',
+      icon: <Video className="w-4 h-4 text-[#0D9488]" />,
+      bg: 'bg-teal-50/80 border-teal-100',
     },
     {
       id: 'documentos',
       title: 'Documentos e Relatórios',
       description: 'Acesse estudos e relatórios globais',
-      icon: <FileText className="w-4 h-4 text-slate-600" />,
-      bg: 'bg-slate-50 border-slate-200',
+      icon: <FileText className="w-4 h-4 text-[#7C3AED]" />,
+      bg: 'bg-purple-50/80 border-purple-100',
     },
   ];
 
@@ -437,73 +437,73 @@ export const HumanRightsImpactView: React.FC<HumanRightsImpactViewProps> = ({
           </button>
         </div>
 
-        {/* HERO: MÃOS UNIDAS + IMPACTO EM DIREITOS HUMANOS */}
-        <div className="rounded-3xl bg-[#090623] text-white border border-violet-950/60 relative overflow-hidden shadow-lg grid grid-cols-1 lg:grid-cols-12 min-h-[290px]">
-          {/* Imagem de Fundo (Mãos unidas) cobrindo o centro e lado direito */}
-          <div className="lg:col-span-12 lg:absolute lg:inset-0 lg:col-start-1">
-            <img
-              src="/imagens-paginas/06-impacto-global/direitos-humanos/1direitoshumanos.png"
-              alt="Mãos unidas em solidariedade e dignidade"
-              className="w-full h-full object-cover object-center opacity-90"
-              referrerPolicy="no-referrer"
-            />
-            {/* Gradiente escuro para perfeita legibilidade dos textos da esquerda e destaque da foto */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#090623] via-[#090623]/80 to-transparent" />
-          </div>
-
-          <div className="relative z-10 lg:col-span-7 p-6 sm:p-8 lg:p-10 flex flex-col justify-center space-y-4">
-            <h2 className="text-2xl sm:text-3xl lg:text-[34px] font-black font-['Outfit'] leading-tight tracking-tight text-white max-w-lg">
-              Direitos Humanos<br />são direitos de todos.
-            </h2>
-            <p className="text-xs sm:text-sm text-violet-100/85 font-normal leading-relaxed max-w-md">
-              Promovemos a dignidade humana, a igualdade, a liberdade e a justiça. Apoie iniciativas que defendem e protegem os direitos fundamentais em todo o mundo.
-            </p>
-            <div className="pt-2">
-              <button
-                onClick={() => {
-                  const el = document.getElementById('projetos-destaque');
-                  if (el) el.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-[#312E81] hover:bg-violet-50 font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer group"
-              >
-                <span>Explorar iniciativas de direitos humanos</span>
-                <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
-              </button>
-            </div>
-          </div>
-
-          <div className="relative z-10 lg:col-span-4 lg:col-start-9 p-5 sm:p-6 lg:p-7 lg:my-6 lg:mr-8 bg-slate-900/60 backdrop-blur-md rounded-2xl border border-white/10 space-y-3.5 self-center mx-6 mb-6 lg:mx-0 lg:mb-0">
-            <h3 className="text-xs font-bold text-violet-200 font-['Outfit'] uppercase tracking-wider">
-              Impacto em Direitos Humanos
-            </h3>
-            <div className="space-y-3 text-xs">
-              {[
-                { icon: <Users className="w-3.5 h-3.5" />, value: '4.875.320', label: 'Pessoas Impactadas' },
-                { icon: <Landmark className="w-3.5 h-3.5" />, value: '276', label: 'Organizações' },
-                { icon: <Megaphone className="w-3.5 h-3.5" />, value: '214', label: 'Campanhas Ativas' },
-                { icon: <HeartHandshake className="w-3.5 h-3.5" />, value: '783.650', label: 'Pessoas Apoiadas' },
-                { icon: <Clock className="w-3.5 h-3.5" />, value: '2.143.480 h', label: 'Horas de Voluntariado' },
-                { icon: <Globe className="w-3.5 h-3.5" />, value: '98', label: 'Países' },
-              ].map((row, idx) => (
-                <div key={idx} className="flex items-center gap-3">
-                  <div className="w-7 h-7 rounded-lg bg-violet-500/20 text-violet-300 flex items-center justify-center shrink-0">
-                    {row.icon}
-                  </div>
-                  <div>
-                    <div className="font-extrabold text-white text-sm font-['Outfit'] leading-none">{row.value}</div>
-                    <div className="text-[11px] text-violet-100/70 mt-0.5">{row.label}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
         {/* LAYOUT PRINCIPAL: COLUNA PRINCIPAL (LADO ESQUERDO/CENTRAL) E SIDEBAR (DIREITA) */}
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
           {/* COLUNA ESQUERDA/CENTRAL (9 COLUNAS NO DESKTOP) */}
           <div className="xl:col-span-9 space-y-6">
-            {/* 1. ÁREAS DE IMPACTO EM DIREITOS HUMANOS (6 CARDS EM UMA LINHA CONTÍNUA) */}
+            {/* 1. HERO: MÃOS UNIDAS + IMPACTO EM DIREITOS HUMANOS (AO LADO DE "MAIS POPULARES") */}
+            <div className="rounded-3xl bg-[#090623] text-white border border-violet-950/60 relative overflow-hidden shadow-lg grid grid-cols-1 lg:grid-cols-12 min-h-[290px]">
+              {/* Imagem de Fundo (Mãos unidas) cobrindo o centro e lado direito */}
+              <div className="lg:col-span-12 lg:absolute lg:inset-0 lg:col-start-1">
+                <img
+                  src="/imagens-paginas/06-impacto-global/direitos-humanos/1direitoshumanos.png"
+                  alt="Mãos unidas em solidariedade e dignidade"
+                  className="w-full h-full object-cover object-center opacity-90"
+                  referrerPolicy="no-referrer"
+                />
+                {/* Gradiente escuro para perfeita legibilidade dos textos da esquerda e destaque da foto */}
+                <div className="absolute inset-0 bg-gradient-to-r from-[#090623] via-[#090623]/80 to-transparent" />
+              </div>
+
+              <div className="relative z-10 lg:col-span-7 p-6 sm:p-7 lg:p-8 flex flex-col justify-center space-y-3.5">
+                <h2 className="text-2xl sm:text-3xl lg:text-[32px] font-black font-['Outfit'] leading-tight tracking-tight text-white max-w-lg">
+                  Direitos Humanos<br />são direitos de todos.
+                </h2>
+                <p className="text-xs sm:text-sm text-violet-100/85 font-normal leading-relaxed max-w-md">
+                  Promovemos a dignidade humana, a igualdade, a liberdade e a justiça. Apoie iniciativas que defendem e protegem os direitos fundamentais em todo o mundo.
+                </p>
+                <div className="pt-1">
+                  <button
+                    onClick={() => {
+                      const el = document.getElementById('projetos-destaque');
+                      if (el) el.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-white text-[#312E81] hover:bg-violet-50 font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer group"
+                  >
+                    <span>Explorar iniciativas de direitos humanos</span>
+                    <ArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </div>
+              </div>
+
+              <div className="relative z-10 lg:col-span-5 p-4 sm:p-5 lg:my-4 lg:mr-5 bg-slate-900/60 backdrop-blur-md rounded-2xl border border-white/10 space-y-3 self-center mx-4 mb-4 lg:mx-0 lg:mb-0">
+                <h3 className="text-xs font-bold text-violet-200 font-['Outfit'] uppercase tracking-wider">
+                  Impacto em Direitos Humanos
+                </h3>
+                <div className="space-y-2.5 text-xs">
+                  {[
+                    { icon: <Users className="w-3.5 h-3.5" />, value: '4.875.320', label: 'Pessoas Impactadas' },
+                    { icon: <Landmark className="w-3.5 h-3.5" />, value: '276', label: 'Organizações' },
+                    { icon: <Megaphone className="w-3.5 h-3.5" />, value: '214', label: 'Campanhas Ativas' },
+                    { icon: <HeartHandshake className="w-3.5 h-3.5" />, value: '783.650', label: 'Pessoas Apoiadas' },
+                    { icon: <Clock className="w-3.5 h-3.5" />, value: '2.143.480 h', label: 'Horas de Voluntariado' },
+                    { icon: <Globe className="w-3.5 h-3.5" />, value: '98', label: 'Países' },
+                  ].map((row, idx) => (
+                    <div key={idx} className="flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-lg bg-violet-500/20 text-violet-300 flex items-center justify-center shrink-0">
+                        {row.icon}
+                      </div>
+                      <div>
+                        <div className="font-extrabold text-white text-xs sm:text-sm font-['Outfit'] leading-none">{row.value}</div>
+                        <div className="text-[10.5px] text-violet-100/70 mt-0.5">{row.label}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* 2. ÁREAS DE IMPACTO EM DIREITOS HUMANOS (6 CARDS EM UMA LINHA CONTÍNUA) */}
             <section className="space-y-3">
               <div className="flex items-center justify-between">
                 <h2 className="text-base sm:text-lg font-black text-[#0F1E3D] font-['Outfit'] tracking-tight">
@@ -624,6 +624,7 @@ export const HumanRightsImpactView: React.FC<HumanRightsImpactViewProps> = ({
               <ImpactRegionMapCard
                 category="direitos-humanos"
                 className="lg:col-span-4"
+                showFooterButton={true}
                 onOpenReport={() => setIsReportModalOpen(true)}
                 onSeeAll={() => setIsReportModalOpen(true)}
               />
@@ -683,50 +684,50 @@ export const HumanRightsImpactView: React.FC<HumanRightsImpactViewProps> = ({
           </div>
 
           {/* COLUNA DIREITA (SIDEBAR DE 3 COLUNAS) */}
-          <div className="xl:col-span-3 space-y-5">
-            {/* MAIS POPULARES EM DIREITOS HUMANOS */}
-            <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-2xs space-y-3.5">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xs sm:text-sm font-black text-[#0F1E3D] font-['Outfit']">
+          <div className="xl:col-span-3 space-y-6">
+            {/* 1. MAIS POPULARES EM DIREITOS HUMANOS (ALINHADO AO LADO DO HERO) */}
+            <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-2xs space-y-3.5">
+              <div className="flex items-center justify-between pb-0.5">
+                <h3 className="text-xs sm:text-sm font-bold text-[#0F1E3D] font-['Outfit']">
                   Mais populares em Direitos Humanos
                 </h3>
                 <button
                   onClick={() => showToast('Exibindo ranking completo de popularidade')}
-                  className="text-xs font-bold text-[#312E81] hover:text-[#26246a] inline-flex items-center gap-1 cursor-pointer"
+                  className="text-xs font-bold text-[#312E81] hover:text-[#26246a] inline-flex items-center gap-1 cursor-pointer transition-colors"
                 >
                   <span>Ver todas</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
 
-              <div className="space-y-2.5">
+              <div className="space-y-3">
                 {popularInitiatives.map((item) => (
                   <div
                     key={item.id}
                     onClick={() => showToast(`Iniciativa: ${item.title}`)}
-                    className="flex items-center justify-between gap-2.5 p-1.5 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
+                    className="flex items-center justify-between gap-2.5 p-1 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="w-4 text-center text-xs font-bold text-slate-400 shrink-0">
+                      <span className="w-5 h-5 rounded-full bg-slate-100 text-[10.5px] font-bold text-slate-500 flex items-center justify-center shrink-0">
                         {item.rank}
                       </span>
                       <img
                         src={item.avatar}
                         alt={item.title}
-                        className="w-8 h-8 rounded-full object-cover shrink-0 border border-slate-100 group-hover:scale-105 transition-transform"
+                        className="w-9 h-9 rounded-xl object-cover shrink-0 border border-slate-100 group-hover:scale-105 transition-transform"
                         referrerPolicy="no-referrer"
                       />
                       <div className="min-w-0">
                         <h4 className="text-xs font-bold text-[#0F1E3D] truncate group-hover:text-[#312E81] transition-colors">
                           {item.title}
                         </h4>
-                        <p className="text-[10.5px] text-slate-500 truncate">
+                        <p className="text-[11px] text-slate-500 truncate">
                           {item.supporters}
                         </p>
                       </div>
                     </div>
 
-                    <span className="text-[10.5px] font-bold text-[#059669] shrink-0">
+                    <span className="text-[11px] font-bold text-[#059669] shrink-0">
                       ▲ {item.growth}
                     </span>
                   </div>
@@ -734,27 +735,27 @@ export const HumanRightsImpactView: React.FC<HumanRightsImpactViewProps> = ({
               </div>
             </div>
 
-            {/* RECURSOS E FERRAMENTAS */}
-            <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-2xs space-y-3.5">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xs sm:text-sm font-black text-[#0F1E3D] font-['Outfit']">
+            {/* 2. RECURSOS E FERRAMENTAS */}
+            <div className="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-2xs space-y-3.5">
+              <div className="flex items-center justify-between pb-0.5">
+                <h3 className="text-xs sm:text-sm font-bold text-[#0F1E3D] font-['Outfit']">
                   Recursos e ferramentas
                 </h3>
                 <button
                   onClick={() => showToast('Todos os recursos disponíveis')}
-                  className="text-xs font-bold text-[#312E81] hover:text-[#26246a] inline-flex items-center gap-1 cursor-pointer"
+                  className="text-xs font-bold text-[#312E81] hover:text-[#26246a] inline-flex items-center gap-1 cursor-pointer transition-colors"
                 >
                   <span>Ver todas</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 {toolsAndResources.map((t) => (
                   <div
                     key={t.id}
                     onClick={() => setActiveToolModal(t.title)}
-                    className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-200/60 transition-all cursor-pointer group"
+                    className="flex items-center justify-between p-2 rounded-xl hover:bg-slate-50 border border-transparent hover:border-slate-100 transition-all cursor-pointer group"
                   >
                     <div className="flex items-center gap-2.5 min-w-0">
                       <div className={`w-8 h-8 rounded-xl ${t.bg} border flex items-center justify-center shrink-0`}>
@@ -775,33 +776,36 @@ export const HumanRightsImpactView: React.FC<HumanRightsImpactViewProps> = ({
               </div>
             </div>
 
-            {/* CTA "DEFENDER DIREITOS É CONSTRUIR UM FUTURO MAIS JUSTO" COM IMAGEM DE MÃOS */}
-            <div className="rounded-2xl bg-[#120B3B] text-white p-5 border border-violet-900/40 relative overflow-hidden shadow-sm space-y-3">
-              <div className="space-y-1.5">
-                <h3 className="text-sm sm:text-base font-black font-['Outfit'] leading-snug">
+            {/* 3. CTA "DEFENDER DIREITOS É CONSTRUIR UM FUTURO MAIS JUSTO" COM IMAGEM DE MÃOS E SILHUETAS */}
+            <div className="rounded-3xl bg-gradient-to-br from-[#1A163B] via-[#1E1B4B] to-[#2E1065] text-white p-5 sm:p-6 border border-violet-900/40 relative overflow-hidden shadow-sm flex flex-col justify-between min-h-[300px]">
+              {/* Imagem de mãos com silhuetas de papel unidas na lateral direita */}
+              <div className="absolute right-0 top-0 bottom-0 w-[44%] overflow-hidden pointer-events-none">
+                <img
+                  src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=600&auto=format&fit=crop&q=80"
+                  alt="Defender direitos humanos com mãos unidas"
+                  className="w-full h-full object-cover object-left"
+                  referrerPolicy="no-referrer"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#1A163B] via-[#1A163B]/70 to-transparent" />
+              </div>
+
+              <div className="relative z-10 space-y-2 max-w-[62%]">
+                <h3 className="text-sm sm:text-base font-black font-['Outfit'] leading-snug text-white">
                   Defender direitos é construir um futuro mais justo para todos.
                 </h3>
-                <p className="text-xs text-violet-100/80 leading-relaxed font-normal">
+                <p className="text-xs text-violet-200/80 leading-relaxed font-normal">
                   Junte-se a iniciativas que protegem a dignidade humana em todo o mundo.
                 </p>
               </div>
 
-              <button
-                onClick={() => setIsSupportModalOpen(true)}
-                className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-violet-50 text-[#312E81] font-bold text-xs shadow-xs transition-all flex items-center justify-center gap-2 cursor-pointer group"
-              >
-                <span>Explorar Iniciativas</span>
-                <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
-              </button>
-
-              <div className="h-28 rounded-xl overflow-hidden relative shadow-inner mt-2">
-                <img
-                  src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=600&auto=format&fit=crop&q=80"
-                  alt="Mãos com silhuetas de papel unidas em solidariedade"
-                  className="w-full h-full object-cover"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#120B3B] via-transparent to-transparent opacity-60" />
+              <div className="relative z-10 pt-4">
+                <button
+                  onClick={() => setIsSupportModalOpen(true)}
+                  className="px-4 py-2.5 rounded-xl bg-white hover:bg-violet-50 text-[#1E1B4B] font-bold text-xs shadow-xs transition-all inline-flex items-center gap-2 cursor-pointer group"
+                >
+                  <span>Explorar Iniciativas</span>
+                  <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-1 transition-transform" />
+                </button>
               </div>
             </div>
           </div>

@@ -320,6 +320,7 @@ export const EntrepreneurshipImpactView: React.FC<EntrepreneurshipImpactViewProp
   const [selectedArea, setSelectedArea] = useState<string | null>(null);
   const [selectedProjectModal, setSelectedProjectModal] = useState<EntrepreneurshipProject | null>(null);
   const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [supportedCount, setSupportedCount] = useState(1248);
   const [hasSupported, setHasSupported] = useState(false);
 
@@ -786,6 +787,8 @@ export const EntrepreneurshipImpactView: React.FC<EntrepreneurshipImpactViewProp
                 <ImpactRegionMapCard
                   category="empreendedorismo"
                   className="lg:col-span-4"
+                  onOpenReport={() => setIsReportModalOpen(true)}
+                  onSeeAll={() => setIsReportModalOpen(true)}
                 />
               </div>
             </section>
@@ -1135,6 +1138,54 @@ export const EntrepreneurshipImpactView: React.FC<EntrepreneurshipImpactViewProp
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: RELATÓRIO REGIONAL DE EMPREENDEDORISMO */}
+      {isReportModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+              <div>
+                <h3 className="text-base font-black text-[#0F172A] font-['Outfit']">
+                  Relatório de Impacto Regional
+                </h3>
+                <p className="text-xs text-slate-500">Distribuição global de iniciativas de empreendedorismo ativas</p>
+              </div>
+              <button
+                onClick={() => setIsReportModalOpen(false)}
+                className="p-1 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs">
+              <div className="p-3 bg-emerald-50/70 rounded-xl border border-emerald-100 text-emerald-950">
+                <span className="font-bold block mb-1 text-emerald-800">África (34% do impacto total)</span>
+                Aceleração de fintechs comunitárias, startups de agritech e capacitação de jovens e mulheres empreendedoras.
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-700">
+                <span className="font-bold block mb-1 text-slate-900">Ásia (26% do impacto total)</span>
+                Ecossistemas de manufatura tecnológica, inclusão financeira digital e microempreendedorismo rural.
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-700">
+                <span className="font-bold block mb-1 text-slate-900">América Latina (20% do impacto total)</span>
+                Inovação social, negócios de impacto ecológico e incubação de cooperativas locais.
+              </div>
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 text-slate-700">
+                <span className="font-bold block mb-1 text-slate-900">Europa & América do Norte (20% do impacto total)</span>
+                Transferência de tecnologia, mentoria transfronteiriça e fundos semente para startups sustentáveis.
+              </div>
+            </div>
+
+            <button
+              onClick={() => setIsReportModalOpen(false)}
+              className="w-full py-2.5 px-4 bg-[#064E3B] hover:bg-[#04382A] text-white font-bold text-xs rounded-xl shadow-xs transition-colors cursor-pointer"
+            >
+              Concluir Leitura
+            </button>
           </div>
         </div>
       )}
