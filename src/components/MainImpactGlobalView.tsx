@@ -29,6 +29,8 @@ import {
   Share2,
   Smile,
   Zap,
+  MoreHorizontal,
+  Cpu,
 } from 'lucide-react';
 
 export interface MainImpactGlobalViewProps {
@@ -304,11 +306,13 @@ export const MainImpactGlobalView: React.FC<MainImpactGlobalViewProps> = ({
           {[
             { id: 'todas', label: 'Todas', icon: Compass },
             { id: 'ambiente', label: 'Ambiente', icon: Leaf },
+            { id: 'tecnologia', label: 'Tecnologia', icon: Cpu },
             { id: 'educacao', label: 'Educação', icon: GraduationCap },
             { id: 'direitos-humanos', label: 'Direitos Humanos', icon: Scale },
             { id: 'saude', label: 'Saúde', icon: HeartPulse },
             { id: 'empreendedorismo', label: 'Empreendedorismo', icon: Rocket },
             { id: 'cultura', label: 'Cultura', icon: Palette },
+            { id: 'mais', label: 'Mais', icon: MoreHorizontal },
           ].map((cat) => {
             const Icon = cat.icon;
             const isActive = cat.id === 'todas';
@@ -318,7 +322,11 @@ export const MainImpactGlobalView: React.FC<MainImpactGlobalViewProps> = ({
                 key={cat.id}
                 type="button"
                 onClick={() => {
-                  if (onNavigateToCategory) onNavigateToCategory(cat.id);
+                  if (onNavigateToCategory) {
+                    onNavigateToCategory(cat.id);
+                  } else if (cat.id === 'mais' && onNavigateToTab) {
+                    onNavigateToTab('mais');
+                  }
                 }}
                 className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer shadow-2xs ${
                   isActive

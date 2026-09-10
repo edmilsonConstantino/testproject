@@ -503,7 +503,7 @@ export const CommunityOfficialHomeView: React.FC<CommunityOfficialHomeViewProps>
                 {/* Seta '>' */}
                 <button
                   type="button"
-                  onClick={onNavigateToAmbiente}
+                  onClick={onNavigateToExplorarComunidade || onNavigateToAmbiente}
                   title="Explorar mais comunidades"
                   className="hidden xl:flex absolute -right-3.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white border border-slate-200 shadow-md items-center justify-center text-slate-600 hover:text-slate-900 hover:bg-slate-50 cursor-pointer z-10 transition-transform hover:scale-105"
                 >
@@ -675,7 +675,7 @@ export const CommunityOfficialHomeView: React.FC<CommunityOfficialHomeViewProps>
                 </h3>
                 <button
                   type="button"
-                  onClick={onNavigateToAmbiente}
+                  onClick={onNavigateToExplorarComunidade || onNavigateToAmbiente}
                   className="text-[11px] font-bold text-[#0066FF] hover:underline cursor-pointer flex items-center gap-0.5"
                 >
                   <span>Ver todas</span>
@@ -723,7 +723,7 @@ export const CommunityOfficialHomeView: React.FC<CommunityOfficialHomeViewProps>
                   return (
                     <div
                       key={t.rank}
-                      onClick={onNavigateToAmbiente}
+                      onClick={onNavigateToExplorarComunidade || onNavigateToAmbiente}
                       className="py-2.5 flex items-center justify-between gap-2 hover:bg-slate-50/80 px-1 rounded-lg transition-colors cursor-pointer group"
                     >
                       <div className="flex items-center gap-2.5 min-w-0">

@@ -68,7 +68,7 @@ export const EnvironmentImpactView: React.FC<EnvironmentImpactViewProps> = ({
   onExploreCommunity = () => {},
   onOpenMobileMenu,
   onOpenAuth = () => {},
-  onNavigateToTab = () => {},
+  onNavigateToTab = (_tabId?: string) => {},
   onNavigateToCategory,
 }) => {
   // State
@@ -448,7 +448,16 @@ export const EnvironmentImpactView: React.FC<EnvironmentImpactViewProps> = ({
             );
           })}
           <button
-            onClick={() => showToast('Mais categorias em breve!')}
+            type="button"
+            onClick={() => {
+              if (onNavigateToCategory) {
+                onNavigateToCategory('mais');
+              } else if (onNavigateToTab) {
+                onNavigateToTab('mais');
+              } else {
+                showToast('Mais categorias em breve!');
+              }
+            }}
             className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-bold bg-white text-slate-500 hover:text-slate-800 border border-slate-200 hover:border-slate-300 transition-colors whitespace-nowrap cursor-pointer"
           >
             <MoreHorizontal className="w-3.5 h-3.5" />

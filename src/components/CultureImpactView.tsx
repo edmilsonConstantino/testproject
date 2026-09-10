@@ -53,7 +53,7 @@ export const CultureImpactView: React.FC<CultureImpactViewProps> = ({
   onExploreCommunity = () => {},
   onOpenMobileMenu,
   onOpenAuth = () => {},
-  onNavigateToTab = () => {},
+  onNavigateToTab = (_tabId?: string) => {},
   onNavigateToCategory,
 }) => {
   const [activeCategory] = useState<string>('cultura');

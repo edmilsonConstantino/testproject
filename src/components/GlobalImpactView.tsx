@@ -75,6 +75,14 @@ export const GlobalImpactView: React.FC<GlobalImpactViewProps> = ({
   }, [currentSubView]);
 
   const handleCategoryNavigation = (categoryId: string) => {
+    if (categoryId === 'mais' || categoryId === 'mais-categorias') {
+      if (onNavigateToCategory) {
+        onNavigateToCategory('mais');
+      } else if (onNavigateToTab) {
+        onNavigateToTab('mais');
+      }
+      return;
+    }
     if (categoryId === 'todas' || categoryId === 'impacto' || categoryId === 'impacto-global') {
       setCurrentSubView('todas');
       window.scrollTo({ top: 0, behavior: 'smooth' });

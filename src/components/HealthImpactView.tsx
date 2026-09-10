@@ -450,11 +450,19 @@ export const HealthImpactView: React.FC<HealthImpactViewProps> = ({
             );
           })}
 
-          {/* Botão "Mais" como Dropdown */}
+          {/* Botão "Mais" */}
           <div className="relative">
             <button
               type="button"
-              onClick={() => setIsMaisDropdownOpen(!isMaisDropdownOpen)}
+              onClick={() => {
+                if (onNavigateToCategory) {
+                  onNavigateToCategory('mais');
+                } else if (onNavigateToTab) {
+                  onNavigateToTab('mais');
+                } else {
+                  setIsMaisDropdownOpen(!isMaisDropdownOpen);
+                }
+              }}
               className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-white border border-slate-200/90 text-[#334155] hover:bg-slate-50 whitespace-nowrap cursor-pointer shadow-2xs"
             >
               <MoreHorizontal className="w-3.5 h-3.5 text-slate-500" />
@@ -474,8 +482,15 @@ export const HealthImpactView: React.FC<HealthImpactViewProps> = ({
                   <button
                     key={extra}
                     type="button"
-                    onClick={() => setIsMaisDropdownOpen(false)}
-                    className="w-full px-3.5 py-1.5 text-left hover:bg-slate-50 text-slate-700 flex items-center justify-between"
+                    onClick={() => {
+                      setIsMaisDropdownOpen(false);
+                      if (onNavigateToCategory) {
+                        onNavigateToCategory('mais');
+                      } else if (onNavigateToTab) {
+                        onNavigateToTab('mais');
+                      }
+                    }}
+                    className="w-full px-3.5 py-1.5 text-left hover:bg-slate-50 text-slate-700 flex items-center justify-between cursor-pointer"
                   >
                     <span>{extra}</span>
                   </button>

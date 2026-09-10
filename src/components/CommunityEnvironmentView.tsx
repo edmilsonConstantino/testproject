@@ -521,6 +521,14 @@ export const CommunityEnvironmentView: React.FC<CommunityEnvironmentViewProps> =
                 key={cat.id}
                 type="button"
                 onClick={() => {
+                  if (cat.id === 'mais') {
+                    if (onNavigateToCategory) {
+                      onNavigateToCategory('mais');
+                    } else if (onNavigateToTab) {
+                      onNavigateToTab('mais');
+                    }
+                    return;
+                  }
                   if (onNavigateToCategory && (cat.id === 'educacao' || cat.id === 'direitos-humanos' || cat.id === 'cultura' || cat.id === 'saude' || cat.id === 'tecnologia' || cat.id === 'empreendedorismo' || cat.id === 'todas')) {
                     onNavigateToCategory(cat.id);
                   } else {

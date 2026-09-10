@@ -207,8 +207,8 @@ const TRENDING_RIGHT_ITEMS: TrendingRightItem[] = [
     members: '78.3K membros',
     growth: '▲ 22%',
     iconType: 'ai',
-    bg: 'bg-indigo-50',
-    color: 'text-[#4338CA]',
+    bg: 'bg-[#5B4DF6]',
+    color: 'text-white',
   },
   {
     rank: 2,
@@ -217,8 +217,8 @@ const TRENDING_RIGHT_ITEMS: TrendingRightItem[] = [
     members: '64.2K membros',
     growth: '▲ 18%',
     iconType: 'cap',
-    bg: 'bg-blue-50',
-    color: 'text-[#2563EB]',
+    bg: 'bg-[#0B1536]',
+    color: 'text-white',
   },
   {
     rank: 3,
@@ -227,8 +227,8 @@ const TRENDING_RIGHT_ITEMS: TrendingRightItem[] = [
     members: '76.8K membros',
     growth: '▲ 16%',
     iconType: 'scholarship',
-    bg: 'bg-emerald-50',
-    color: 'text-[#059669]',
+    bg: 'bg-[#10B981]',
+    color: 'text-white',
   },
   {
     rank: 4,
@@ -237,8 +237,8 @@ const TRENDING_RIGHT_ITEMS: TrendingRightItem[] = [
     members: '52.6K membros',
     growth: '▲ 14%',
     iconType: 'book',
-    bg: 'bg-rose-50',
-    color: 'text-[#E11D48]',
+    bg: 'bg-[#E11D48]',
+    color: 'text-white',
   },
   {
     rank: 5,
@@ -247,8 +247,8 @@ const TRENDING_RIGHT_ITEMS: TrendingRightItem[] = [
     members: '41.3K membros',
     growth: '▲ 12%',
     iconType: 'stem',
-    bg: 'bg-sky-50',
-    color: 'text-[#0284C7]',
+    bg: 'bg-[#0284C7]',
+    color: 'text-white',
   },
 ];
 
@@ -350,25 +350,50 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
   return (
     <div id="community-education-view" className="w-full bg-[#F8FAFC] min-h-screen text-[#0F172A] flex flex-col">
       {/* Conteúdo Principal (busca/idioma/notificações/perfil/breadcrumb já vêm do Topbar compartilhado no AppLayout) */}
-      <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col gap-5">
-        {/* 2. Cabeçalho de Educação com Ícone e Métricas */}
-        <section id="educacao-header" className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-          <div className="flex items-start sm:items-center gap-3.5">
-            {/* Ícone Quadrado Arredondado com Capelo Azul */}
-            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-[#EEF2FF] border border-indigo-200/80 flex items-center justify-center shrink-0 shadow-2xs">
-              <GraduationCap className="w-7 h-7 sm:w-8 sm:h-8 text-[#4F46E5]" strokeWidth={2.2} />
-            </div>
+      <main className="flex-1 max-w-[1520px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-5">
+        {/* Layout Principal: Lado Esquerdo (Header, Fita de Categorias, Filtros, Hero e Conteúdo) e Lado Direito (Card Comunidades em tendência no Topo, Atividades e CTA) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+          {/* LADO ESQUERDO: Header, Fitas e Área de Filtros + Conteúdo (lg:col-span-8 xl:col-span-9) */}
+          <div className="lg:col-span-8 xl:col-span-9 flex flex-col gap-4">
+            {/* 1. Cabeçalho de Educação com Ícone, Título, Subtítulo, Métricas e Botão Criar Comunidade */}
+            <header id="educacao-header" className="flex flex-col gap-3">
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center gap-3.5">
+                  {/* Ícone Quadrado Arredondado com Capelo Azul */}
+                  <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-[#EEF2FF] border border-indigo-200/80 flex items-center justify-center shrink-0 shadow-2xs">
+                    <GraduationCap className="w-7 h-7 sm:w-8 sm:h-8 text-[#4F46E5]" strokeWidth={2.2} />
+                  </div>
 
-            <div className="flex flex-col">
-              <h1 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight font-['Outfit'] leading-tight">
-                Educação
-              </h1>
-              <p className="text-xs sm:text-sm text-[#64748B] font-normal leading-snug">
-                Aprendizagem para todos. Compartilhe conhecimento, recursos e oportunidades educacionais.
-              </p>
+                  <div className="flex flex-col">
+                    <h1 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight font-['Outfit'] leading-tight">
+                      Educação
+                    </h1>
+                    <p className="text-xs sm:text-sm text-[#64748B] font-normal leading-snug">
+                      Aprendizagem para todos. Compartilhe conhecimento, recursos e oportunidades educacionais.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Botão Criar Comunidade no mesmo lugar */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onOpenCreateCommunity) {
+                      onOpenCreateCommunity();
+                    } else {
+                      setIsCreateModalOpen(true);
+                    }
+                  }}
+                  id="btn-criar-comunidade-educacao"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#4F46E5] to-[#06B6D4] hover:opacity-95 text-white font-bold text-xs sm:text-sm shadow-xs transition-all cursor-pointer shrink-0"
+                >
+                  <span>Criar Comunidade</span>
+                  <Plus className="w-4 h-4 stroke-[2.8]" />
+                </button>
+              </div>
 
               {/* Fita de Métricas: Comunidades, Membros e Países */}
-              <div className="flex flex-wrap items-center gap-4 sm:gap-6 mt-1.5 text-[11.5px] sm:text-xs font-semibold text-[#64748B]">
+              <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-[11.5px] sm:text-xs font-semibold text-[#64748B]">
                 <span className="flex items-center gap-1.5">
                   <Users className="w-3.5 h-3.5 text-slate-500" />
                   <strong className="font-bold text-[#0F172A]">1.572</strong> comunidades
@@ -382,109 +407,70 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
                   <strong className="font-bold text-[#0F172A]">192</strong> países
                 </span>
               </div>
-            </div>
-          </div>
+            </header>
 
-          {/* Botão "+ Criar Comunidade" Azul/Índigo */}
-          <button
-            type="button"
-            onClick={() => {
-              if (onOpenCreateCommunity) {
-                onOpenCreateCommunity();
-              } else {
-                setIsCreateModalOpen(true);
-              }
-            }}
-            id="btn-criar-comunidade-educacao"
-            className="self-start sm:self-center inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-sm transition-all cursor-pointer shrink-0"
-          >
-            <span>Criar Comunidade</span>
-            <Plus className="w-4 h-4 stroke-[2.5]" />
-          </button>
-        </section>
+            {/* 2. Fita Horizontal de Categorias (com Educação Selecionada) */}
+            <nav
+              id="categories-ribbon-educacao"
+              className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 relative"
+              aria-label="Categorias de Comunidades"
+            >
+              {[
+                { id: 'todas', label: 'Todas', icon: Compass },
+                { id: 'ambiente', label: 'Ambiente', icon: Leaf },
+                { id: 'tecnologia', label: 'Tecnologia', icon: Cpu },
+                { id: 'educacao', label: 'Educação', icon: GraduationCap },
+                { id: 'direitos-humanos', label: 'Direitos Humanos', icon: Scale },
+                { id: 'saude', label: 'Saúde', icon: HeartPulse },
+                { id: 'empreendedorismo', label: 'Empreendedorismo', icon: Rocket },
+                { id: 'cultura', label: 'Cultura', icon: Palette },
+              ].map((cat) => {
+                const Icon = cat.icon;
+                const isActive = cat.id === 'educacao';
 
-        {/* 3. Fita Horizontal de Categorias (com Educação Selecionada) */}
-        <nav
-          id="categories-ribbon-educacao"
-          className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 relative"
-          aria-label="Categorias de Comunidades"
-        >
-          {[
-            { id: 'todas', label: 'Todas', icon: Compass },
-            { id: 'ambiente', label: 'Ambiente', icon: Leaf },
-            { id: 'tecnologia', label: 'Tecnologia', icon: Cpu },
-            { id: 'educacao', label: 'Educação', icon: GraduationCap },
-            { id: 'direitos-humanos', label: 'Direitos Humanos', icon: Scale },
-            { id: 'saude', label: 'Saúde', icon: HeartPulse },
-            { id: 'empreendedorismo', label: 'Empreendedorismo', icon: Rocket },
-            { id: 'cultura', label: 'Cultura', icon: Palette },
-          ].map((cat) => {
-            const Icon = cat.icon;
-            const isActive = cat.id === 'educacao';
+                return (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => {
+                      if (onNavigateToCategory) onNavigateToCategory(cat.id);
+                    }}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer shadow-2xs ${
+                      isActive
+                        ? 'bg-[#3730A3] text-white shadow-xs'
+                        : 'bg-white border border-slate-200/90 text-[#334155] hover:bg-slate-50 hover:text-slate-900'
+                    }`}
+                  >
+                    <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-500'}`} strokeWidth={2.2} />
+                    <span>{cat.label}</span>
+                  </button>
+                );
+              })}
 
-            return (
+              {/* Botão "... Mais" */}
               <button
-                key={cat.id}
                 type="button"
                 onClick={() => {
-                  if (onNavigateToCategory) onNavigateToCategory(cat.id);
+                  if (onNavigateToCategory) {
+                    onNavigateToCategory('mais');
+                  } else if (onNavigateToTab) {
+                    onNavigateToTab('mais');
+                  }
                 }}
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer shadow-2xs ${
-                  isActive
-                    ? 'bg-[#3730A3] text-white shadow-xs'
-                    : 'bg-white border border-slate-200/90 text-[#334155] hover:bg-slate-50 hover:text-slate-900'
-                }`}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-white border border-slate-200/90 text-[#334155] hover:bg-slate-50 whitespace-nowrap cursor-pointer shadow-2xs"
               >
-                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-500'}`} strokeWidth={2.2} />
-                <span>{cat.label}</span>
+                <MoreHorizontal className="w-3.5 h-3.5 text-slate-500" />
+                <span>Mais</span>
               </button>
-            );
-          })}
+            </nav>
 
-          {/* Botão "Mais" como Dropdown Exclusivo (sem criar página de rota) */}
-          <div className="relative">
-            <button
-              type="button"
-              onClick={() => setIsMaisDropdownOpen(!isMaisDropdownOpen)}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-white border border-slate-200/90 text-[#334155] hover:bg-slate-50 whitespace-nowrap cursor-pointer shadow-2xs"
-            >
-              <MoreHorizontal className="w-3.5 h-3.5 text-slate-500" />
-              <span>Mais</span>
-            </button>
-
-            {isMaisDropdownOpen && (
-              <div className="absolute left-0 mt-1 w-52 bg-white border border-slate-200 rounded-2xl shadow-xl py-1.5 z-40 text-xs font-medium">
-                {[
-                  'Turismo',
-                  'Desporto',
-                  'Habitação',
-                  'Igualdade de Género',
-                  'Juventude',
-                  'Proteção Social',
-                  'Paz e Segurança',
-                  'Governança',
-                ].map((extra) => (
-                  <button
-                    key={extra}
-                    type="button"
-                    onClick={() => setIsMaisDropdownOpen(false)}
-                    className="w-full px-3.5 py-1.5 text-left hover:bg-slate-50 text-slate-700 flex items-center justify-between"
-                  >
-                    <span>{extra}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </nav>
-
-        {/* 4. Grade de Três Colunas (Filtros, Centro com Banner/Comunidades/Recursos, Coluna Lateral) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-          {/* COLUNA ESQUERDA: Filtros (lg:col-span-2) */}
-          <aside
-            id="filtros-educacao-sidebar"
-            className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex flex-col gap-4"
-          >
+            {/* 3. Subgrid com Filtros e Conteúdo Principal */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-start mt-1">
+              {/* COLUNA ESQUERDA: Filtros (md:col-span-3 xl:col-span-3) */}
+              <aside
+                id="filtros-educacao-sidebar"
+                className="md:col-span-3 xl:col-span-3 bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex flex-col gap-4"
+              >
             <div className="flex items-center justify-between pb-1 border-b border-slate-100">
               <span className="text-sm font-bold text-[#0F172A] flex items-center gap-1.5">
                 <Filter className="w-3.5 h-3.5 text-slate-500" />
@@ -624,8 +610,8 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
             </button>
           </aside>
 
-          {/* COLUNA CENTRAL: Hero Banner, Comunidades e Recursos (lg:col-span-7) */}
-          <div className="lg:col-span-7 flex flex-col gap-6">
+          {/* COLUNA CENTRAL: Hero Banner, Comunidades e Recursos (md:col-span-9 xl:col-span-9) */}
+          <div className="md:col-span-9 xl:col-span-9 flex flex-col gap-6">
             {/* HERO BANNER: "Educação que transforma vidas" com 3 Métricas Integradas */}
             <section
               id="hero-educacao-banner"
@@ -838,58 +824,63 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
               </div>
             </section>
           </div>
+        </div>
+      </div>
 
-          {/* COLUNA DIREITA: Tendências, Atividades Recentes e CTA Educacional (lg:col-span-3) */}
-          <aside className="lg:col-span-3 flex flex-col gap-4">
-            {/* 1. Card: Comunidades em tendência (Educação) */}
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex flex-col gap-3">
-              <div className="flex items-center justify-between pb-1 border-b border-slate-100">
-                <h3 className="text-xs font-bold text-[#0F172A] font-['Outfit']">
-                  Comunidades em tendência (Educação)
-                </h3>
-                <button
-                  type="button"
-                  className="text-[11px] font-bold text-[#0066FF] hover:underline cursor-pointer flex items-center gap-0.5"
-                >
-                  <span>Ver todas</span>
-                  <ArrowRight className="w-3 h-3" />
-                </button>
-              </div>
+      {/* LADO DIREITO: Card Comunidades em tendência (Educação) no Topo + Atividades + CTA (lg:col-span-4 xl:col-span-3) */}
+      <aside id="right-sidebar-educacao" className="lg:col-span-4 xl:col-span-3 flex flex-col gap-4">
+        {/* 1. Card: Comunidades em tendência (Educação) */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-2xs flex flex-col gap-4">
+          <div className="flex items-center justify-between pb-1">
+            <h3 className="text-sm font-bold text-[#0F172A] font-['Outfit']">
+              Comunidades em tendência (Educação)
+            </h3>
+            <button
+              type="button"
+              onClick={() => {
+                if (onNavigateToCategory) onNavigateToCategory('todas');
+              }}
+              className="text-xs font-bold text-blue-600 hover:underline cursor-pointer flex items-center gap-1 shrink-0"
+            >
+              <span>Ver todas</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
 
-              {/* Lista 1 a 5 */}
-              <div className="flex flex-col divide-y divide-slate-100">
-                {TRENDING_RIGHT_ITEMS.map((item) => (
-                  <div
-                    key={item.id}
-                    className="py-2 flex items-center justify-between gap-2 hover:bg-slate-50 px-1 rounded-lg transition-colors cursor-pointer group"
-                  >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <span className="text-xs font-bold text-slate-400 w-3 shrink-0">
-                        {item.rank}
-                      </span>
-                      <div className={`w-7 h-7 rounded-lg ${item.bg} ${item.color} flex items-center justify-center shrink-0`}>
-                        {item.iconType === 'ai' && <Sparkles className="w-4 h-4" />}
-                        {item.iconType === 'cap' && <GraduationCap className="w-4 h-4" />}
-                        {item.iconType === 'scholarship' && <Award className="w-4 h-4" />}
-                        {item.iconType === 'book' && <BookOpen className="w-4 h-4" />}
-                        {item.iconType === 'stem' && <Atom className="w-4 h-4" />}
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <h4 className="text-xs font-bold text-[#0F172A] truncate group-hover:text-indigo-600 transition-colors">
-                          {item.name}
-                        </h4>
-                        <span className="text-[10px] text-slate-500 block truncate">
-                          {item.members}
-                        </span>
-                      </div>
-                    </div>
-                    <span className="text-[11px] font-bold text-[#10B981] shrink-0">
-                      {item.growth}
+          {/* Lista 1 a 5 */}
+          <div className="flex flex-col space-y-3.5">
+            {TRENDING_RIGHT_ITEMS.map((item) => (
+              <div
+                key={item.id}
+                className="flex items-center justify-between gap-3 p-1 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer group"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <span className="w-4 text-xs font-semibold text-slate-400 text-center shrink-0">
+                    {item.rank}
+                  </span>
+                  <div className={`w-9 h-9 rounded-full ${item.bg} ${item.color} flex items-center justify-center shrink-0 shadow-2xs`}>
+                    {item.iconType === 'ai' && <Sparkles className="w-4 h-4 stroke-[2.2]" />}
+                    {item.iconType === 'cap' && <GraduationCap className="w-4 h-4 stroke-[2.2]" />}
+                    {item.iconType === 'scholarship' && <Award className="w-4 h-4 stroke-[2.2]" />}
+                    {item.iconType === 'book' && <BookOpen className="w-4 h-4 stroke-[2.2]" />}
+                    {item.iconType === 'stem' && <Atom className="w-4 h-4 stroke-[2.2]" />}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h4 className="text-xs font-bold text-[#0F172A] truncate group-hover:text-blue-600 transition-colors">
+                      {item.name}
+                    </h4>
+                    <span className="text-[11px] text-slate-400 block truncate font-normal">
+                      {item.members}
                     </span>
                   </div>
-                ))}
+                </div>
+                <span className="text-xs font-bold text-emerald-600 shrink-0 flex items-center gap-0.5">
+                  {item.growth}
+                </span>
               </div>
-            </div>
+            ))}
+          </div>
+        </div>
 
             {/* 2. Card: Atividades recentes (Educação) */}
             <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex flex-col gap-3">

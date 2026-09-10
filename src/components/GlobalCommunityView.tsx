@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { CommunityOfficialHomeView } from './CommunityOfficialHomeView';
-import { ExploreCommunityView } from './ExploreCommunityView';
+import { CommunityExploreView } from './CommunityExploreView';
 import { CommunityEnvironmentView } from './CommunityEnvironmentView';
 import { CommunityEducationView } from './CommunityEducationView';
 import { CommunityHumanRightsView } from './CommunityHumanRightsView';
@@ -8,11 +8,12 @@ import { CommunityCultureView } from './CommunityCultureView';
 import { CommunityHealthView } from './CommunityHealthView';
 import { CommunityTechnologyView } from './CommunityTechnologyView';
 import { CommunityEntrepreneurshipView } from './CommunityEntrepreneurshipView';
+import { CommunityMoreCategoriesView } from './CommunityMoreCategoriesView';
 import { CreateCommunityWizardView } from './CreateCommunityWizardView';
 import { BreadcrumbItem } from './Topbar';
 
 export interface GlobalCommunityViewProps {
-  initialSubView?: 'official' | 'explorar-comunidade' | 'ambiente' | 'educacao' | 'direitos-humanos' | 'cultura' | 'saude' | 'tecnologia' | 'empreendedorismo' | 'criar-comunidade';
+  initialSubView?: 'official' | 'explorar' | 'explorar-comunidade' | 'ambiente' | 'educacao' | 'direitos-humanos' | 'cultura' | 'saude' | 'tecnologia' | 'empreendedorismo' | 'criar-comunidade' | 'mais';
   onNavigateToTab?: (tabId: string) => void;
   onOpenAuth?: (mode: 'login' | 'register') => void;
   onOpenAiAssistant?: () => void;
@@ -34,63 +35,32 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
   onOpenCreateCommunityModal,
   onBreadcrumbChange,
 }) => {
-  const [currentSubView, setCurrentSubView] = useState<'official' | 'explorar-comunidade' | 'ambiente' | 'educacao' | 'direitos-humanos' | 'cultura' | 'saude' | 'tecnologia' | 'empreendedorismo' | 'criar-comunidade'>(initialSubView);
+  const [currentSubView, setCurrentSubView] = useState<'official' | 'explorar' | 'explorar-comunidade' | 'ambiente' | 'educacao' | 'direitos-humanos' | 'cultura' | 'saude' | 'tecnologia' | 'empreendedorismo' | 'criar-comunidade' | 'mais'>(initialSubView);
 
   const onBreadcrumbChangeRef = useRef(onBreadcrumbChange);
   onBreadcrumbChangeRef.current = onBreadcrumbChange;
 
-  // Sincronizar se initialSubView mudar
-  useEffect(() => {
-    if (initialSubView) {
-      setCurrentSubView(initialSubView);
-    }
-  }, [initialSubView]);
+  const goToOfficial = useCallback(() => {
+    setCurrentSubView('official');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
-  // Emitir breadcrumb para o Topbar compartilhado conforme a subview ativa
-  useEffect(() => {
-    const goToOfficial = () => {
-      setCurrentSubView('official');
+  const goToExplorar = useCallback(() => {
+    setCurrentSubView('explorar');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const handleOpenCreateCommunity = useCallback(() => {
+    setCurrentSubView('criar-comunidade');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const handleNavigateCategory = useCallback((catId: string) => {
+    if (catId === 'mais' || catId === 'mais-categorias') {
+      setCurrentSubView('mais');
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-    const goToExplorar = () => {
-      setCurrentSubView('explorar-comunidade');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    const CATEGORY_LABELS: Record<string, string> = {
-      ambiente: 'Ambiente',
-      educacao: 'Educação',
-      'direitos-humanos': 'Direitos Humanos',
-      cultura: 'Cultura',
-      saude: 'Saúde',
-      tecnologia: 'Tecnologia',
-      empreendedorismo: 'Empreendedorismo',
-    };
-
-    if (currentSubView === 'official') {
-      onBreadcrumbChangeRef.current?.([]);
-    } else if (currentSubView === 'criar-comunidade') {
-      onBreadcrumbChangeRef.current?.([
-        { label: 'Comunidade Global', onClick: goToOfficial },
-        { label: 'Criar Comunidade' },
-      ]);
-    } else if (currentSubView === 'explorar-comunidade') {
-      onBreadcrumbChangeRef.current?.([
-        { label: 'Comunidade Global', onClick: goToOfficial },
-        { label: 'Explorar Comunidade' },
-      ]);
-    } else {
-      onBreadcrumbChangeRef.current?.([
-        { label: 'Comunidade Global', onClick: goToOfficial },
-        { label: 'Explorar Comunidade', onClick: goToExplorar },
-        { label: CATEGORY_LABELS[currentSubView] || 'Explorar' },
-      ]);
-    }
-  }, [currentSubView]);
-
-  const handleNavigateCategory = (catId: string) => {
-    if (catId === 'explorar' || catId === 'explorar-comunidade') {
-      setCurrentSubView('explorar-comunidade');
+    } else if (catId === 'explorar' || catId === 'explorar-comunidade' || catId === 'todas') {
+      setCurrentSubView('explorar');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (catId === 'ambiente') {
       setCurrentSubView('ambiente');
@@ -113,39 +83,88 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
     } else if (catId === 'empreendedorismo') {
       setCurrentSubView('empreendedorismo');
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else if (catId === 'todas') {
-      setCurrentSubView('explorar-comunidade');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  };
+  }, []);
 
-  const handleOpenCreateCommunity = () => {
-    setCurrentSubView('criar-comunidade');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  // Sincronizar se initialSubView mudar
+  useEffect(() => {
+    if (initialSubView) {
+      setCurrentSubView(initialSubView);
+    }
+  }, [initialSubView]);
+
+  // Emitir breadcrumb para o Topbar compartilhado conforme a subview ativa
+  useEffect(() => {
+    const CATEGORY_LABELS: Record<string, string> = {
+      ambiente: 'Ambiente',
+      educacao: 'Educação',
+      'direitos-humanos': 'Direitos Humanos',
+      cultura: 'Cultura',
+      saude: 'Saúde',
+      tecnologia: 'Tecnologia',
+      empreendedorismo: 'Empreendedorismo',
+    };
+
+    if (currentSubView === 'official') {
+      onBreadcrumbChangeRef.current?.([]);
+    } else if (currentSubView === 'criar-comunidade') {
+      onBreadcrumbChangeRef.current?.([
+        { label: 'Comunidade Global', onClick: goToOfficial },
+        { label: 'Criar Comunidade' },
+      ]);
+    } else if (currentSubView === 'mais') {
+      // Breadcrumb com 3 níveis: Comunidade Global > Explorar Comunidade > Mais
+      onBreadcrumbChangeRef.current?.([
+        { label: 'Comunidade Global', onClick: goToOfficial },
+        { label: 'Explorar Comunidade', onClick: goToExplorar },
+        { label: 'Mais' },
+      ]);
+    } else if (currentSubView === 'explorar' || currentSubView === 'explorar-comunidade') {
+      // Breadcrumb com só 2 níveis: Comunidade Global > Explorar Comunidade
+      onBreadcrumbChangeRef.current?.([
+        { label: 'Comunidade Global', onClick: goToOfficial },
+        { label: 'Explorar Comunidade' },
+      ]);
+    } else {
+      onBreadcrumbChangeRef.current?.([
+        { label: 'Comunidade Global', onClick: goToOfficial },
+        { label: 'Explorar Comunidade', onClick: goToExplorar },
+        { label: CATEGORY_LABELS[currentSubView] || 'Explorar' },
+      ]);
+    }
+  }, [currentSubView, goToOfficial, goToExplorar]);
 
   // Página de Ação Exclusiva: Criar Comunidade (UI CRIAR COMUNIDADE.png)
   if (currentSubView === 'criar-comunidade') {
     return (
       <CreateCommunityWizardView
-        onBackToCommunity={() => {
-          setCurrentSubView('official');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onBackToCommunity={goToOfficial}
         onNavigateToTab={onNavigateToTab}
         onOpenAuth={onOpenAuth}
       />
     );
   }
 
-  // Página: Explorar Comunidade (Todas as Causas Combinadas)
-  if (currentSubView === 'explorar-comunidade') {
+  // Página: Explorar Comunidade (CommunityExploreView com carrossel em destaque e lista detalhada)
+  if (currentSubView === 'explorar' || currentSubView === 'explorar-comunidade') {
     return (
-      <ExploreCommunityView
-        onBackToOfficial={() => {
-          setCurrentSubView('official');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+      <CommunityExploreView
+        onBackToOfficial={goToOfficial}
+        onNavigateToCategory={handleNavigateCategory}
+        onNavigateToTab={onNavigateToTab}
+        onOpenAuth={onOpenAuth}
+        onOpenAiAssistant={onOpenAiAssistant}
+        onOpenMobileMenu={onOpenMobileMenu}
+        onOpenCreateCommunity={handleOpenCreateCommunity}
+      />
+    );
+  }
+
+  // Página: Mais Categorias (CommunityMoreCategoriesView)
+  if (currentSubView === 'mais') {
+    return (
+      <CommunityMoreCategoriesView
+        onBackToOfficial={goToOfficial}
         onNavigateToCategory={handleNavigateCategory}
         onNavigateToTab={onNavigateToTab}
         onOpenAuth={onOpenAuth}
@@ -160,10 +179,7 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
   if (currentSubView === 'cultura') {
     return (
       <CommunityCultureView
-        onBackToOfficial={() => {
-          setCurrentSubView('official');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onBackToOfficial={goToOfficial}
         onNavigateToCategory={handleNavigateCategory}
         onNavigateToTab={onNavigateToTab}
         onOpenAuth={onOpenAuth}
@@ -178,10 +194,7 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
   if (currentSubView === 'saude') {
     return (
       <CommunityHealthView
-        onBackToOfficial={() => {
-          setCurrentSubView('official');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onBackToOfficial={goToOfficial}
         onNavigateToCategory={handleNavigateCategory}
         onNavigateToTab={onNavigateToTab}
         onOpenAuth={onOpenAuth}
@@ -196,10 +209,7 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
   if (currentSubView === 'tecnologia') {
     return (
       <CommunityTechnologyView
-        onBackToOfficial={() => {
-          setCurrentSubView('official');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onBackToOfficial={goToOfficial}
         onNavigateToCategory={handleNavigateCategory}
         onNavigateToTab={onNavigateToTab}
         onOpenAuth={onOpenAuth}
@@ -214,10 +224,7 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
   if (currentSubView === 'empreendedorismo') {
     return (
       <CommunityEntrepreneurshipView
-        onBackToOfficial={() => {
-          setCurrentSubView('official');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onBackToOfficial={goToOfficial}
         onNavigateToCategory={handleNavigateCategory}
         onNavigateToTab={onNavigateToTab}
         onOpenAuth={onOpenAuth}
@@ -232,10 +239,7 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
   if (currentSubView === 'direitos-humanos') {
     return (
       <CommunityHumanRightsView
-        onBackToOfficial={() => {
-          setCurrentSubView('official');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onBackToOfficial={goToOfficial}
         onNavigateToCategory={handleNavigateCategory}
         onNavigateToTab={onNavigateToTab}
         onOpenAuth={onOpenAuth}
@@ -250,10 +254,7 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
   if (currentSubView === 'educacao') {
     return (
       <CommunityEducationView
-        onBackToOfficial={() => {
-          setCurrentSubView('official');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onBackToOfficial={goToOfficial}
         onNavigateToCategory={handleNavigateCategory}
         onNavigateToTab={onNavigateToTab}
         onOpenAuth={onOpenAuth}
@@ -268,10 +269,7 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
   if (currentSubView === 'ambiente') {
     return (
       <CommunityEnvironmentView
-        onBackToOfficial={() => {
-          setCurrentSubView('official');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        }}
+        onBackToOfficial={goToOfficial}
         onNavigateToCategory={handleNavigateCategory}
         onNavigateToTab={onNavigateToTab}
         onOpenAuth={onOpenAuth}
@@ -286,18 +284,9 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
   // Nível 1: Página Oficial da Comunidade Global (UI COMUNIDADE GLOBAL.png)
   return (
     <CommunityOfficialHomeView
-      onNavigateToAmbiente={() => {
-        setCurrentSubView('ambiente');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }}
-      onNavigateToEducacao={() => {
-        setCurrentSubView('educacao');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }}
-      onNavigateToExplorarComunidade={() => {
-        setCurrentSubView('explorar-comunidade');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }}
+      onNavigateToAmbiente={() => handleNavigateCategory('ambiente')}
+      onNavigateToEducacao={() => handleNavigateCategory('educacao')}
+      onNavigateToExplorarComunidade={() => handleNavigateCategory('explorar')}
       onNavigateToTab={onNavigateToTab}
       onOpenAuth={onOpenAuth}
       onOpenAiAssistant={onOpenAiAssistant}

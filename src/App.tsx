@@ -38,7 +38,7 @@ import {
 } from 'lucide-react';
 
 // Abas que renderizam GlobalCommunityView / GlobalImpactView (mantidas em sincronia com os ramos condicionais abaixo)
-const COMMUNITY_TABS = ['comunidade', 'comunidade-global', 'ambiente', 'educacao', 'cultura', 'criar-comunidade', 'explorar-comunidade'];
+const COMMUNITY_TABS = ['comunidade', 'comunidade-global', 'ambiente', 'educacao', 'cultura', 'criar-comunidade', 'explorar-comunidade', 'mais'];
 const IMPACT_TABS = ['impacto', 'impacto-global', 'saude', 'tecnologia', 'empreendedorismo', 'direitos-humanos'];
 const BREADCRUMB_TABS = [
   ...COMMUNITY_TABS,
@@ -68,6 +68,10 @@ const getInitialTab = (): string => {
     return 'noticias';
   } else if (target === 'criar-comunidade') {
     return 'criar-comunidade';
+  } else if (target === 'mais' || target === 'mais-categorias') {
+    return 'mais';
+  } else if (target === 'explorar-comunidade') {
+    return 'explorar-comunidade';
   } else if (target === 'comunidade' || target === 'comunidade-global' || target.includes('comunidade')) {
     return 'comunidade';
   } else if (target === 'eventos' || target === 'eventos-globais') {
@@ -80,12 +84,12 @@ const getInitialTab = (): string => {
     return 'sobre';
   } else if (target === 'definicoes' || target === 'settings' || target === 'preferencias' || target === 'configuracoes' || target === 'privacidade' || target === 'seguranca') {
     return 'definicoes';
-  } else if (target === 'inicio') {
+  } else if (target === 'empreendedorismo' || target === 'tecnologia' || target === 'saude' || target === 'direitos-humanos') {
+    return target;
+  } else if (target === 'inicio' || target === 'home' || !target) {
     return 'inicio';
-  } else if (target === 'comunidade' || target === 'comunidade-global') {
-    return 'comunidade';
   }
-  return 'definicoes';
+  return 'inicio';
 };
 
 export default function App() {
@@ -93,6 +97,10 @@ export default function App() {
   const [selectedCountry, setSelectedCountry] = useState<CountryData>(COUNTRIES_DATA[0]); // Portugal by default
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [breadcrumb, setBreadcrumb] = useState<BreadcrumbItem[]>([]);
+
+  const handleBreadcrumbChange = useCallback((items: BreadcrumbItem[]) => {
+    setBreadcrumb(items);
+  }, []);
 
   // Modals state
   const [isCountryModalOpen, setIsCountryModalOpen] = useState(false);
@@ -137,7 +145,13 @@ export default function App() {
         setCurrentTab('noticias');
       } else if (target === 'criar-comunidade') {
         setCurrentTab('criar-comunidade');
-      } else if (target === 'comunidade' || target === 'comunidade-global' || target.includes('comunidade') || target === 'ambiente' || target === 'explorar-comunidade') {
+      } else if (target === 'mais' || target === 'mais-categorias') {
+        setCurrentTab('mais');
+      } else if (target === 'explorar-comunidade') {
+        setCurrentTab('explorar-comunidade');
+      } else if (target === 'ambiente') {
+        setCurrentTab('ambiente');
+      } else if (target === 'comunidade' || target === 'comunidade-global' || target.includes('comunidade')) {
         setCurrentTab('comunidade');
       } else if (target === 'eventos' || target === 'eventos-globais') {
         setCurrentTab('eventos');
@@ -295,8 +309,10 @@ export default function App() {
           /* Comunidade Global (Página Oficial, Categorias e Criar Comunidade UI CRIAR COMUNIDADE.png) */
           <GlobalCommunityView
             initialSubView={
-              currentTab === 'explorar-comunidade'
-                ? 'explorar-comunidade'
+              currentTab === 'mais'
+                ? 'mais'
+                : currentTab === 'explorar-comunidade'
+                ? 'explorar'
                 : currentTab === 'ambiente'
                 ? 'ambiente'
                 : currentTab === 'educacao'
@@ -331,7 +347,7 @@ export default function App() {
             onOpenCreateCommunityModal={() => {
               handleNavigateToTab('criar-comunidade');
             }}
-            onBreadcrumbChange={setBreadcrumb}
+            onBreadcrumbChange={handleBreadcrumbChange}
           />
         ) : IMPACT_TABS.includes(currentTab) ? (
           /* Impacto Global (UI IMPACTO GLOBAL.png) / Ambiente / Saúde / Tecnologia / Empreendedorismo */
@@ -341,6 +357,14 @@ export default function App() {
             onOpenMobileMenu={() => setIsMobileSidebarOpen(true)}
             onOpenAuth={handleOpenAuth}
             onNavigateToTab={handleNavigateToTab}
+            onNavigateToCategory={(cat) => {
+              if (cat === 'mais' || cat === 'mais-categorias') {
+                setCurrentTab('mais');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              } else {
+                handleNavigateToTab(cat);
+              }
+            }}
             onExploreWorld={() => {
               setCurrentTab('explorar');
               window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -349,14 +373,14 @@ export default function App() {
               setCurrentTab('comunidade');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
-            onBreadcrumbChange={setBreadcrumb}
+            onBreadcrumbChange={handleBreadcrumbChange}
           />
         ) : currentTab === 'ia' ? (
           /* VILA AI Copiloto & Inteligência Coletiva Global */
           <VilaAiView
             onNavigateToTab={handleNavigateToTab}
             onOpenAuth={handleOpenAuth}
-            onBreadcrumbChange={setBreadcrumb}
+            onBreadcrumbChange={handleBreadcrumbChange}
           />
         ) : (currentTab === 'parceiros' || currentTab === 'parceiros-globais') ? (
           /* Parceiros Globais (Alianças, Mapa Mundial, Projetos Co-financiados) */
@@ -364,7 +388,7 @@ export default function App() {
             onNavigateToTab={handleNavigateToTab}
             onOpenAuth={handleOpenAuth}
             onOpenAiAssistant={() => setIsAiModalOpen(true)}
-            onBreadcrumbChange={setBreadcrumb}
+            onBreadcrumbChange={handleBreadcrumbChange}
           />
         ) : (currentTab === 'perfil' || currentTab === 'meu-perfil') ? (
           /* Perfil Cidadã Ativa (8 ecrãs estruturados) */
@@ -372,7 +396,7 @@ export default function App() {
             onNavigateToTab={handleNavigateToTab}
             onOpenAuth={handleOpenAuth}
             onOpenAiAssistant={() => setIsAiModalOpen(true)}
-            onBreadcrumbChange={setBreadcrumb}
+            onBreadcrumbChange={handleBreadcrumbChange}
           />
         ) : (currentTab === 'sobre' || currentTab === 'sobre-a-vila') ? (
           /* Sobre a VILA View matching exact reference UI SOBRE.png */
