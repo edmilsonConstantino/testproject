@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Globe, ChevronDown, ChevronRight, Bell, Menu, X, Check, User, Settings, LogOut, ShieldCheck, Home } from 'lucide-react';
+import { Search, Globe, ChevronDown, ChevronRight, Bell, Menu, X, Check, User, Settings, LogOut, ShieldCheck, Home, ArrowLeft } from 'lucide-react';
 import { Logo } from './Logo';
 import { GLOBAL_NOTIFICATIONS } from '../data/countriesData';
 
@@ -142,10 +142,22 @@ export const Topbar: React.FC<TopbarProps> = ({
       {breadcrumb && breadcrumb.length > 0 && (
         <nav
           id="topbar-breadcrumb"
-          className="hidden lg:flex items-center gap-2 text-[13px] font-medium shrink-0 max-w-xs truncate"
+          className="hidden lg:flex items-center gap-2 text-[13px] font-medium shrink-0 max-w-sm truncate"
           aria-label="Breadcrumb"
         >
-          <Home className="w-4 h-4 text-[#0055FE] shrink-0" />
+          {breadcrumb[0]?.onClick && (
+            <button
+              type="button"
+              onClick={breadcrumb[0].onClick}
+              className="w-8 h-8 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-700 hover:text-[#0055FE] transition-colors shadow-2xs cursor-pointer shrink-0"
+              title="Voltar"
+              aria-label="Voltar"
+            >
+              <ArrowLeft className="w-4 h-4 stroke-[2.2]" />
+            </button>
+          )}
+
+          <Globe className="w-4 h-4 text-[#0055FE] shrink-0" />
           {breadcrumb.map((item, idx) => {
             const isLast = idx === breadcrumb.length - 1;
             return (

@@ -66,6 +66,8 @@ const getInitialTab = (): string => {
     target.includes('noticia')
   ) {
     return 'noticias';
+  } else if (target === 'criar-comunidade') {
+    return 'criar-comunidade';
   } else if (target === 'comunidade' || target === 'comunidade-global' || target.includes('comunidade')) {
     return 'comunidade';
   } else if (target === 'eventos' || target === 'eventos-globais') {
@@ -133,6 +135,8 @@ export default function App() {
         target.includes('noticia')
       ) {
         setCurrentTab('noticias');
+      } else if (target === 'criar-comunidade') {
+        setCurrentTab('criar-comunidade');
       } else if (target === 'comunidade' || target === 'comunidade-global' || target.includes('comunidade') || target === 'ambiente' || target === 'explorar-comunidade') {
         setCurrentTab('comunidade');
       } else if (target === 'eventos' || target === 'eventos-globais') {
@@ -325,7 +329,7 @@ export default function App() {
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             onOpenCreateCommunityModal={() => {
-              setAuthModal({ isOpen: true, mode: 'register' });
+              handleNavigateToTab('criar-comunidade');
             }}
             onBreadcrumbChange={setBreadcrumb}
           />
