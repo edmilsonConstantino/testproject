@@ -36,6 +36,7 @@ import {
   Sun,
   X,
 } from 'lucide-react';
+import { ImpactRegionMapCard } from './ImpactRegionMapCard';
 
 export interface EntrepreneurshipImpactViewProps {
   onBackToImpact?: () => void;
@@ -782,59 +783,10 @@ export const EntrepreneurshipImpactView: React.FC<EntrepreneurshipImpactViewProp
                 </div>
 
                 {/* Widget: Impacto por Região (lg:col-span-4) */}
-                <div className="lg:col-span-4 bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex flex-col justify-between">
-                  <div className="flex items-center justify-between pb-1 border-b border-slate-100">
-                    <h3 className="text-xs font-bold text-[#0F172A] font-['Outfit']">
-                      Impacto por região
-                    </h3>
-                    <button
-                      type="button"
-                      className="text-[11px] font-bold text-emerald-700 hover:underline cursor-pointer flex items-center gap-0.5"
-                    >
-                      <span>Ver todas</span>
-                      <ArrowRight className="w-3 h-3" />
-                    </button>
-                  </div>
-
-                  {/* Silhueta Gráfica do Mapa Global em Verde */}
-                  <div className="relative py-2 flex items-center justify-center">
-                    <svg viewBox="0 0 400 180" className="w-full h-24 text-emerald-500 fill-current opacity-85">
-                      <path d="M 60,30 Q 90,20 110,40 Q 130,50 120,80 Q 90,85 70,70 Z" fill="#10B981" opacity="0.85" />
-                      <path d="M 110,90 Q 130,100 125,140 Q 110,160 100,130 Q 95,100 110,90 Z" fill="#059669" opacity="0.9" />
-                      <path d="M 180,30 Q 210,25 220,50 Q 200,65 185,55 Z" fill="#34D399" opacity="0.8" />
-                      <path d="M 180,70 Q 230,75 220,130 Q 190,145 175,105 Z" fill="#047857" opacity="0.95" />
-                      <path d="M 230,30 Q 320,20 330,75 Q 290,100 240,80 Z" fill="#10B981" opacity="0.85" />
-                      <path d="M 300,120 Q 340,115 335,145 Q 310,150 300,120 Z" fill="#6EE7B7" opacity="0.75" />
-                    </svg>
-                  </div>
-
-                  {/* Lista de Regiões com Pontos Coloridos */}
-                  <div className="flex flex-col gap-1 text-[11px]">
-                    {[
-                      { name: 'África', dot: 'bg-amber-500' },
-                      { name: 'Ásia', dot: 'bg-emerald-600' },
-                      { name: 'América Latina', dot: 'bg-blue-600' },
-                      { name: 'Europa', dot: 'bg-teal-500' },
-                      { name: 'América do Norte', dot: 'bg-emerald-400' },
-                    ].map((reg) => (
-                      <div key={reg.name} className="flex items-center gap-2">
-                        <span className={`w-2 h-2 rounded-full ${reg.dot}`} />
-                        <span className="text-slate-600">{reg.name}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Link Rodapé */}
-                  <div className="pt-2 border-t border-slate-100 mt-2 text-center">
-                    <button
-                      type="button"
-                      className="text-xs font-bold text-emerald-700 hover:underline inline-flex items-center gap-1 cursor-pointer"
-                    >
-                      <span>Ver relatório completo</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
+                <ImpactRegionMapCard
+                  category="empreendedorismo"
+                  className="lg:col-span-4"
+                />
               </div>
             </section>
 

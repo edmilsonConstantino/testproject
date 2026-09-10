@@ -61,14 +61,14 @@ const MONTHS_DATA: MonthData[] = [
       { day: 13, isCurrentMonth: true },
       { day: 14, isCurrentMonth: true, hasEvent: true },
       { day: 15, isCurrentMonth: true, hasEvent: true },
-      { day: 16, isCurrentMonth: true }, // Dia selecionado por padrão
+      { day: 16, isCurrentMonth: true, hasEvent: true }, // Dia selecionado ativo
       { day: 17, isCurrentMonth: true },
       { day: 18, isCurrentMonth: true },
       { day: 19, isCurrentMonth: true },
       { day: 20, isCurrentMonth: true },
       { day: 21, isCurrentMonth: true },
       { day: 22, isCurrentMonth: true },
-      { day: 23, isCurrentMonth: true, hasEvent: true },
+      { day: 23, isCurrentMonth: true },
       { day: 24, isCurrentMonth: true },
       { day: 25, isCurrentMonth: true },
       { day: 26, isCurrentMonth: true },
@@ -191,28 +191,29 @@ export const GlobalCalendarWidget: React.FC<GlobalCalendarWidgetProps> = ({
             const isSelected = d.isCurrentMonth && d.day === selectedDay;
 
             return (
-              <button
-                key={index}
-                type="button"
-                onClick={() => handleDayClick(d)}
-                disabled={!d.isCurrentMonth}
-                className={`relative h-8 sm:h-8.5 rounded-[10px] flex flex-col items-center justify-center transition-all select-none ${
-                  !d.isCurrentMonth
-                    ? 'text-slate-300 cursor-default font-normal'
-                    : isSelected
-                    ? 'bg-[#0055FE] text-white font-bold shadow-xs cursor-pointer'
-                    : 'text-slate-700 hover:bg-slate-100/80 font-medium cursor-pointer'
-                }`}
-              >
-                <span className="text-[12px] leading-none">{d.day}</span>
-                {/* Ponto indicador de evento verde sob o dia */}
-                {d.hasEvent && !isSelected && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mt-1" />
-                )}
-                {d.hasEvent && isSelected && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-white mt-1" />
-                )}
-              </button>
+              <div key={index} className="flex items-center justify-center p-0.5">
+                <button
+                  type="button"
+                  onClick={() => handleDayClick(d)}
+                  disabled={!d.isCurrentMonth}
+                  className={`relative w-7 h-7 sm:w-8 sm:h-8 rounded-full flex flex-col items-center justify-center transition-all select-none ${
+                    !d.isCurrentMonth
+                      ? 'text-slate-300 cursor-default font-normal'
+                      : isSelected
+                      ? 'bg-[#2563EB] text-white font-bold shadow-xs cursor-pointer'
+                      : 'text-slate-700 hover:bg-slate-100/80 font-medium cursor-pointer'
+                  }`}
+                >
+                  <span className="text-[11.5px] sm:text-xs leading-none">{d.day}</span>
+                  {/* Ponto indicador de evento sob o dia */}
+                  {d.hasEvent && !isSelected && (
+                    <span className="w-1 h-1 rounded-full bg-emerald-500 mt-0.5" />
+                  )}
+                  {d.hasEvent && isSelected && (
+                    <span className="w-1 h-1 rounded-full bg-white mt-0.5" />
+                  )}
+                </button>
+              </div>
             );
           })}
         </div>

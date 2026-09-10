@@ -30,6 +30,7 @@ import {
 export interface CommunityOfficialHomeViewProps {
   onNavigateToAmbiente?: () => void;
   onNavigateToEducacao?: () => void;
+  onNavigateToExplorarComunidade?: () => void;
   onNavigateToTab?: (tabId: string) => void;
   onOpenAuth?: (mode: 'login' | 'register') => void;
   onOpenAiAssistant?: () => void;
@@ -265,6 +266,7 @@ const COMMUNITY_EVENTS: CommunityEventItem[] = [
 export const CommunityOfficialHomeView: React.FC<CommunityOfficialHomeViewProps> = ({
   onNavigateToAmbiente,
   onNavigateToEducacao,
+  onNavigateToExplorarComunidade,
   onNavigateToTab,
   onOpenAuth,
   onOpenAiAssistant,
@@ -374,10 +376,10 @@ export const CommunityOfficialHomeView: React.FC<CommunityOfficialHomeViewProps>
                 </p>
 
                 <div className="flex flex-wrap items-center gap-3 pt-3">
-                  {/* Botão "Explorar Comunidades" que direciona para a página de Ambiente */}
+                  {/* Botão "Explorar Comunidades" que direciona para a página Explorar Comunidade */}
                   <button
                     type="button"
-                    onClick={onNavigateToAmbiente}
+                    onClick={onNavigateToExplorarComunidade || onNavigateToAmbiente}
                     id="btn-explorar-comunidades-hero"
                     className="inline-flex items-center gap-2 px-5 py-2.5 sm:py-3 rounded-full bg-gradient-to-r from-[#0052FF] via-[#0088FF] to-[#00D285] hover:opacity-95 text-white text-xs sm:text-[13px] font-bold transition-all shadow-md hover:shadow-lg cursor-pointer group"
                   >
@@ -409,7 +411,7 @@ export const CommunityOfficialHomeView: React.FC<CommunityOfficialHomeViewProps>
                 </h3>
                 <button
                   type="button"
-                  onClick={onNavigateToAmbiente}
+                  onClick={onNavigateToExplorarComunidade || onNavigateToAmbiente}
                   className="inline-flex items-center gap-1 text-xs font-bold text-[#0066FF] hover:underline cursor-pointer"
                 >
                   <span>Ver todas</span>

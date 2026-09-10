@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ImpactRegionMapCard } from './ImpactRegionMapCard';
 import {
   Globe,
   Leaf,
@@ -487,58 +488,17 @@ export const MainImpactGlobalView: React.FC<MainImpactGlobalViewProps> = ({
               </div>
 
               {/* Impacto por Região com Distribuição Percentual (lg:col-span-4) */}
-              <div className="lg:col-span-4 bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex flex-col justify-between">
-                <div className="flex items-center justify-between pb-1 border-b border-slate-100">
-                  <h3 className="text-xs font-bold text-[#0F172A] font-['Outfit']">
-                    Impacto por região
-                  </h3>
-                  <button
-                    type="button"
-                    className="text-[11px] font-bold text-emerald-700 hover:underline cursor-pointer flex items-center gap-0.5"
-                  >
-                    <span>Ver todas</span>
-                    <ArrowRight className="w-3 h-3" />
-                  </button>
-                </div>
-
-                {/* Mapa Vetorial e Percentagens */}
-                <div className="grid grid-cols-2 items-center gap-2 py-2">
-                  <div className="flex items-center justify-center">
-                    <svg viewBox="0 0 200 120" className="w-full h-24 text-emerald-500 fill-current opacity-85">
-                      <path d="M 30,20 Q 50,15 60,30 Q 70,40 60,60 Q 40,65 30,50 Z" fill="#10B981" opacity="0.85" />
-                      <path d="M 55,65 Q 65,70 60,100 Q 50,110 45,90 Q 42,70 55,65 Z" fill="#059669" opacity="0.9" />
-                      <path d="M 90,20 Q 110,15 115,35 Q 100,45 92,35 Z" fill="#34D399" opacity="0.8" />
-                      <path d="M 90,45 Q 120,50 110,95 Q 95,105 85,75 Z" fill="#047857" opacity="0.95" />
-                      <path d="M 120,20 Q 170,15 175,55 Q 150,70 125,55 Z" fill="#10B981" opacity="0.85" />
-                      <path d="M 155,85 Q 175,80 170,105 Q 155,108 150,88 Z" fill="#6EE7B7" opacity="0.75" />
-                    </svg>
-                  </div>
-
-                  <div className="flex flex-col gap-1.5 text-[11px]">
-                    {[
-                      { name: 'África', percent: '32%', dot: 'bg-amber-500' },
-                      { name: 'América do Sul', percent: '24%', dot: 'bg-blue-600' },
-                      { name: 'Ásia', percent: '20%', dot: 'bg-emerald-600' },
-                      { name: 'Europa', percent: '16%', dot: 'bg-teal-500' },
-                      { name: 'América do Norte', percent: '8%', dot: 'bg-emerald-400' },
-                    ].map((reg) => (
-                      <div key={reg.name} className="flex items-center justify-between">
-                        <div className="flex items-center gap-1.5 min-w-0">
-                          <span className={`w-2 h-2 rounded-full ${reg.dot} shrink-0`} />
-                          <span className="text-slate-600 truncate">{reg.name}</span>
-                        </div>
-                        <span className="font-bold text-slate-800 text-[10.5px] ml-1">{reg.percent}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="pt-2 border-t border-slate-100 text-center">
-                  <span className="text-[10px] text-slate-400 font-medium">
-                    Monitoramento em tempo real em 196 países
-                  </span>
-                </div>
-              </div>
+              <ImpactRegionMapCard
+                category="global"
+                className="lg:col-span-4"
+                customRegions={[
+                  { id: 'africa', name: 'África', percent: 32, projectsCount: 420, highlight: true },
+                  { id: 'latin-america', name: 'América Latina', percent: 24, projectsCount: 315 },
+                  { id: 'asia', name: 'Ásia', percent: 20, projectsCount: 260 },
+                  { id: 'europe', name: 'Europa', percent: 16, projectsCount: 210 },
+                  { id: 'north-america', name: 'América do Norte', percent: 8, projectsCount: 105 },
+                ]}
+              />
             </section>
 
             {/* SEÇÃO 2: Projetos em Destaque (4 Cards) + Alinhamento com os ODS (10 Ícones) */}

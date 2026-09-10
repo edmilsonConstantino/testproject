@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { AppLayout } from './components/AppLayout';
 import { Sidebar } from './components/Sidebar';
 import { Topbar, BreadcrumbItem } from './components/Topbar';
@@ -11,6 +11,9 @@ import { GlobalCommunityView } from './components/GlobalCommunityView';
 import { GlobalImpactView } from './components/GlobalImpactView';
 import { AboutVilaView } from './components/AboutVilaView';
 import { SettingsView } from './components/SettingsView';
+import { VilaAiView } from './components/VilaAiView';
+import { GlobalPartnersView } from './components/GlobalPartnersView';
+import { UserProfileView } from './components/UserProfileView';
 import { CountryDetailModal } from './components/CountryDetailModal';
 import { VideoModal } from './components/VideoModal';
 import { SearchCommandModal } from './components/SearchCommandModal';
@@ -35,8 +38,17 @@ import {
 } from 'lucide-react';
 
 // Abas que renderizam GlobalCommunityView / GlobalImpactView (mantidas em sincronia com os ramos condicionais abaixo)
-const COMMUNITY_TABS = ['comunidade', 'comunidade-global', 'ambiente', 'educacao', 'direitos-humanos', 'cultura', 'saude', 'tecnologia', 'criar-comunidade', 'explorar-comunidade'];
-const IMPACT_TABS = ['impacto', 'impacto-global', 'saude', 'tecnologia', 'empreendedorismo'];
+const COMMUNITY_TABS = ['comunidade', 'comunidade-global', 'ambiente', 'educacao', 'cultura', 'criar-comunidade', 'explorar-comunidade'];
+const IMPACT_TABS = ['impacto', 'impacto-global', 'saude', 'tecnologia', 'empreendedorismo', 'direitos-humanos'];
+const BREADCRUMB_TABS = [
+  ...COMMUNITY_TABS,
+  ...IMPACT_TABS,
+  'ia',
+  'parceiros',
+  'parceiros-globais',
+  'perfil',
+  'meu-perfil',
+];
 
 const getInitialTab = (): string => {
   if (typeof window === 'undefined') return 'inicio';
@@ -92,12 +104,17 @@ export default function App() {
   });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  // Limpa o breadcrumb do Topbar ao sair das áreas de Comunidade/Impacto (que o alimentam via onBreadcrumbChange)
+  // Limpa o breadcrumb do Topbar ao sair das áreas que o alimentam via onBreadcrumbChange
   useEffect(() => {
-    if (!COMMUNITY_TABS.includes(currentTab) && !IMPACT_TABS.includes(currentTab)) {
+    if (!BREADCRUMB_TABS.includes(currentTab)) {
       setBreadcrumb([]);
     }
   }, [currentTab]);
+
+  const handleNavigateToTab = useCallback((tabId: string) => {
+    setCurrentTab(tabId);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   // URL hash, query parameter and pathname router sync
   useEffect(() => {
@@ -122,7 +139,7 @@ export default function App() {
         setCurrentTab('eventos');
       } else if (target === 'explorar' || target === 'explorar-o-mundo') {
         setCurrentTab('explorar');
-      } else if (target === 'empreendedorismo' || target === 'tecnologia' || target === 'saude') {
+      } else if (target === 'empreendedorismo' || target === 'tecnologia' || target === 'saude' || target === 'direitos-humanos') {
         setCurrentTab(target);
       } else if (target === 'impacto' || target === 'impacto-global') {
         setCurrentTab('impacto');
@@ -274,7 +291,9 @@ export default function App() {
           /* Comunidade Global (Página Oficial, Categorias e Criar Comunidade UI CRIAR COMUNIDADE.png) */
           <GlobalCommunityView
             initialSubView={
-              currentTab === 'ambiente' || currentTab === 'explorar-comunidade'
+              currentTab === 'explorar-comunidade'
+                ? 'explorar-comunidade'
+                : currentTab === 'ambiente'
                 ? 'ambiente'
                 : currentTab === 'educacao'
                 ? 'educacao'
@@ -313,14 +332,11 @@ export default function App() {
         ) : IMPACT_TABS.includes(currentTab) ? (
           /* Impacto Global (UI IMPACTO GLOBAL.png) / Ambiente / Saúde / Tecnologia / Empreendedorismo */
           <GlobalImpactView
-            initialSubView={currentTab === 'empreendedorismo' ? 'empreendedorismo' : currentTab === 'tecnologia' ? 'tecnologia' : currentTab === 'saude' ? 'saude' : currentTab === 'ambiente' ? 'ambiente' : 'todas'}
+            initialSubView={currentTab === 'direitos-humanos' ? 'direitos-humanos' : currentTab === 'empreendedorismo' ? 'empreendedorismo' : currentTab === 'tecnologia' ? 'tecnologia' : currentTab === 'saude' ? 'saude' : currentTab === 'ambiente' ? 'ambiente' : 'todas'}
             onOpenAiAssistant={() => setIsAiModalOpen(true)}
             onOpenMobileMenu={() => setIsMobileSidebarOpen(true)}
             onOpenAuth={handleOpenAuth}
-            onNavigateToTab={(tabId) => {
-              setCurrentTab(tabId);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            }}
+            onNavigateToTab={handleNavigateToTab}
             onExploreWorld={() => {
               setCurrentTab('explorar');
               window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -329,6 +345,29 @@ export default function App() {
               setCurrentTab('comunidade');
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
+            onBreadcrumbChange={setBreadcrumb}
+          />
+        ) : currentTab === 'ia' ? (
+          /* VILA AI Copiloto & Inteligência Coletiva Global */
+          <VilaAiView
+            onNavigateToTab={handleNavigateToTab}
+            onOpenAuth={handleOpenAuth}
+            onBreadcrumbChange={setBreadcrumb}
+          />
+        ) : (currentTab === 'parceiros' || currentTab === 'parceiros-globais') ? (
+          /* Parceiros Globais (Alianças, Mapa Mundial, Projetos Co-financiados) */
+          <GlobalPartnersView
+            onNavigateToTab={handleNavigateToTab}
+            onOpenAuth={handleOpenAuth}
+            onOpenAiAssistant={() => setIsAiModalOpen(true)}
+            onBreadcrumbChange={setBreadcrumb}
+          />
+        ) : (currentTab === 'perfil' || currentTab === 'meu-perfil') ? (
+          /* Perfil Cidadã Ativa (8 ecrãs estruturados) */
+          <UserProfileView
+            onNavigateToTab={handleNavigateToTab}
+            onOpenAuth={handleOpenAuth}
+            onOpenAiAssistant={() => setIsAiModalOpen(true)}
             onBreadcrumbChange={setBreadcrumb}
           />
         ) : (currentTab === 'sobre' || currentTab === 'sobre-a-vila') ? (

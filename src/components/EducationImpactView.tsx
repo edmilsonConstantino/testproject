@@ -26,6 +26,7 @@ import {
   FileText,
   Handshake,
 } from 'lucide-react';
+import { ImpactRegionMapCard } from './ImpactRegionMapCard';
 
 export interface EducationImpactViewProps {
   onOpenAiAssistant?: () => void;
@@ -463,67 +464,12 @@ export const EducationImpactView: React.FC<EducationImpactViewProps> = ({
                 ))}
               </div>
 
-              <div className="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-2xs mt-4">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-black text-[#0F1E3D] font-['Outfit']">
-                    Impacto por região
-                  </h3>
-                  <button
-                    onClick={() => setIsReportModalOpen(true)}
-                    className="text-xs font-bold text-[#1D4ED8] hover:text-[#1739AD] inline-flex items-center gap-1 cursor-pointer"
-                  >
-                    <span>Ver todas</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
-                  <div className="md:col-span-8 bg-[#F8FAFC] rounded-xl p-3 border border-slate-100 relative">
-                    <svg viewBox="0 0 500 240" className="w-full h-auto">
-                      <path d="M60 40 L130 35 L160 70 L140 100 L110 95 L95 125 L75 95 L50 65 Z" fill="#BFDBFE" stroke="#1D4ED8" strokeWidth="1" />
-                      <path d="M110 115 L145 125 L165 160 L140 220 L120 180 L105 130 Z" fill="#93C5FD" stroke="#1D4ED8" strokeWidth="1" />
-                      <path d="M210 40 L270 35 L285 75 L250 85 L225 70 L215 50 Z" fill="#60A5FA" stroke="#1E40AF" strokeWidth="1" />
-                      <path d="M220 85 L280 80 L310 130 L280 190 L240 190 L220 120 Z" fill="#3B82F6" stroke="#1E40AF" strokeWidth="1" />
-                      <path d="M285 40 L410 35 L440 90 L390 125 L320 115 L290 75 Z" fill="#60A5FA" stroke="#1E40AF" strokeWidth="1" />
-                      <path d="M380 150 L440 145 L450 185 L390 190 Z" fill="#DBEAFE" stroke="#2563EB" strokeWidth="1" />
-                      <circle cx="260" cy="130" r="5" fill="#1D4ED8" />
-                      <circle cx="260" cy="130" r="10" fill="none" stroke="#1D4ED8" strokeWidth="1.5" opacity="0.5" />
-                    </svg>
-                    <div className="absolute bottom-2 left-3 flex items-center gap-1.5 text-[10.5px] font-bold text-slate-700 bg-white/90 px-2 py-0.5 rounded-md shadow-2xs">
-                      <span className="w-2 h-2 rounded-full bg-[#1D4ED8]" />
-                      <span>África (34%)</span>
-                    </div>
-                  </div>
-
-                  <div className="md:col-span-4 space-y-2 text-xs">
-                    {[
-                      { region: 'África', pct: '34%', width: '34%' },
-                      { region: 'Ásia', pct: '28%', width: '28%' },
-                      { region: 'América do Sul', pct: '18%', width: '18%' },
-                      { region: 'Europa', pct: '12%', width: '12%' },
-                      { region: 'América do Norte', pct: '8%', width: '8%' },
-                    ].map((r, i) => (
-                      <div key={i} className="space-y-1">
-                        <div className="flex justify-between text-[11px]">
-                          <span className="text-slate-600 font-medium">{r.region}</span>
-                          <span className="font-bold text-[#1D4ED8]">{r.pct}</span>
-                        </div>
-                        <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                          <div className="h-full bg-[#1D4ED8] rounded-full" style={{ width: r.width }} />
-                        </div>
-                      </div>
-                    ))}
-
-                    <button
-                      onClick={() => setIsReportModalOpen(true)}
-                      className="mt-3 w-full py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 border border-slate-200 text-xs font-bold text-[#1D4ED8] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                    >
-                      <span>Ver relatório completo</span>
-                      <ArrowRight className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
+              <ImpactRegionMapCard
+                category="educacao"
+                className="mt-4"
+                onOpenReport={() => setIsReportModalOpen(true)}
+                onSeeAll={() => setIsReportModalOpen(true)}
+              />
             </section>
 
             <section className="space-y-3">

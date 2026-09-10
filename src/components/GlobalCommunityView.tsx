@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { CommunityOfficialHomeView } from './CommunityOfficialHomeView';
+import { ExploreCommunityView } from './ExploreCommunityView';
 import { CommunityEnvironmentView } from './CommunityEnvironmentView';
 import { CommunityEducationView } from './CommunityEducationView';
 import { CommunityHumanRightsView } from './CommunityHumanRightsView';
@@ -11,7 +12,7 @@ import { CreateCommunityWizardView } from './CreateCommunityWizardView';
 import { BreadcrumbItem } from './Topbar';
 
 export interface GlobalCommunityViewProps {
-  initialSubView?: 'official' | 'ambiente' | 'educacao' | 'direitos-humanos' | 'cultura' | 'saude' | 'tecnologia' | 'empreendedorismo' | 'criar-comunidade';
+  initialSubView?: 'official' | 'explorar-comunidade' | 'ambiente' | 'educacao' | 'direitos-humanos' | 'cultura' | 'saude' | 'tecnologia' | 'empreendedorismo' | 'criar-comunidade';
   onNavigateToTab?: (tabId: string) => void;
   onOpenAuth?: (mode: 'login' | 'register') => void;
   onOpenAiAssistant?: () => void;
@@ -33,7 +34,10 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
   onOpenCreateCommunityModal,
   onBreadcrumbChange,
 }) => {
-  const [currentSubView, setCurrentSubView] = useState<'official' | 'ambiente' | 'educacao' | 'direitos-humanos' | 'cultura' | 'saude' | 'tecnologia' | 'empreendedorismo' | 'criar-comunidade'>(initialSubView);
+  const [currentSubView, setCurrentSubView] = useState<'official' | 'explorar-comunidade' | 'ambiente' | 'educacao' | 'direitos-humanos' | 'cultura' | 'saude' | 'tecnologia' | 'empreendedorismo' | 'criar-comunidade'>(initialSubView);
+
+  const onBreadcrumbChangeRef = useRef(onBreadcrumbChange);
+  onBreadcrumbChangeRef.current = onBreadcrumbChange;
 
   // Sincronizar se initialSubView mudar
   useEffect(() => {
@@ -43,15 +47,13 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
   }, [initialSubView]);
 
   // Emitir breadcrumb para o Topbar compartilhado conforme a subview ativa
-  // Trilha confirmada pelo mockup de referência (UI AMBIENTE.png etc.): as páginas de categoria
-  // ficam sob "Explorar Comunidade", entre o hub e o nome da categoria.
   useEffect(() => {
     const goToOfficial = () => {
       setCurrentSubView('official');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
     const goToExplorar = () => {
-      setCurrentSubView('ambiente');
+      setCurrentSubView('explorar-comunidade');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -66,23 +68,31 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
     };
 
     if (currentSubView === 'official') {
-      onBreadcrumbChange?.([]);
+      onBreadcrumbChangeRef.current?.([]);
     } else if (currentSubView === 'criar-comunidade') {
-      onBreadcrumbChange?.([
+      onBreadcrumbChangeRef.current?.([
         { label: 'Comunidade Global', onClick: goToOfficial },
         { label: 'Criar Comunidade' },
       ]);
+    } else if (currentSubView === 'explorar-comunidade') {
+      onBreadcrumbChangeRef.current?.([
+        { label: 'Comunidade Global', onClick: goToOfficial },
+        { label: 'Explorar Comunidade' },
+      ]);
     } else {
-      onBreadcrumbChange?.([
+      onBreadcrumbChangeRef.current?.([
         { label: 'Comunidade Global', onClick: goToOfficial },
         { label: 'Explorar Comunidade', onClick: goToExplorar },
-        { label: CATEGORY_LABELS[currentSubView] },
+        { label: CATEGORY_LABELS[currentSubView] || 'Explorar' },
       ]);
     }
-  }, [currentSubView, onBreadcrumbChange]);
+  }, [currentSubView]);
 
   const handleNavigateCategory = (catId: string) => {
-    if (catId === 'ambiente') {
+    if (catId === 'explorar' || catId === 'explorar-comunidade') {
+      setCurrentSubView('explorar-comunidade');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (catId === 'ambiente') {
       setCurrentSubView('ambiente');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (catId === 'educacao') {
@@ -104,7 +114,7 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
       setCurrentSubView('empreendedorismo');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else if (catId === 'todas') {
-      setCurrentSubView('official');
+      setCurrentSubView('explorar-comunidade');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -124,6 +134,24 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
         }}
         onNavigateToTab={onNavigateToTab}
         onOpenAuth={onOpenAuth}
+      />
+    );
+  }
+
+  // Página: Explorar Comunidade (Todas as Causas Combinadas)
+  if (currentSubView === 'explorar-comunidade') {
+    return (
+      <ExploreCommunityView
+        onBackToOfficial={() => {
+          setCurrentSubView('official');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
+        onNavigateToCategory={handleNavigateCategory}
+        onNavigateToTab={onNavigateToTab}
+        onOpenAuth={onOpenAuth}
+        onOpenAiAssistant={onOpenAiAssistant}
+        onOpenMobileMenu={onOpenMobileMenu}
+        onOpenCreateCommunity={handleOpenCreateCommunity}
       />
     );
   }
@@ -264,6 +292,10 @@ export const GlobalCommunityView: React.FC<GlobalCommunityViewProps> = ({
       }}
       onNavigateToEducacao={() => {
         setCurrentSubView('educacao');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }}
+      onNavigateToExplorarComunidade={() => {
+        setCurrentSubView('explorar-comunidade');
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }}
       onNavigateToTab={onNavigateToTab}

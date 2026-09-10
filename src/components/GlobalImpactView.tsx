@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MainImpactGlobalView } from './MainImpactGlobalView';
 import { EnvironmentImpactView, EnvironmentImpactViewProps } from './EnvironmentImpactView';
 import { HealthImpactView } from './HealthImpactView';
@@ -28,6 +28,11 @@ export const GlobalImpactView: React.FC<GlobalImpactViewProps> = ({
 }) => {
   const [currentSubView, setCurrentSubView] = useState<'todas' | 'ambiente' | 'saude' | 'tecnologia' | 'empreendedorismo' | 'direitos-humanos' | 'educacao' | 'cultura'>(initialSubView);
 
+  const onNavigateToTabRef = useRef(onNavigateToTab);
+  onNavigateToTabRef.current = onNavigateToTab;
+  const onBreadcrumbChangeRef = useRef(onBreadcrumbChange);
+  onBreadcrumbChangeRef.current = onBreadcrumbChange;
+
   useEffect(() => {
     if (initialSubView) {
       setCurrentSubView(initialSubView);
@@ -53,21 +58,21 @@ export const GlobalImpactView: React.FC<GlobalImpactViewProps> = ({
 
     // Trilha confirmada pelo mockup de referência (UI TECNOLOGIA.png etc.): Impacto Global é sempre
     // exibido como parte de Comunidade Global no breadcrumb, mesmo tendo item próprio na sidebar.
-    const goToComunidade = () => onNavigateToTab?.('comunidade');
+    const goToComunidade = () => onNavigateToTabRef.current?.('comunidade');
 
     if (currentSubView === 'todas') {
-      onBreadcrumbChange?.([
+      onBreadcrumbChangeRef.current?.([
         { label: 'Comunidade Global', onClick: goToComunidade },
         { label: 'Impacto Global' },
       ]);
     } else {
-      onBreadcrumbChange?.([
+      onBreadcrumbChangeRef.current?.([
         { label: 'Comunidade Global', onClick: goToComunidade },
         { label: 'Impacto Global', onClick: goToTodas },
-        { label: CATEGORY_LABELS[currentSubView] },
+        { label: CATEGORY_LABELS[currentSubView] || 'Impacto' },
       ]);
     }
-  }, [currentSubView, onBreadcrumbChange, onNavigateToTab]);
+  }, [currentSubView]);
 
   const handleCategoryNavigation = (categoryId: string) => {
     if (categoryId === 'todas' || categoryId === 'impacto' || categoryId === 'impacto-global') {
