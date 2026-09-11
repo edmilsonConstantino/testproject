@@ -31,6 +31,7 @@ export interface ImpactRegionMapCardProps {
   className?: string;
   showFooterButton?: boolean;
   showPercentagesInLegend?: boolean;
+  hideHeader?: boolean;
 }
 
 // Mapeamento preciso de países para continentes geográficos
@@ -345,6 +346,7 @@ export const ImpactRegionMapCard: React.FC<ImpactRegionMapCardProps> = ({
   className = '',
   showFooterButton = false,
   showPercentagesInLegend = false,
+  hideHeader = false,
 }) => {
   const [hoveredRegionId, setHoveredRegionId] = useState<string | null>(null);
 
@@ -426,26 +428,28 @@ export const ImpactRegionMapCard: React.FC<ImpactRegionMapCardProps> = ({
 
   return (
     <div
-      className={`bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/80 shadow-2xs flex flex-col justify-between ${className}`}
+      className={`bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-2xs flex flex-col justify-between ${className}`}
     >
       {/* 1. Header com Título e Ação "Ver todas" */}
-      <div className="flex items-center justify-between pb-1">
-        <h3
-          className="text-sm sm:text-[15px] font-bold font-['Outfit'] tracking-tight"
-          style={{ color: theme.btnText }}
-        >
-          {title}
-        </h3>
-        <button
-          type="button"
-          onClick={onSeeAll || onOpenReport}
-          className="text-xs font-semibold inline-flex items-center gap-1 cursor-pointer transition-colors group hover:opacity-85"
-          style={{ color: theme.btnText }}
-        >
-          <span>Ver todas</span>
-          <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" />
-        </button>
-      </div>
+      {!hideHeader && (
+        <div className="flex items-center justify-between pb-1">
+          <h3
+            className="text-sm sm:text-[15px] font-bold font-['Outfit'] tracking-tight"
+            style={{ color: theme.btnText }}
+          >
+            {title}
+          </h3>
+          <button
+            type="button"
+            onClick={onSeeAll || onOpenReport}
+            className="text-xs font-semibold inline-flex items-center gap-1 cursor-pointer transition-colors group hover:opacity-85"
+            style={{ color: theme.btnText }}
+          >
+            <span>Ver todas</span>
+            <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" />
+          </button>
+        </div>
+      )}
 
       {/* 2. Mapa Mundi Autêntico com Projeção e Cores Fiéis ao Mockup */}
       <div className="relative py-1.5 flex items-center justify-between gap-1 group/map">

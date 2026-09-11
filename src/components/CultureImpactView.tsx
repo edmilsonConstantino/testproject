@@ -659,8 +659,8 @@ export const CultureImpactView: React.FC<CultureImpactViewProps> = ({
             <section id="projetos-destaque-cultura" className="flex flex-col gap-3.5">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
                 {/* 3 Cards de Projetos (lg:col-span-8) */}
-                <div className="lg:col-span-8 flex flex-col gap-3">
-                  <div className="flex items-center justify-between">
+                <div className="lg:col-span-8 flex flex-col min-w-0">
+                  <div className="flex items-center justify-between mb-3 h-7">
                     <h2 className="text-base sm:text-lg font-black text-[#0F172A] font-['Outfit'] tracking-tight">
                       Projetos em destaque
                     </h2>
@@ -684,70 +684,91 @@ export const CultureImpactView: React.FC<CultureImpactViewProps> = ({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
-                    {featuredProjects.slice(carouselIndex, carouselIndex + 3).map((proj) => (
-                      <div
-                        key={proj.id}
-                        onClick={() => setSelectedProject(proj)}
-                        className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs hover:shadow-xs overflow-hidden transition-all cursor-pointer flex flex-col group"
-                      >
-                        {/* Imagem do Projeto com Badge da Categoria */}
-                        <div className="relative h-28 sm:h-30 overflow-hidden bg-slate-100">
-                          <img
-                            src={proj.imageUrl}
-                            alt={proj.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            referrerPolicy="no-referrer"
-                          />
-                          <span className={`absolute top-2 left-2 px-2 py-0.5 rounded text-[9px] font-bold ${proj.tagColor} text-white shadow-xs`}>
-                            {proj.tag}
-                          </span>
-                        </div>
-
-                        {/* Informações do Projeto */}
-                        <div className="p-3 flex-1 flex flex-col justify-between gap-2.5">
-                          <div>
-                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                              {proj.location}
-                            </div>
-                            <h3 className="text-xs sm:text-[13px] font-bold text-[#0F172A] font-['Outfit'] mt-0.5 line-clamp-2 group-hover:text-[#371B80] transition-colors leading-snug">
-                              {proj.title}
-                            </h3>
-                            <p className="text-[10.5px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">
-                              {proj.description}
-                            </p>
+                  <div className="relative flex-1">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5 h-full">
+                      {featuredProjects.slice(carouselIndex, carouselIndex + 3).map((proj) => (
+                        <div
+                          key={proj.id}
+                          onClick={() => setSelectedProject(proj)}
+                          className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs hover:shadow-xs overflow-hidden transition-all cursor-pointer flex flex-col justify-between group h-full"
+                        >
+                          {/* Imagem do Projeto com Badge da Categoria */}
+                          <div className="relative h-28 sm:h-30 overflow-hidden bg-slate-100 shrink-0">
+                            <img
+                              src={proj.imageUrl}
+                              alt={proj.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              referrerPolicy="no-referrer"
+                            />
+                            <span className={`absolute top-2 left-2 px-2 py-0.5 rounded text-[9px] font-bold ${proj.tagColor} text-white shadow-xs`}>
+                              {proj.tag}
+                            </span>
                           </div>
 
-                          {/* Barra de Progresso e Pessoas Impactadas */}
-                          <div className="pt-2 border-t border-slate-100 flex flex-col gap-1">
-                            <div className="flex items-center justify-between text-[10px] gap-2">
-                              <span className="text-slate-500 truncate">
-                                Impactadas: <strong className="text-slate-800 font-bold">{proj.impactPeople}</strong>
-                              </span>
-                              <span className="font-bold text-[#371B80] whitespace-nowrap shrink-0">{proj.progressPercent}% da meta</span>
+                          {/* Informações do Projeto */}
+                          <div className="p-3 flex-1 flex flex-col justify-between gap-2.5">
+                            <div>
+                              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                {proj.location}
+                              </div>
+                              <h3 className="text-xs sm:text-[13px] font-bold text-[#0F172A] font-['Outfit'] mt-0.5 line-clamp-2 group-hover:text-[#371B80] transition-colors leading-snug">
+                                {proj.title}
+                              </h3>
+                              <p className="text-[10.5px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                                {proj.description}
+                              </p>
                             </div>
-                            <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                              <div
-                                className="h-full bg-[#371B80] rounded-full transition-all duration-500"
-                                style={{ width: `${proj.progressPercent}%` }}
-                              />
+
+                            {/* Barra de Progresso e Pessoas Impactadas */}
+                            <div className="pt-2 border-t border-slate-100 flex flex-col gap-1">
+                              <div className="flex items-center justify-between text-[10px] gap-2">
+                                <span className="text-slate-500 truncate">
+                                  Impactadas: <strong className="text-slate-800 font-bold">{proj.impactPeople}</strong>
+                                </span>
+                                <span className="font-bold text-[#371B80] whitespace-nowrap shrink-0">{proj.progressPercent}% da meta</span>
+                              </div>
+                              <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-[#371B80] rounded-full transition-all duration-500"
+                                  style={{ width: `${proj.progressPercent}%` }}
+                                />
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
 
                 {/* Widget: Impacto por Região (lg:col-span-4) - Mesmo formato e mapa da aba de Empreendedorismo */}
-                <ImpactRegionMapCard
-                  category="cultura"
-                  className="lg:col-span-4"
-                  customRegions={CULTURE_REGIONS}
-                  showPercentagesInLegend={true}
-                  onOpenReport={() => setIsReportModalOpen(true)}
-                  onSeeAll={() => setIsReportModalOpen(true)}
-                />
+                <div className="lg:col-span-4 flex flex-col min-w-0">
+                  <div className="flex items-center justify-between mb-3 h-7">
+                    <h2 className="text-base sm:text-lg font-black text-[#0F172A] font-['Outfit'] tracking-tight">
+                      Impacto por região
+                    </h2>
+                    <button
+                      type="button"
+                      onClick={() => setIsReportModalOpen(true)}
+                      className="text-xs font-semibold text-[#371B80] hover:opacity-85 inline-flex items-center gap-1 cursor-pointer transition-colors group"
+                    >
+                      <span>Ver todas</span>
+                      <ArrowRight className="w-3.5 h-3.5 transform group-hover:translate-x-0.5 transition-transform" />
+                    </button>
+                  </div>
+
+                  <div className="flex-1 h-full">
+                    <ImpactRegionMapCard
+                      category="cultura"
+                      hideHeader={true}
+                      className="h-full"
+                      customRegions={CULTURE_REGIONS}
+                      showPercentagesInLegend={true}
+                      onOpenReport={() => setIsReportModalOpen(true)}
+                      onSeeAll={() => setIsReportModalOpen(true)}
+                    />
+                  </div>
+                </div>
               </div>
             </section>
 
