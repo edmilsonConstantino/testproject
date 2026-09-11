@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { AppLayout } from './components/AppLayout';
+import { AdminLayout } from './components/AdminLayout';
 import { Sidebar } from './components/Sidebar';
 import { Topbar, BreadcrumbItem } from './components/Topbar';
 import { MapHeroSection } from './components/MapHeroSection';
@@ -69,11 +70,26 @@ const PLATAFORMA_TABS = [
   'admin',
   'visao-geral',
   'gestao-utilizadores',
-  'gestao-parceiros',
-  'gestao-recursos',
-  'gestao-suporte',
+  'utilizadores-comunidades',
   'membros',
+  'territorios-paises',
+  'gestao-territorios',
+  'projetos-iniciativas',
+  'gestao-projetos',
+  'participacao-consultas',
+  'gestao-consultas',
+  'eventos-globais-admin',
+  'gestao-eventos',
+  'gestao-parceiros',
+  'parceiros-colaboracoes',
+  'gestao-recursos',
+  'recursos-infraestrutura',
   'recursos',
+  'relatorios-dados',
+  'gestao-relatorios',
+  'configuracoes-plataforma',
+  'gestao-configuracoes',
+  'gestao-suporte',
   'suporte',
 ];
 
@@ -84,6 +100,12 @@ export const isPlataformaTab = (tab: string): boolean => {
     tab === 'gestao' ||
     tab === 'admin' ||
     tab === 'visao-geral' ||
+    tab === 'territorios-paises' ||
+    tab === 'projetos-iniciativas' ||
+    tab === 'participacao-consultas' ||
+    tab === 'eventos-globais-admin' ||
+    tab === 'relatorios-dados' ||
+    tab === 'configuracoes-plataforma' ||
     tab.startsWith('gestao-')
   );
 };
@@ -278,9 +300,13 @@ export default function App() {
     setAuthModal({ isOpen: true, mode });
   };
 
+  // Se estiver em rota da Plataforma e o perfil for administrador, usa o AdminLayout com AdminSidebar
+  const isPlatformAdmin = isPlataformaTab(currentTab) && currentUser.isAdmin;
+  const LayoutComponent = isPlatformAdmin ? AdminLayout : AppLayout;
+
   return (
     <>
-      <AppLayout
+      <LayoutComponent
         currentTab={currentTab}
         currentUser={currentUser}
         onSelectDemoUser={setCurrentUser}
@@ -307,7 +333,9 @@ export default function App() {
         isLoggedIn={isLoggedIn}
         onLogout={() => setIsLoggedIn(false)}
         searchPlaceholder={
-          COMMUNITY_TABS.includes(currentTab)
+          isPlatformAdmin
+            ? 'Pesquisar na plataforma...'
+            : COMMUNITY_TABS.includes(currentTab)
             ? 'Pesquisar pessoas, comunidades, temas, organizações...'
             : IMPACT_TABS.includes(currentTab)
             ? 'Pesquisar iniciativas, temas, organizações...'
@@ -620,7 +648,7 @@ export default function App() {
               )}
           </div>
         )}
-      </AppLayout>
+      </LayoutComponent>
 
       {/* 3. Interactive Modals */}
       <CountryDetailModal
