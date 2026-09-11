@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { AppLayout } from './components/AppLayout';
 import { Sidebar } from './components/Sidebar';
 import { Topbar, BreadcrumbItem } from './components/Topbar';
@@ -15,6 +15,7 @@ import { VilaAiView } from './components/VilaAiView';
 import { GlobalPartnersView } from './components/GlobalPartnersView';
 import { PerfilVilaView } from './components/perfil-vila/PerfilVilaView';
 import { PainelGestaoPlaceholderView } from './components/PainelGestaoPlaceholderView';
+import { AdminRestrictedAccessView } from './components/AdminRestrictedAccessView';
 import { DEMO_USERS, DemoUser } from './data/demoUsers';
 import { CountryDetailModal } from './components/CountryDetailModal';
 import { VideoModal } from './components/VideoModal';
@@ -64,6 +65,9 @@ const BREADCRUMB_TABS = [
 
 const PLATAFORMA_TABS = [
   'painel-gestao',
+  'gestao',
+  'admin',
+  'visao-geral',
   'gestao-utilizadores',
   'gestao-parceiros',
   'gestao-recursos',
@@ -72,6 +76,17 @@ const PLATAFORMA_TABS = [
   'recursos',
   'suporte',
 ];
+
+export const isPlataformaTab = (tab: string): boolean => {
+  return (
+    PLATAFORMA_TABS.includes(tab) ||
+    tab === 'painel-gestao' ||
+    tab === 'gestao' ||
+    tab === 'admin' ||
+    tab === 'visao-geral' ||
+    tab.startsWith('gestao-')
+  );
+};
 
 const getInitialTab = (): string => {
   if (typeof window === 'undefined') return 'inicio';
@@ -154,9 +169,22 @@ export default function App() {
   });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  // Mantém referência síncrona do utilizador atual para os listeners de rota
+  const currentUserRef = useRef(currentUser);
+  useEffect(() => {
+    currentUserRef.current = currentUser;
+  }, [currentUser]);
+
+  // Se o utilizador atual não for admin, garante que o modal de suporte operacional da plataforma é fechado
+  useEffect(() => {
+    if (!currentUser.isAdmin && isSupportModalOpen) {
+      setIsSupportModalOpen(false);
+    }
+  }, [currentUser.isAdmin, isSupportModalOpen]);
+
   // Limpa o breadcrumb do Topbar ao sair das áreas que o alimentam via onBreadcrumbChange
   useEffect(() => {
-    if (!BREADCRUMB_TABS.includes(currentTab)) {
+    if (!BREADCRUMB_TABS.includes(currentTab) && !isPlataformaTab(currentTab)) {
       setBreadcrumb([]);
     }
   }, [currentTab]);
@@ -201,14 +229,10 @@ export default function App() {
         setCurrentTab(target);
       } else if (target === 'impacto' || target === 'impacto-global') {
         setCurrentTab('impacto');
-      } else if (
-        target === 'painel-gestao' ||
-        target === 'gestao' ||
-        target === 'admin' ||
-        PLATAFORMA_TABS.includes(target)
-      ) {
+      } else if (isPlataformaTab(target)) {
         setCurrentTab(target);
-        if (target === 'gestao-suporte' || target === 'suporte') {
+        // Suporte da plataforma só abre automaticamente via URL se for perfil administrador
+        if ((target === 'gestao-suporte' || target === 'suporte') && currentUserRef.current.isAdmin) {
           setIsSupportModalOpen(true);
         }
       } else if (target === 'sobre' || target === 'sobre-a-vila' || target.includes('sobre')) {
@@ -271,7 +295,11 @@ export default function App() {
         }}
         onOpenAuth={handleOpenAuth}
         onOpenImpactModal={() => setIsImpactModalOpen(true)}
-        onOpenSupportModal={() => setIsSupportModalOpen(true)}
+        onOpenSupportModal={() => {
+          if (currentUser.isAdmin) {
+            setIsSupportModalOpen(true);
+          }
+        }}
         isMobileSidebarOpen={isMobileSidebarOpen}
         onCloseMobileSidebar={() => setIsMobileSidebarOpen(false)}
         onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
@@ -295,8 +323,7 @@ export default function App() {
           currentTab === 'noticias' ||
           currentTab === 'movimento' ||
           currentTab === 'eventos' ||
-          currentTab === 'painel-gestao' ||
-          PLATAFORMA_TABS.includes(currentTab) ||
+          isPlataformaTab(currentTab) ||
           COMMUNITY_TABS.includes(currentTab) ||
           IMPACT_TABS.includes(currentTab)
         }
@@ -453,15 +480,32 @@ export default function App() {
             onOpenAiAssistant={() => setIsAiModalOpen(true)}
             onBreadcrumbChange={handleBreadcrumbChange}
           />
-        ) : (currentTab === 'painel-gestao' || PLATAFORMA_TABS.includes(currentTab)) ? (
-          /* Painel de Gestão da Plataforma (Área de Governança & Administração) */
-          <PainelGestaoPlaceholderView
-            currentUser={currentUser}
-            currentSection={currentTab}
-            onNavigateToTab={handleNavigateToTab}
-            onBreadcrumbChange={handleBreadcrumbChange}
-            onOpenSupportModal={() => setIsSupportModalOpen(true)}
-          />
+        ) : isPlataformaTab(currentTab) ? (
+          /* Centralized Guard: Painel de Gestão da Plataforma (Área de Governança & Administração) */
+          currentUser.isAdmin ? (
+            <PainelGestaoPlaceholderView
+              currentUser={currentUser}
+              currentSection={currentTab}
+              onNavigateToTab={handleNavigateToTab}
+              onBreadcrumbChange={handleBreadcrumbChange}
+              onOpenSupportModal={() => setIsSupportModalOpen(true)}
+            />
+          ) : (
+            <AdminRestrictedAccessView
+              currentUser={currentUser}
+              attemptedRoute={currentTab}
+              onBackToHome={() => {
+                setCurrentTab('inicio');
+                window.location.hash = 'inicio';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              onNavigateToTab={handleNavigateToTab}
+              onSwitchToAdmin={(adminUser) => {
+                setCurrentUser(adminUser);
+              }}
+              onBreadcrumbChange={handleBreadcrumbChange}
+            />
+          )
         ) : (currentTab === 'perfil-vila' || currentTab === 'perfil' || currentTab === 'meu-perfil') ? (
           /* Perfil VILA (Persona Cidadã Ativa) */
           <PerfilVilaView
