@@ -14,6 +14,7 @@ import { SettingsView } from './components/SettingsView';
 import { VilaAiView } from './components/VilaAiView';
 import { GlobalPartnersView } from './components/GlobalPartnersView';
 import { UserProfileView } from './components/UserProfileView';
+import { PerfilVilaView } from './components/perfil-vila/PerfilVilaView';
 import { CountryDetailModal } from './components/CountryDetailModal';
 import { VideoModal } from './components/VideoModal';
 import { SearchCommandModal } from './components/SearchCommandModal';
@@ -48,6 +49,7 @@ const BREADCRUMB_TABS = [
   'parceiros-globais',
   'perfil',
   'meu-perfil',
+  'perfil-vila',
 ];
 
 const getInitialTab = (): string => {
@@ -80,6 +82,8 @@ const getInitialTab = (): string => {
     return 'explorar';
   } else if (target === 'impacto' || target === 'impacto-global') {
     return 'impacto';
+  } else if (target === 'perfil-vila' || target === 'perfil' || target === 'meu-perfil') {
+    return 'perfil-vila';
   } else if (target === 'sobre' || target === 'sobre-a-vila' || target.includes('sobre')) {
     return 'sobre';
   } else if (target === 'definicoes' || target === 'settings' || target === 'preferencias' || target === 'configuracoes' || target === 'privacidade' || target === 'seguranca') {
@@ -398,9 +402,9 @@ export default function App() {
             onOpenAiAssistant={() => setIsAiModalOpen(true)}
             onBreadcrumbChange={handleBreadcrumbChange}
           />
-        ) : (currentTab === 'perfil' || currentTab === 'meu-perfil') ? (
-          /* Perfil Cidadã Ativa (8 ecrãs estruturados) */
-          <UserProfileView
+        ) : (currentTab === 'perfil-vila' || currentTab === 'perfil' || currentTab === 'meu-perfil') ? (
+          /* Perfil VILA (Persona Cidadã Ativa) */
+          <PerfilVilaView
             onNavigateToTab={handleNavigateToTab}
             onOpenAuth={handleOpenAuth}
             onOpenAiAssistant={() => setIsAiModalOpen(true)}

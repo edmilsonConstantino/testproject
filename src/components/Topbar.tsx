@@ -462,7 +462,7 @@ export const Topbar: React.FC<TopbarProps> = ({
                   role="menuitem"
                   onClick={() => {
                     setIsAvatarMenuOpen(false);
-                    onNavigateToTab?.('perfil');
+                    onNavigateToTab?.('perfil-vila');
                   }}
                   className="w-full px-4 py-2 text-left text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 transition-colors cursor-pointer"
                 >
