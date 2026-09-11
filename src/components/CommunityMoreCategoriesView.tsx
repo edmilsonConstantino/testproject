@@ -347,41 +347,23 @@ export const CommunityMoreCategoriesView: React.FC<CommunityMoreCategoriesViewPr
 
   return (
     <div className="w-full min-h-screen bg-[#F8FAFC] pb-16">
-      <div className="max-w-[1520px] mx-auto px-4 sm:px-6 lg:px-8 pt-4">
-        {/* Layout Principal: Lado Esquerdo (Header, Fita de Métricas, Fita de Categorias, Filtros, Hero e Grade) e Lado Direito (Criar Comunidade, Card Categorias Mais Populares no Topo, Artigos e CTA) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-          {/* LADO ESQUERDO: Header, Fitas e Área Principal de Conteúdo (lg:col-span-8 xl:col-span-9) */}
-          <div className="lg:col-span-8 xl:col-span-9 flex flex-col gap-4">
-            {/* 1. Header Superior da Página */}
-            <header id="more-categories-header" className="flex flex-col gap-3">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3.5">
-                  <div className="w-12 h-12 rounded-2xl bg-[#0B1536] text-white flex items-center justify-center shadow-md shrink-0">
-                    <LayoutGrid className="w-6 h-6 stroke-[2.2]" />
-                  </div>
-                  <div>
-                    <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight">
-                      Mais Categorias
-                    </h1>
-                    <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-                      Explore todas as áreas de interesse e encontre comunidades que combinam com você.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Botão Criar Comunidade */}
-                <button
-                  type="button"
-                  onClick={onOpenCreateCommunity}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0B1536] hover:bg-slate-900 text-white font-bold text-xs sm:text-sm shadow-xs transition-colors cursor-pointer shrink-0"
-                >
-                  <span>Criar Comunidade</span>
-                  <Plus className="w-4 h-4 stroke-[2.8]" />
-                </button>
-              </div>
+      <div className="max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col gap-5">
+        {/* 1. Header Superior da Página */}
+        <section id="more-categories-header" className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-3.5">
+            <div className="w-12 h-12 rounded-2xl bg-[#0B1536] text-white flex items-center justify-center shadow-md shrink-0">
+              <LayoutGrid className="w-6 h-6 stroke-[2.2]" />
+            </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] font-['Outfit'] tracking-tight">
+                Mais Categorias
+              </h1>
+              <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
+                Explore todas as áreas de interesse e encontre comunidades que combinam com você.
+              </p>
 
               {/* Fita de Métricas Globais */}
-              <div className="flex items-center gap-6 text-xs text-slate-600 flex-wrap pt-0.5 font-medium">
+              <div className="flex items-center gap-6 text-xs text-slate-600 flex-wrap pt-1.5 font-medium">
                 <div className="flex items-center gap-1.5">
                   <Users className="w-4 h-4 text-blue-600" />
                   <span className="font-bold text-[#0F172A]">2.450</span>
@@ -403,51 +385,64 @@ export const CommunityMoreCategoriesView: React.FC<CommunityMoreCategoriesViewPr
                   <span>recursos</span>
                 </div>
               </div>
-            </header>
+            </div>
+          </div>
 
-            {/* 2. Fita Horizontal de Categorias (com "Mais" ativo) */}
-            <nav
-              id="categories-ribbon"
-              className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5"
-              aria-label="Categorias de Comunidades"
-            >
-              {CATEGORIES_RIBBON.map((cat) => {
-                const Icon = cat.icon;
-                const isMais = cat.id === 'mais';
+          {/* Botão Criar Comunidade (mesmo padrão da seção de tecnologia) */}
+          <button
+            type="button"
+            onClick={onOpenCreateCommunity}
+            id="btn-criar-comunidade-mais-categorias"
+            className="self-start sm:self-center inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#0B1536] hover:bg-slate-900 text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-sm transition-all cursor-pointer shrink-0"
+          >
+            <span>Criar Comunidade</span>
+            <Plus className="w-4 h-4 stroke-[2.5]" />
+          </button>
+        </section>
 
-                return (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    onClick={() => {
-                      if (cat.id !== 'mais') {
-                        if (onNavigateToCategory) {
-                          onNavigateToCategory(cat.id);
-                        } else if (onNavigateToTab) {
-                          onNavigateToTab(cat.id);
-                        }
-                      }
-                    }}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer shadow-2xs ${
-                      isMais
-                        ? 'bg-[#0B1536] text-white shadow-xs'
-                        : 'bg-white border border-slate-200/90 text-[#334155] hover:bg-slate-50 hover:text-slate-900'
-                    }`}
-                  >
-                    <Icon className={`w-3.5 h-3.5 ${isMais ? 'text-white' : 'text-slate-500'}`} strokeWidth={2.2} />
-                    <span>{cat.label}</span>
-                  </button>
-                );
-              })}
-            </nav>
+        {/* 2. Fita Horizontal de Categorias (com "Mais" ativo) */}
+        <nav
+          id="categories-ribbon"
+          className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 relative"
+          aria-label="Categorias de Comunidades"
+        >
+          {CATEGORIES_RIBBON.map((cat) => {
+            const Icon = cat.icon;
+            const isMais = cat.id === 'mais';
 
-            {/* 3. Sub-grid com Filtros e Conteúdo (Hero, Categorias Grid, CTA final) */}
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start mt-1">
-              {/* COLUNA ESQUERDA: Filtros (lg:col-span-3) */}
-              <aside
-                id="filtros-sidebar"
-                className="lg:col-span-3 bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex flex-col gap-5"
+            return (
+              <button
+                key={cat.id}
+                type="button"
+                onClick={() => {
+                  if (cat.id !== 'mais') {
+                    if (onNavigateToCategory) {
+                      onNavigateToCategory(cat.id);
+                    } else if (onNavigateToTab) {
+                      onNavigateToTab(cat.id);
+                    }
+                  }
+                }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer shadow-2xs ${
+                  isMais
+                    ? 'bg-[#0B1536] text-white shadow-xs'
+                    : 'bg-white border border-slate-200/90 text-[#334155] hover:bg-slate-50 hover:text-slate-900'
+                }`}
               >
+                <Icon className={`w-3.5 h-3.5 ${isMais ? 'text-white' : 'text-slate-500'}`} strokeWidth={2.2} />
+                <span>{cat.label}</span>
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* 3. Grade Principal de Três Colunas (Filtros, Conteúdo Central e Mais Populares alinhados no mesmo nível) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+          {/* COLUNA ESQUERDA: Filtros (lg:col-span-2) */}
+          <aside
+            id="filtros-sidebar"
+            className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex flex-col gap-5"
+          >
                 {/* Título e Botão Limpar Tudo */}
                 <div className="flex items-center justify-between pb-1 border-b border-slate-100">
                   <h3 className="text-xs font-bold text-[#0F172A] font-['Outfit'] uppercase tracking-wider">
@@ -577,8 +572,8 @@ export const CommunityMoreCategoriesView: React.FC<CommunityMoreCategoriesViewPr
                 </button>
               </aside>
 
-              {/* CONTEÚDO PRINCIPAL: Hero + Grade de Categorias + Faixa Final (lg:col-span-9) */}
-              <main id="main-more-categories-content" className="lg:col-span-9 flex flex-col gap-6">
+              {/* CONTEÚDO PRINCIPAL: Hero + Grade de Categorias + Faixa Final (lg:col-span-7) */}
+              <main id="main-more-categories-content" className="lg:col-span-7 flex flex-col gap-6">
                 {/* HERO CARD EXCLUSIVO */}
                 <div
                   id="hero-more-categories"
@@ -802,11 +797,9 @@ export const CommunityMoreCategoriesView: React.FC<CommunityMoreCategoriesViewPr
                   </button>
                 </div>
               </main>
-            </div>
-          </div>
 
-          {/* LADO DIREITO: Card de Categorias mais populares no Topo + Artigos + CTA (lg:col-span-4 xl:col-span-3) */}
-          <aside id="right-sidebar" className="lg:col-span-4 xl:col-span-3 flex flex-col gap-4">
+          {/* COLUNA DIREITA: Card de Categorias mais populares no Topo + Artigos + CTA (lg:col-span-3) */}
+          <aside id="right-sidebar" className="lg:col-span-3 flex flex-col gap-4">
             {/* 1. CARD: Categorias mais populares (EM CIMA, EXATAMENTE COMO NA IMAGEM) */}
             <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-2xs flex flex-col gap-4">
               <div className="flex items-center justify-between pb-1">

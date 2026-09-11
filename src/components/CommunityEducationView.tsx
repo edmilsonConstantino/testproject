@@ -350,50 +350,25 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
   return (
     <div id="community-education-view" className="w-full bg-[#F8FAFC] min-h-screen text-[#0F172A] flex flex-col">
       {/* Conteúdo Principal (busca/idioma/notificações/perfil/breadcrumb já vêm do Topbar compartilhado no AppLayout) */}
-      <main className="flex-1 max-w-[1520px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-5">
-        {/* Layout Principal: Lado Esquerdo (Header, Fita de Categorias, Filtros, Hero e Conteúdo) e Lado Direito (Card Comunidades em tendência no Topo, Atividades e CTA) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
-          {/* LADO ESQUERDO: Header, Fitas e Área de Filtros + Conteúdo (lg:col-span-8 xl:col-span-9) */}
-          <div className="lg:col-span-8 xl:col-span-9 flex flex-col gap-4">
-            {/* 1. Cabeçalho de Educação com Ícone, Título, Subtítulo, Métricas e Botão Criar Comunidade */}
-            <header id="educacao-header" className="flex flex-col gap-3">
-              <div className="flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3.5">
-                  {/* Ícone Quadrado Arredondado com Capelo Azul */}
-                  <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-[#EEF2FF] border border-indigo-200/80 flex items-center justify-center shrink-0 shadow-2xs">
-                    <GraduationCap className="w-7 h-7 sm:w-8 sm:h-8 text-[#4F46E5]" strokeWidth={2.2} />
-                  </div>
+      <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col gap-5">
+        {/* 2. Cabeçalho de Educação com Ícone, Título, Métricas e Botão Criar Comunidade (mesmo padrão da seção de tecnologia) */}
+        <section id="educacao-header" className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-start sm:items-center gap-3.5">
+            {/* Ícone Quadrado Arredondado com Capelo Azul */}
+            <div className="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-[#EEF2FF] border border-indigo-200/80 flex items-center justify-center shrink-0 shadow-2xs">
+              <GraduationCap className="w-7 h-7 sm:w-8 sm:h-8 text-[#4F46E5]" strokeWidth={2.2} />
+            </div>
 
-                  <div className="flex flex-col">
-                    <h1 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight font-['Outfit'] leading-tight">
-                      Educação
-                    </h1>
-                    <p className="text-xs sm:text-sm text-[#64748B] font-normal leading-snug">
-                      Aprendizagem para todos. Compartilhe conhecimento, recursos e oportunidades educacionais.
-                    </p>
-                  </div>
-                </div>
-
-                {/* Botão Criar Comunidade no mesmo lugar */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (onOpenCreateCommunity) {
-                      onOpenCreateCommunity();
-                    } else {
-                      setIsCreateModalOpen(true);
-                    }
-                  }}
-                  id="btn-criar-comunidade-educacao"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#4F46E5] to-[#06B6D4] hover:opacity-95 text-white font-bold text-xs sm:text-sm shadow-xs transition-all cursor-pointer shrink-0"
-                >
-                  <span>Criar Comunidade</span>
-                  <Plus className="w-4 h-4 stroke-[2.8]" />
-                </button>
-              </div>
+            <div className="flex flex-col">
+              <h1 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight font-['Outfit'] leading-tight">
+                Educação
+              </h1>
+              <p className="text-xs sm:text-sm text-[#64748B] font-normal leading-snug">
+                Aprendizagem para todos. Compartilhe conhecimento, recursos e oportunidades educacionais.
+              </p>
 
               {/* Fita de Métricas: Comunidades, Membros e Países */}
-              <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-[11.5px] sm:text-xs font-semibold text-[#64748B]">
+              <div className="flex flex-wrap items-center gap-4 sm:gap-6 mt-1.5 text-[11.5px] sm:text-xs font-semibold text-[#64748B]">
                 <span className="flex items-center gap-1.5">
                   <Users className="w-3.5 h-3.5 text-slate-500" />
                   <strong className="font-bold text-[#0F172A]">1.572</strong> comunidades
@@ -407,70 +382,123 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
                   <strong className="font-bold text-[#0F172A]">192</strong> países
                 </span>
               </div>
-            </header>
+            </div>
+          </div>
 
-            {/* 2. Fita Horizontal de Categorias (com Educação Selecionada) */}
-            <nav
-              id="categories-ribbon-educacao"
-              className="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5 relative"
-              aria-label="Categorias de Comunidades"
-            >
-              {[
-                { id: 'todas', label: 'Todas', icon: Compass },
-                { id: 'ambiente', label: 'Ambiente', icon: Leaf },
-                { id: 'tecnologia', label: 'Tecnologia', icon: Cpu },
-                { id: 'educacao', label: 'Educação', icon: GraduationCap },
-                { id: 'direitos-humanos', label: 'Direitos Humanos', icon: Scale },
-                { id: 'saude', label: 'Saúde', icon: HeartPulse },
-                { id: 'empreendedorismo', label: 'Empreendedorismo', icon: Rocket },
-                { id: 'cultura', label: 'Cultura', icon: Palette },
-              ].map((cat) => {
-                const Icon = cat.icon;
-                const isActive = cat.id === 'educacao';
+          {/* Botão Criar Comunidade (da mesma forma que está na seção de tecnologia) */}
+          <button
+            type="button"
+            onClick={() => {
+              if (onOpenCreateCommunity) {
+                onOpenCreateCommunity();
+              } else {
+                setIsCreateModalOpen(true);
+              }
+            }}
+            id="btn-criar-comunidade-educacao"
+            className="self-start sm:self-center inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-[#4F46E5] hover:bg-[#4338CA] text-white text-xs sm:text-sm font-bold shadow-xs hover:shadow-sm transition-all cursor-pointer shrink-0"
+          >
+            <span>Criar Comunidade</span>
+            <Plus className="w-4 h-4 stroke-[2.5]" />
+          </button>
+        </section>
 
-                return (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    onClick={() => {
-                      if (onNavigateToCategory) onNavigateToCategory(cat.id);
-                    }}
-                    className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer shadow-2xs ${
-                      isActive
-                        ? 'bg-[#3730A3] text-white shadow-xs'
-                        : 'bg-white border border-slate-200/90 text-[#334155] hover:bg-slate-50 hover:text-slate-900'
-                    }`}
-                  >
-                    <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-500'}`} strokeWidth={2.2} />
-                    <span>{cat.label}</span>
-                  </button>
-                );
-              })}
+        {/* 3. Fita Horizontal de Categorias (com Educação Selecionada) */}
+        <nav
+          id="categories-ribbon-educacao"
+          className="flex items-center gap-2 overflow-x-auto no-scrollbar py-1 relative"
+          aria-label="Categorias de Comunidades"
+        >
+          {[
+            { id: 'todas', label: 'Todas', icon: Compass },
+            { id: 'ambiente', label: 'Ambiente', icon: Leaf },
+            { id: 'tecnologia', label: 'Tecnologia', icon: Cpu },
+            { id: 'educacao', label: 'Educação', icon: GraduationCap },
+            { id: 'direitos-humanos', label: 'Direitos Humanos', icon: Scale },
+            { id: 'saude', label: 'Saúde', icon: HeartPulse },
+            { id: 'empreendedorismo', label: 'Empreendedorismo', icon: Rocket },
+            { id: 'cultura', label: 'Cultura', icon: Palette },
+          ].map((cat) => {
+            const Icon = cat.icon;
+            const isActive = cat.id === 'educacao';
 
-              {/* Botão "... Mais" */}
+            return (
               <button
+                key={cat.id}
                 type="button"
                 onClick={() => {
-                  if (onNavigateToCategory) {
-                    onNavigateToCategory('mais');
-                  } else if (onNavigateToTab) {
-                    onNavigateToTab('mais');
-                  }
+                  if (onNavigateToCategory) onNavigateToCategory(cat.id);
                 }}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-white border border-slate-200/90 text-[#334155] hover:bg-slate-50 whitespace-nowrap cursor-pointer shadow-2xs"
+                className={`flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer shadow-2xs ${
+                  isActive
+                    ? 'bg-[#3730A3] text-white shadow-xs'
+                    : 'bg-white border border-slate-200/90 text-[#334155] hover:bg-slate-50 hover:text-slate-900'
+                }`}
               >
-                <MoreHorizontal className="w-3.5 h-3.5 text-slate-500" />
-                <span>Mais</span>
+                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-white' : 'text-slate-500'}`} strokeWidth={2.2} />
+                <span>{cat.label}</span>
               </button>
-            </nav>
+            );
+          })}
 
-            {/* 3. Subgrid com Filtros e Conteúdo Principal */}
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-start mt-1">
-              {/* COLUNA ESQUERDA: Filtros (md:col-span-3 xl:col-span-3) */}
-              <aside
-                id="filtros-educacao-sidebar"
-                className="md:col-span-3 xl:col-span-3 bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex flex-col gap-4"
-              >
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => {
+                if (onNavigateToCategory) {
+                  onNavigateToCategory('mais');
+                } else if (onNavigateToTab) {
+                  onNavigateToTab('mais');
+                } else {
+                  setIsMaisDropdownOpen(!isMaisDropdownOpen);
+                }
+              }}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold bg-white border border-slate-200/90 text-[#334155] hover:bg-slate-50 whitespace-nowrap cursor-pointer shadow-2xs"
+            >
+              <MoreHorizontal className="w-3.5 h-3.5 text-slate-500" />
+              <span>Mais</span>
+            </button>
+
+            {isMaisDropdownOpen && (
+              <div className="absolute left-0 mt-1 w-52 bg-white border border-slate-200 rounded-2xl shadow-xl py-1.5 z-40 text-xs font-medium">
+                {[
+                  'Turismo',
+                  'Desporto',
+                  'Habitação',
+                  'Igualdade de Género',
+                  'Juventude',
+                  'Proteção Social',
+                  'Paz e Segurança',
+                  'Governança',
+                ].map((extra) => (
+                  <button
+                    key={extra}
+                    type="button"
+                    onClick={() => {
+                      setIsMaisDropdownOpen(false);
+                      if (onNavigateToCategory) {
+                        onNavigateToCategory('mais');
+                      } else if (onNavigateToTab) {
+                        onNavigateToTab('mais');
+                      }
+                    }}
+                    className="w-full px-3.5 py-1.5 text-left hover:bg-slate-50 text-slate-700 flex items-center justify-between cursor-pointer"
+                  >
+                    <span>{extra}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </nav>
+
+        {/* 4. Grade Principal de Três Colunas (Filtros, Hero/Conteúdo e Tendências alinhados no mesmo nível) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+          {/* COLUNA ESQUERDA: Filtros (lg:col-span-2) */}
+          <aside
+            id="filtros-educacao-sidebar"
+            className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex flex-col gap-4"
+          >
             <div className="flex items-center justify-between pb-1 border-b border-slate-100">
               <span className="text-sm font-bold text-[#0F172A] flex items-center gap-1.5">
                 <Filter className="w-3.5 h-3.5 text-slate-500" />
@@ -610,8 +638,8 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
             </button>
           </aside>
 
-          {/* COLUNA CENTRAL: Hero Banner, Comunidades e Recursos (md:col-span-9 xl:col-span-9) */}
-          <div className="md:col-span-9 xl:col-span-9 flex flex-col gap-6">
+          {/* COLUNA CENTRAL: Hero Banner, Comunidades e Recursos (lg:col-span-7) */}
+          <div className="lg:col-span-7 flex flex-col gap-6">
             {/* HERO BANNER: "Educação que transforma vidas" com 3 Métricas Integradas */}
             <section
               id="hero-educacao-banner"
@@ -824,11 +852,9 @@ export const CommunityEducationView: React.FC<CommunityEducationViewProps> = ({
               </div>
             </section>
           </div>
-        </div>
-      </div>
 
-      {/* LADO DIREITO: Card Comunidades em tendência (Educação) no Topo + Atividades + CTA (lg:col-span-4 xl:col-span-3) */}
-      <aside id="right-sidebar-educacao" className="lg:col-span-4 xl:col-span-3 flex flex-col gap-4">
+          {/* COLUNA DIREITA: Card Comunidades em tendência (Educação) no Topo + Atividades + CTA (lg:col-span-3) */}
+          <aside id="right-sidebar-educacao" className="lg:col-span-3 flex flex-col gap-4">
         {/* 1. Card: Comunidades em tendência (Educação) */}
         <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-2xs flex flex-col gap-4">
           <div className="flex items-center justify-between pb-1">
