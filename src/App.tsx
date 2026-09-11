@@ -52,6 +52,24 @@ const BREADCRUMB_TABS = [
   'meu-perfil',
   'perfil-vila',
   'painel-gestao',
+  'gestao-utilizadores',
+  'gestao-parceiros',
+  'gestao-recursos',
+  'gestao-suporte',
+  'membros',
+  'recursos',
+  'suporte',
+];
+
+const PLATAFORMA_TABS = [
+  'painel-gestao',
+  'gestao-utilizadores',
+  'gestao-parceiros',
+  'gestao-recursos',
+  'gestao-suporte',
+  'membros',
+  'recursos',
+  'suporte',
 ];
 
 const getInitialTab = (): string => {
@@ -86,8 +104,19 @@ const getInitialTab = (): string => {
     return 'impacto';
   } else if (target === 'perfil-vila' || target === 'perfil' || target === 'meu-perfil') {
     return 'perfil-vila';
-  } else if (target === 'painel-gestao' || target === 'gestao' || target === 'admin') {
-    return 'painel-gestao';
+  } else if (
+    target === 'painel-gestao' ||
+    target === 'gestao' ||
+    target === 'admin' ||
+    target === 'gestao-utilizadores' ||
+    target === 'gestao-parceiros' ||
+    target === 'gestao-recursos' ||
+    target === 'gestao-suporte' ||
+    target === 'membros' ||
+    target === 'recursos' ||
+    target === 'suporte'
+  ) {
+    return target;
   } else if (target === 'sobre' || target === 'sobre-a-vila' || target.includes('sobre')) {
     return 'sobre';
   } else if (target === 'definicoes' || target === 'settings' || target === 'preferencias' || target === 'configuracoes' || target === 'privacidade' || target === 'seguranca') {
@@ -254,6 +283,7 @@ export default function App() {
           currentTab === 'movimento' ||
           currentTab === 'eventos' ||
           currentTab === 'painel-gestao' ||
+          PLATAFORMA_TABS.includes(currentTab) ||
           COMMUNITY_TABS.includes(currentTab) ||
           IMPACT_TABS.includes(currentTab)
         }
@@ -410,10 +440,11 @@ export default function App() {
             onOpenAiAssistant={() => setIsAiModalOpen(true)}
             onBreadcrumbChange={handleBreadcrumbChange}
           />
-        ) : currentTab === 'painel-gestao' ? (
+        ) : (currentTab === 'painel-gestao' || PLATAFORMA_TABS.includes(currentTab)) ? (
           /* Painel de Gestão da Plataforma (Área de Governança & Administração) */
           <PainelGestaoPlaceholderView
             currentUser={currentUser}
+            currentSection={currentTab}
             onNavigateToTab={handleNavigateToTab}
             onBreadcrumbChange={handleBreadcrumbChange}
           />

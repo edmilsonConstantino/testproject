@@ -18,6 +18,10 @@ import {
   Check,
   LogOut,
   Building2,
+  Eye,
+  Package,
+  HelpCircle,
+  UserCheck,
 } from 'lucide-react';
 import { Logo } from './Logo';
 import { DemoUser } from '../data/demoUsers';
@@ -254,43 +258,86 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 </span>
               </div>
 
-              <button
-                type="button"
-                id="nav-item-painel-gestao"
-                onClick={() => {
-                  onSelectTab('painel-gestao');
-                  if (onCloseMobile) onCloseMobile();
-                }}
-                className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[12px] leading-tight transition-all duration-200 group cursor-pointer ${
-                  currentTab === 'painel-gestao'
-                    ? 'bg-gradient-to-r from-[#0055FE] to-[#0096C7] text-white font-bold shadow-xs'
-                    : 'text-[#122244] hover:bg-slate-50 hover:text-[#0055FE] font-medium'
-                }`}
-                aria-current={currentTab === 'painel-gestao' ? 'page' : undefined}
-              >
-                <div className="flex items-center gap-2 min-w-0">
-                  <span
-                    className={`shrink-0 transition-colors ${
-                      currentTab === 'painel-gestao'
-                        ? 'text-white'
-                        : 'text-amber-600 group-hover:text-[#0055FE]'
+              {/* 5 Atalhos Rápidos da Secção PLATAFORMA conforme UI de Referência */}
+              {[
+                {
+                  id: 'painel-gestao',
+                  label: 'Painel de Gestão',
+                  targetTab: 'painel-gestao',
+                  icon: <UserCheck className="w-4 h-4" strokeWidth={2.2} />,
+                  badge: 'Admin',
+                },
+                {
+                  id: 'membros',
+                  label: 'Membros',
+                  targetTab: 'gestao-utilizadores',
+                  icon: <Eye className="w-4 h-4" strokeWidth={2.2} />,
+                },
+                {
+                  id: 'parceiros',
+                  label: 'Parceiros',
+                  targetTab: 'gestao-parceiros',
+                  icon: <Heart className="w-4 h-4" strokeWidth={2.2} />,
+                },
+                {
+                  id: 'recursos',
+                  label: 'Recursos',
+                  targetTab: 'gestao-recursos',
+                  icon: <Package className="w-4 h-4" strokeWidth={2.2} />,
+                },
+                {
+                  id: 'suporte',
+                  label: 'Suporte',
+                  targetTab: 'gestao-suporte',
+                  icon: <HelpCircle className="w-4 h-4" strokeWidth={2.2} />,
+                },
+              ].map((shortcut) => {
+                const isActive = currentTab === shortcut.targetTab;
+                return (
+                  <button
+                    key={shortcut.id}
+                    type="button"
+                    id={`nav-item-plataforma-${shortcut.id}`}
+                    onClick={() => {
+                      onSelectTab(shortcut.targetTab);
+                      if (onCloseMobile) onCloseMobile();
+                    }}
+                    className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[12px] leading-tight transition-all duration-200 group cursor-pointer ${
+                      isActive
+                        ? 'bg-gradient-to-r from-[#0055FE] to-[#0096C7] text-white font-bold shadow-xs'
+                        : 'text-[#122244] hover:bg-slate-50 hover:text-[#0055FE] font-medium'
                     }`}
+                    aria-current={isActive ? 'page' : undefined}
                   >
-                    <Building2 className="w-4 h-4" strokeWidth={2.2} />
-                  </span>
-                  <span className="truncate tracking-tight font-semibold">Painel de Gestão</span>
-                </div>
+                    <div className="flex items-center gap-2 min-w-0">
+                      <span
+                        className={`shrink-0 transition-colors ${
+                          isActive
+                            ? 'text-white'
+                            : 'text-[#122244] group-hover:text-[#0055FE]'
+                        }`}
+                      >
+                        {shortcut.icon}
+                      </span>
+                      <span className="truncate tracking-tight font-semibold">
+                        {shortcut.label}
+                      </span>
+                    </div>
 
-                <span
-                  className={`ml-1 px-1.5 py-0.5 rounded-full text-[8px] font-extrabold tracking-wider uppercase shrink-0 transition-colors ${
-                    currentTab === 'painel-gestao'
-                      ? 'bg-white/25 text-white'
-                      : 'bg-amber-100/80 text-amber-800 border border-amber-200'
-                  }`}
-                >
-                  Admin
-                </span>
-              </button>
+                    {shortcut.badge && (
+                      <span
+                        className={`ml-1 px-1.5 py-0.5 rounded-full text-[8px] font-extrabold tracking-wider uppercase shrink-0 transition-colors ${
+                          isActive
+                            ? 'bg-white/25 text-white'
+                            : 'bg-amber-100/80 text-amber-800 border border-amber-200'
+                        }`}
+                      >
+                        {shortcut.badge}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
             </div>
           )}
         </nav>
