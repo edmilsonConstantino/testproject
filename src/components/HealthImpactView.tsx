@@ -145,7 +145,7 @@ const IMPACT_AREAS: ImpactArea[] = [
   },
 ];
 
-// 4 Projetos em Destaque
+// 6 Projetos em Destaque (Navegação 3 em 3)
 const FEATURED_HEALTH_PROJECTS: HealthProject[] = [
   {
     id: 'proj-1',
@@ -198,6 +198,32 @@ const FEATURED_HEALTH_PROJECTS: HealthProject[] = [
     impacted: 'Impactadas 96K pessoas',
     progressPercent: 75,
     progressBarColor: 'bg-indigo-600',
+  },
+  {
+    id: 'proj-5',
+    tag: 'Saúde Materna',
+    tagBg: 'bg-pink-700',
+    tagColor: 'text-white',
+    image: 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=600&auto=format&fit=crop&q=80',
+    title: 'Maternidade Segura',
+    description: 'Acompanhamento pré-natal e parto humanizado em áreas rurais.',
+    location: 'Angola',
+    impacted: 'Impactadas 54K pessoas',
+    progressPercent: 83,
+    progressBarColor: 'bg-rose-600',
+  },
+  {
+    id: 'proj-6',
+    tag: 'Prevenção',
+    tagBg: 'bg-amber-700',
+    tagColor: 'text-white',
+    image: 'https://images.unsplash.com/photo-1584515933487-779824d29309?w=600&auto=format&fit=crop&q=80',
+    title: 'Vacinação sem Fronteiras',
+    description: 'Campanhas de imunização em comunidades isoladas.',
+    location: 'Guatemala',
+    impacted: 'Impactadas 78K pessoas',
+    progressPercent: 88,
+    progressBarColor: 'bg-amber-600',
   },
 ];
 
@@ -312,6 +338,7 @@ export const HealthImpactView: React.FC<HealthImpactViewProps> = ({
   const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
   const [supportedCount, setSupportedCount] = useState(842);
   const [hasSupported, setHasSupported] = useState(false);
+  const [carouselIndex, setCarouselIndex] = useState(0);
 
   // Helper para renderizar ícones das áreas
   const renderAreaIcon = (type: ImpactArea['iconType']) => {
@@ -666,71 +693,94 @@ export const HealthImpactView: React.FC<HealthImpactViewProps> = ({
             {/* SEÇÃO 2: Projetos em Destaque (4 Cards) + Impacto por Região (Widget com Mapa) */}
             <section id="projetos-em-destaque-saude" className="flex flex-col gap-3.5">
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-                {/* 4 Cards de Projetos (lg:col-span-8) */}
+                {/* Projetos em destaque (3 em 3 cards) */}
                 <div className="lg:col-span-8 flex flex-col gap-3">
                   <div className="flex items-center justify-between">
                     <h3 className="text-base sm:text-lg font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
                       Projetos em destaque
                     </h3>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setCarouselIndex((prev) => (prev > 0 ? prev - 1 : Math.max(0, FEATURED_HEALTH_PROJECTS.length - 3)))}
+                        className="w-7 h-7 rounded-full border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-600 cursor-pointer shadow-2xs transition-colors"
+                        aria-label="Anterior"
+                        title="Projetos anteriores"
+                      >
+                        <ChevronRight className="w-4 h-4 rotate-180" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCarouselIndex((prev) => (prev < FEATURED_HEALTH_PROJECTS.length - 3 ? prev + 1 : 0))}
+                        className="w-7 h-7 rounded-full border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-600 cursor-pointer shadow-2xs transition-colors"
+                        aria-label="Seguinte"
+                        title="Próximos projetos"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 relative">
-                    {FEATURED_HEALTH_PROJECTS.map((proj) => (
-                      <article
-                        key={proj.id}
-                        onClick={() => setSelectedProjectModal(proj)}
-                        className="bg-white rounded-xl border border-slate-200/80 overflow-hidden shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all flex flex-col cursor-pointer group"
-                      >
-                        {/* Imagem do Projeto com Badge da Categoria Sobreposta */}
-                        <div className="relative h-24 w-full overflow-hidden bg-slate-100">
-                          <img
-                            src={proj.image}
-                            alt={proj.title}
-                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            referrerPolicy="no-referrer"
-                          />
-                          <span className={`absolute top-2 left-2 text-[8px] font-bold px-2 py-0.5 rounded shadow-2xs ${proj.tagBg} ${proj.tagColor}`}>
-                            {proj.tag}
-                          </span>
-                        </div>
-
-                        {/* Conteúdo */}
-                        <div className="p-2.5 flex-1 flex flex-col justify-between">
-                          <div>
-                            <h4 className="text-[11.5px] font-bold text-[#0F172A] font-['Outfit'] line-clamp-1 leading-snug group-hover:text-emerald-700 transition-colors">
-                              {proj.title}
-                            </h4>
-                            <p className="text-[10px] text-slate-500 line-clamp-2 leading-tight mt-0.5 mb-1.5">
-                              {proj.description}
-                            </p>
-                            <span className="text-[9.5px] text-slate-400 font-medium block">
-                              {proj.location}
+                  <div className="relative">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
+                      {FEATURED_HEALTH_PROJECTS.slice(carouselIndex, carouselIndex + 3).map((proj) => (
+                        <article
+                          key={proj.id}
+                          onClick={() => setSelectedProjectModal(proj)}
+                          className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-2xs hover:border-slate-300 hover:shadow-xs transition-all flex flex-col cursor-pointer group"
+                        >
+                          {/* Imagem do Projeto com Badge da Categoria Sobreposta */}
+                          <div className="relative h-28 sm:h-32 w-full overflow-hidden bg-slate-100">
+                            <img
+                              src={proj.image}
+                              alt={proj.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              referrerPolicy="no-referrer"
+                            />
+                            <span className={`absolute top-2 left-2 text-[9.5px] font-bold px-2 py-0.5 rounded-full shadow-2xs ${proj.tagBg} ${proj.tagColor}`}>
+                              {proj.tag}
                             </span>
                           </div>
 
-                          {/* Barra de Progresso da Meta */}
-                          <div className="pt-2 border-t border-slate-100 mt-2">
-                            <div className="flex items-center justify-between text-[9.5px] mb-1">
-                              <span className="font-bold text-slate-700 truncate">{proj.impacted}</span>
-                              <span className="font-bold text-emerald-700 shrink-0">{proj.progressPercent}% da meta</span>
+                          {/* Conteúdo */}
+                          <div className="p-3.5 flex-1 flex flex-col justify-between space-y-2.5">
+                            <div>
+                              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                {proj.location}
+                              </div>
+                              <h4 className="text-xs sm:text-[13px] font-bold text-[#0F172A] font-['Outfit'] line-clamp-1 leading-snug group-hover:text-emerald-700 transition-colors mt-0.5">
+                                {proj.title}
+                              </h4>
+                              <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed mt-1">
+                                {proj.description}
+                              </p>
                             </div>
-                            <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                              <div
-                                className={`h-full rounded-full ${proj.progressBarColor}`}
-                                style={{ width: `${proj.progressPercent}%` }}
-                              />
+
+                            {/* Barra de Progresso da Meta */}
+                            <div className="pt-2 border-t border-slate-100 space-y-1.5">
+                              <div className="flex items-center justify-between text-[10.5px]">
+                                <span className="text-slate-500 truncate">{proj.impacted}</span>
+                                <span className="font-bold text-emerald-700 shrink-0">{proj.progressPercent}% da meta</span>
+                              </div>
+                              <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                <div
+                                  className={`h-full rounded-full ${proj.progressBarColor}`}
+                                  style={{ width: `${proj.progressPercent}%` }}
+                                />
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      </article>
-                    ))}
+                        </article>
+                      ))}
+                    </div>
 
                     <button
                       type="button"
                       title="Ver mais projetos"
-                      className="hidden 2xl:flex absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white border border-slate-200 shadow-md items-center justify-center text-slate-600 hover:text-slate-900 cursor-pointer z-10"
+                      onClick={() => setCarouselIndex((prev) => (prev < FEATURED_HEALTH_PROJECTS.length - 3 ? prev + 1 : 0))}
+                      className="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white border border-slate-200 shadow-md items-center justify-center text-slate-600 hover:text-slate-900 cursor-pointer z-10"
                     >
-                      <ChevronRight className="w-3.5 h-3.5" />
+                      <ChevronRight className="w-4 h-4" />
                     </button>
                   </div>
                 </div>

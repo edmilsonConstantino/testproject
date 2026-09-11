@@ -453,69 +453,57 @@ export const MainImpactGlobalView: React.FC<MainImpactGlobalViewProps> = ({
               </div>
             </section>
 
-            {/* SEÇÃO 1: Áreas de Impacto (6 Cards) + Impacto por Região com Percentagens */}
-            <section id="areas-e-regiao-main" className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-              {/* 6 Áreas de Impacto (lg:col-span-8) */}
-              <div className="lg:col-span-8 flex flex-col gap-3">
+            {/* SEÇÃO 1: Áreas de Impacto (6 Cards em Linha) */}
+            <section id="areas-de-impacto-main" className="flex flex-col gap-3">
+              <div className="flex items-center justify-between">
                 <h3 className="text-base sm:text-lg font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
                   Áreas de impacto
                 </h3>
-
-                <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
-                  {IMPACT_AREAS.map((area) => (
-                    <div
-                      key={area.id}
-                      onClick={() => {
-                        if (onNavigateToCategory) onNavigateToCategory(area.categoryTarget);
-                      }}
-                      className="bg-white rounded-xl border border-slate-200/80 p-3 shadow-2xs hover:shadow-xs hover:border-slate-300 transition-all flex flex-col justify-between cursor-pointer group"
-                    >
-                      <div>
-                        {/* Ícone Redondo com Cor Vibrante */}
-                        <div className={`w-9 h-9 rounded-full ${area.iconBg} flex items-center justify-center mb-2 shadow-xs group-hover:scale-105 transition-transform`}>
-                          {area.icon}
-                        </div>
-
-                        <h4 className="text-xs font-bold text-[#0F172A] font-['Outfit'] leading-snug group-hover:text-emerald-700 transition-colors">
-                          {area.name}
-                        </h4>
-
-                        <p className="text-[10px] text-slate-500 leading-tight mt-1 line-clamp-2">
-                          {area.description}
-                        </p>
-                      </div>
-
-                      <div className="pt-2 border-t border-slate-100 mt-2">
-                        <span className="text-[9.5px] font-bold text-emerald-700 block">
-                          {area.count}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
               </div>
 
-              {/* Impacto por Região com Distribuição Percentual (lg:col-span-4) */}
-              <ImpactRegionMapCard
-                category="global"
-                className="lg:col-span-4"
-                customRegions={[
-                  { id: 'africa', name: 'África', percent: 32, projectsCount: 420, highlight: true },
-                  { id: 'latin-america', name: 'América Latina', percent: 24, projectsCount: 315 },
-                  { id: 'asia', name: 'Ásia', percent: 20, projectsCount: 260 },
-                  { id: 'europe', name: 'Europa', percent: 16, projectsCount: 210 },
-                  { id: 'north-america', name: 'América do Norte', percent: 8, projectsCount: 105 },
-                ]}
-              />
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                {IMPACT_AREAS.map((area) => (
+                  <div
+                    key={area.id}
+                    onClick={() => {
+                      if (onNavigateToCategory) onNavigateToCategory(area.categoryTarget);
+                    }}
+                    className="bg-white rounded-xl border border-slate-200/80 p-3 shadow-2xs hover:shadow-xs hover:border-slate-300 transition-all flex flex-col justify-between cursor-pointer group"
+                  >
+                    <div>
+                      {/* Ícone Redondo com Cor Vibrante */}
+                      <div className={`w-9 h-9 rounded-full ${area.iconBg} flex items-center justify-center mb-2 shadow-xs group-hover:scale-105 transition-transform`}>
+                        {area.icon}
+                      </div>
+
+                      <h4 className="text-xs font-bold text-[#0F172A] font-['Outfit'] leading-snug group-hover:text-emerald-700 transition-colors">
+                        {area.name}
+                      </h4>
+
+                      <p className="text-[10px] text-slate-500 leading-tight mt-1 line-clamp-2">
+                        {area.description}
+                      </p>
+                    </div>
+
+                    <div className="pt-2 border-t border-slate-100 mt-2">
+                      <span className="text-[9.5px] font-bold text-emerald-700 block">
+                        {area.count}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </section>
 
-            {/* SEÇÃO 2: Projetos em Destaque (4 Cards) + Alinhamento com os ODS (10 Ícones) */}
-            <section id="projetos-em-destaque-main" className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            {/* SEÇÃO 2: Projetos em Destaque (4 Cards) + Impacto por Região (Lado a Lado) */}
+            <section id="projetos-em-destaque-main" className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
               {/* 4 Cards de Projetos (lg:col-span-8) */}
               <div className="lg:col-span-8 flex flex-col gap-3">
-                <h3 className="text-base sm:text-lg font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
-                  Projetos em destaque
-                </h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-base sm:text-lg font-bold text-[#0F172A] font-['Outfit'] tracking-tight">
+                    Projetos em destaque
+                  </h3>
+                </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3">
                   {FEATURED_PROJECTS.map((proj) => (
@@ -570,52 +558,56 @@ export const MainImpactGlobalView: React.FC<MainImpactGlobalViewProps> = ({
                 </div>
               </div>
 
-              {/* Alinhamento com os ODS (10 Ícones Coloridos Oficiais) (lg:col-span-4) */}
-              <div className="lg:col-span-4 bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex flex-col justify-between">
-                <div className="flex items-center justify-between pb-1 border-b border-slate-100">
-                  <h3 className="text-xs font-bold text-[#0F172A] font-['Outfit']">
-                    Alinhamento com os ODS
+              {/* Impacto por Região com Mapa Interativo (lg:col-span-4) */}
+              <ImpactRegionMapCard
+                category="global"
+                className="lg:col-span-4"
+                customRegions={[
+                  { id: 'africa', name: 'África', percent: 32, projectsCount: 420, highlight: true },
+                  { id: 'latin-america', name: 'América Latina', percent: 24, projectsCount: 315 },
+                  { id: 'asia', name: 'Ásia', percent: 20, projectsCount: 260 },
+                  { id: 'europe', name: 'Europa', percent: 16, projectsCount: 210 },
+                  { id: 'north-america', name: 'América do Norte', percent: 8, projectsCount: 105 },
+                ]}
+              />
+            </section>
+
+            {/* SEÇÃO 3: Alinhamento com os ODS (10 Ícones Coloridos Oficiais) */}
+            <section id="ods-alignment-main" className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex flex-col gap-3">
+              <div className="flex items-center justify-between pb-1 border-b border-slate-100">
+                <div className="flex items-center gap-2">
+                  <Target className="w-4 h-4 text-emerald-700" />
+                  <h3 className="text-xs sm:text-sm font-bold text-[#0F172A] font-['Outfit']">
+                    Alinhamento com os Objetivos de Desenvolvimento Sustentável (ODS)
                   </h3>
-                  <button
-                    type="button"
-                    onClick={() => setIsOdsModalOpen(true)}
-                    className="text-[11px] font-bold text-emerald-700 hover:underline cursor-pointer flex items-center gap-0.5"
-                  >
-                    <span>Ver todos</span>
-                    <ArrowRight className="w-3 h-3" />
-                  </button>
                 </div>
+                <button
+                  type="button"
+                  onClick={() => setIsOdsModalOpen(true)}
+                  className="text-[11px] font-bold text-emerald-700 hover:underline cursor-pointer flex items-center gap-0.5"
+                >
+                  <span>Ver todos os 17 ODS</span>
+                  <ArrowRight className="w-3 h-3" />
+                </button>
+              </div>
 
-                {/* Grid 5x2 de Badges ODS Coloridas */}
-                <div className="grid grid-cols-5 gap-1.5 py-3">
-                  {ODS_ITEMS.map((ods) => (
-                    <div
-                      key={ods.number}
-                      onClick={() => setIsOdsModalOpen(true)}
-                      title={`ODS ${ods.number}: ${ods.name}`}
-                      className={`h-11 rounded-lg ${ods.color} text-white flex flex-col items-center justify-center p-1 shadow-2xs cursor-pointer hover:scale-105 transition-transform`}
-                    >
-                      <span className="text-[11px] font-black leading-none font-['Outfit']">
-                        {ods.number}
-                      </span>
-                      <span className="text-[7.5px] font-bold opacity-90 truncate max-w-full text-center leading-none mt-0.5">
-                        ODS
-                      </span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Link Inferior: Ver todos os ODS alinhados */}
-                <div className="pt-2 border-t border-slate-100 text-center">
-                  <button
-                    type="button"
+              {/* Grid de 10 Badges ODS Coloridas em linha elegante */}
+              <div className="grid grid-cols-5 sm:grid-cols-10 gap-2 py-1">
+                {ODS_ITEMS.map((ods) => (
+                  <div
+                    key={ods.number}
                     onClick={() => setIsOdsModalOpen(true)}
-                    className="text-xs font-bold text-emerald-700 hover:underline inline-flex items-center gap-1 cursor-pointer"
+                    title={`ODS ${ods.number}: ${ods.name}`}
+                    className={`h-14 rounded-xl ${ods.color} text-white flex flex-col items-center justify-center p-1.5 shadow-2xs cursor-pointer hover:scale-105 transition-transform group`}
                   >
-                    <span>Ver todos os ODS alinhados</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                    <span className="text-sm font-black leading-none font-['Outfit']">
+                      {ods.number}
+                    </span>
+                    <span className="text-[8px] font-bold opacity-90 truncate max-w-full text-center leading-tight mt-1">
+                      {ods.name.split(' ')[0]}
+                    </span>
+                  </div>
+                ))}
               </div>
             </section>
 

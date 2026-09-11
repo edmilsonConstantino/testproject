@@ -39,7 +39,7 @@ import {
 
 // Abas que renderizam GlobalCommunityView / GlobalImpactView (mantidas em sincronia com os ramos condicionais abaixo)
 const COMMUNITY_TABS = ['comunidade', 'comunidade-global', 'ambiente', 'educacao', 'cultura', 'criar-comunidade', 'explorar-comunidade', 'mais'];
-const IMPACT_TABS = ['impacto', 'impacto-global', 'saude', 'tecnologia', 'empreendedorismo', 'direitos-humanos'];
+const IMPACT_TABS = ['impacto', 'impacto-global', 'saude', 'tecnologia', 'empreendedorismo', 'direitos-humanos', 'impacto-cultura', 'cultura-impacto'];
 const BREADCRUMB_TABS = [
   ...COMMUNITY_TABS,
   ...IMPACT_TABS,
@@ -84,7 +84,7 @@ const getInitialTab = (): string => {
     return 'sobre';
   } else if (target === 'definicoes' || target === 'settings' || target === 'preferencias' || target === 'configuracoes' || target === 'privacidade' || target === 'seguranca') {
     return 'definicoes';
-  } else if (target === 'empreendedorismo' || target === 'tecnologia' || target === 'saude' || target === 'direitos-humanos') {
+  } else if (target === 'empreendedorismo' || target === 'tecnologia' || target === 'saude' || target === 'direitos-humanos' || target === 'impacto-cultura' || target === 'cultura-impacto') {
     return target;
   } else if (target === 'inicio' || target === 'home' || !target) {
     return 'inicio';
@@ -352,7 +352,15 @@ export default function App() {
         ) : IMPACT_TABS.includes(currentTab) ? (
           /* Impacto Global (UI IMPACTO GLOBAL.png) / Ambiente / Saúde / Tecnologia / Empreendedorismo */
           <GlobalImpactView
-            initialSubView={currentTab === 'direitos-humanos' ? 'direitos-humanos' : currentTab === 'empreendedorismo' ? 'empreendedorismo' : currentTab === 'tecnologia' ? 'tecnologia' : currentTab === 'saude' ? 'saude' : currentTab === 'ambiente' ? 'ambiente' : 'todas'}
+            initialSubView={
+              currentTab === 'direitos-humanos' ? 'direitos-humanos' :
+              currentTab === 'empreendedorismo' ? 'empreendedorismo' :
+              currentTab === 'tecnologia' ? 'tecnologia' :
+              currentTab === 'saude' ? 'saude' :
+              currentTab === 'ambiente' ? 'ambiente' :
+              currentTab === 'impacto-cultura' || currentTab === 'cultura-impacto' ? 'cultura' :
+              'todas'
+            }
             onOpenAiAssistant={() => setIsAiModalOpen(true)}
             onOpenMobileMenu={() => setIsMobileSidebarOpen(true)}
             onOpenAuth={handleOpenAuth}

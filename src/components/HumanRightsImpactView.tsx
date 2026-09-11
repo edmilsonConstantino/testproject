@@ -69,6 +69,7 @@ export const HumanRightsImpactView: React.FC<HumanRightsImpactViewProps> = ({
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [supportSuccessToast, setSupportSuccessToast] = useState<string | null>(null);
   const [donationAmount, setDonationAmount] = useState<number>(25);
+  const [carouselIndex, setCarouselIndex] = useState<number>(0);
 
   const showToast = (msg: string) => {
     setSupportSuccessToast(msg);
@@ -150,7 +151,7 @@ export const HumanRightsImpactView: React.FC<HumanRightsImpactViewProps> = ({
     },
   ];
 
-  // 4. Projetos em Destaque (4 cards em linha lado a lado)
+  // 4. Projetos em Destaque (6 projetos para navegação 3 em 3)
   const featuredProjects: ProjectItem[] = [
     {
       id: 'p1',
@@ -195,6 +196,28 @@ export const HumanRightsImpactView: React.FC<HumanRightsImpactViewProps> = ({
       impactPeople: '88K pessoas',
       progressPercent: 75,
       imageUrl: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=600&auto=format&fit=crop&q=80',
+    },
+    {
+      id: 'p5',
+      tag: 'Refugiados',
+      badgeColor: 'bg-[#0D9488]',
+      title: 'Acolhimento e Dignidade',
+      location: 'Grécia',
+      description: 'Assistência jurídica, psicológica e habitação temporária.',
+      impactPeople: '64K pessoas',
+      progressPercent: 81,
+      imageUrl: 'https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?w=600&auto=format&fit=crop&q=80',
+    },
+    {
+      id: 'p6',
+      tag: 'Indígenas',
+      badgeColor: 'bg-[#D97706]',
+      title: 'Povos Originários',
+      location: 'Colômbia',
+      description: 'Demarcação de terras e proteção de líderes comunitários.',
+      impactPeople: '58K pessoas',
+      progressPercent: 85,
+      imageUrl: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=600&auto=format&fit=crop&q=80',
     },
   ];
 
@@ -558,50 +581,70 @@ export const HumanRightsImpactView: React.FC<HumanRightsImpactViewProps> = ({
 
             {/* 2. PROJETOS EM DESTAQUE (4 CARDS) + IMPACTO POR REGIÃO (SIDE-BY-SIDE) */}
             <section id="projetos-destaque" className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-stretch">
-              {/* LADO ESQUERDO: 4 PROJETOS EM DESTAQUE COM SETA DE NAVEGAÇÃO */}
+              {/* LADO ESQUERDO: PROJETOS EM DESTAQUE (3 EM 3 CARDS) COM NAVEGAÇÃO */}
               <div className="lg:col-span-8 flex flex-col justify-between space-y-3">
                 <div className="flex items-center justify-between">
                   <h2 className="text-base sm:text-lg font-black text-[#0F1E3D] font-['Outfit'] tracking-tight">
                     Projetos em destaque
                   </h2>
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setCarouselIndex((prev) => (prev > 0 ? prev - 1 : Math.max(0, featuredProjects.length - 3)))}
+                      className="w-7 h-7 rounded-full border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-600 cursor-pointer shadow-2xs transition-colors"
+                      aria-label="Anterior"
+                      title="Projetos anteriores"
+                    >
+                      <ChevronRight className="w-4 h-4 rotate-180" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCarouselIndex((prev) => (prev < featuredProjects.length - 3 ? prev + 1 : 0))}
+                      className="w-7 h-7 rounded-full border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-600 cursor-pointer shadow-2xs transition-colors"
+                      aria-label="Seguinte"
+                      title="Próximos projetos"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
 
                 <div className="relative flex-1">
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 h-full">
-                    {featuredProjects.map((proj) => (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5 h-full">
+                    {featuredProjects.slice(carouselIndex, carouselIndex + 3).map((proj) => (
                       <div
                         key={proj.id}
                         onClick={() => setSelectedProject(proj)}
                         className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs hover:shadow-xs overflow-hidden transition-all cursor-pointer flex flex-col group justify-between"
                       >
                         <div>
-                          <div className="relative h-28 sm:h-32 overflow-hidden">
+                          <div className="relative h-28 sm:h-32 overflow-hidden bg-slate-100">
                             <img
                               src={proj.imageUrl}
                               alt={proj.title}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                               referrerPolicy="no-referrer"
                             />
-                            <span className={`absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9px] font-bold ${proj.badgeColor} text-white shadow-xs`}>
+                            <span className={`absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9.5px] font-bold ${proj.badgeColor} text-white shadow-xs`}>
                               {proj.tag}
                             </span>
                           </div>
 
-                          <div className="p-3 space-y-1">
-                            <div className="text-[9.5px] font-bold text-slate-400 uppercase tracking-wider">
+                          <div className="p-3.5 space-y-1">
+                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                               {proj.location}
                             </div>
-                            <h3 className="text-xs font-black text-[#0F1E3D] font-['Outfit'] leading-snug line-clamp-2 min-h-[30px] group-hover:text-[#312E81] transition-colors">
+                            <h3 className="text-xs sm:text-[13px] font-bold text-[#0F1E3D] font-['Outfit'] leading-snug line-clamp-1 group-hover:text-[#312E81] transition-colors mt-0.5">
                               {proj.title}
                             </h3>
-                            <p className="text-[10.5px] text-slate-500 line-clamp-2 leading-relaxed">
+                            <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed mt-1">
                               {proj.description}
                             </p>
                           </div>
                         </div>
 
-                        <div className="p-3 pt-0 space-y-1.5">
-                          <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px]">
+                        <div className="p-3.5 pt-0 space-y-1.5">
+                          <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10.5px]">
                             <span className="text-slate-500 truncate">
                               Impactadas: <strong className="text-slate-800 font-bold">{proj.impactPeople}</strong>
                             </span>
@@ -620,8 +663,9 @@ export const HumanRightsImpactView: React.FC<HumanRightsImpactViewProps> = ({
 
                   {/* Botão de navegação do carrossel no canto direito */}
                   <button
-                    onClick={() => showToast('Navegando projetos em destaque')}
-                    className="absolute -right-2 sm:-right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white border border-slate-200 shadow-md flex items-center justify-center text-slate-600 hover:text-[#312E81] hover:bg-slate-50 transition-all cursor-pointer z-10"
+                    type="button"
+                    onClick={() => setCarouselIndex((prev) => (prev < featuredProjects.length - 3 ? prev + 1 : 0))}
+                    className="hidden md:flex absolute -right-2 sm:-right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white border border-slate-200 shadow-md items-center justify-center text-slate-600 hover:text-[#312E81] hover:bg-slate-50 transition-all cursor-pointer z-10"
                     title="Próximos projetos"
                   >
                     <ChevronRight className="w-4 h-4" />

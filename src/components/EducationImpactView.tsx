@@ -65,6 +65,7 @@ export const EducationImpactView: React.FC<EducationImpactViewProps> = ({
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const [supportSuccessToast, setSupportSuccessToast] = useState<string | null>(null);
   const [donationAmount, setDonationAmount] = useState<number>(25);
+  const [carouselIndex, setCarouselIndex] = useState<number>(0);
 
   const showToast = (msg: string) => {
     setSupportSuccessToast(msg);
@@ -168,7 +169,7 @@ export const EducationImpactView: React.FC<EducationImpactViewProps> = ({
       description: 'Formação em competências digitais para jovens e professores.',
       impactPeople: '65K pessoas',
       progressPercent: 72,
-      imageUrl: 'https://images.unsplash.com/photo-1596496181861-5fb43f7a6c2f?w=700&auto=format&fit=crop&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=700&auto=format&fit=crop&q=80',
     },
     {
       id: 'p3',
@@ -189,6 +190,26 @@ export const EducationImpactView: React.FC<EducationImpactViewProps> = ({
       impactPeople: '55K pessoas',
       progressPercent: 78,
       imageUrl: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=700&auto=format&fit=crop&q=80',
+    },
+    {
+      id: 'p5',
+      tag: 'Alfabetização',
+      title: 'Leitura para Todos',
+      location: 'Colômbia',
+      description: 'Bibliotecas itinerantes e programas de leitura comunitária.',
+      impactPeople: '94K pessoas',
+      progressPercent: 82,
+      imageUrl: 'https://images.unsplash.com/photo-1457369804613-52c61a468e7d?w=700&auto=format&fit=crop&q=80',
+    },
+    {
+      id: 'p6',
+      tag: 'Inclusão',
+      title: 'Educação Especial Acessível',
+      location: 'Portugal',
+      description: 'Materiais pedagógicos adaptados para alunos com necessidades especiais.',
+      impactPeople: '43K pessoas',
+      progressPercent: 88,
+      imageUrl: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?w=700&auto=format&fit=crop&q=80',
     },
   ];
 
@@ -374,6 +395,7 @@ export const EducationImpactView: React.FC<EducationImpactViewProps> = ({
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           <div className="lg:col-span-8 space-y-6">
+            {/* Áreas de impacto em educação (6 cards em linha) */}
             <section className="space-y-3">
               <div className="flex items-center justify-between">
                 <h2 className="text-base sm:text-lg font-black text-[#0F1E3D] font-['Outfit'] tracking-tight">
@@ -388,118 +410,167 @@ export const EducationImpactView: React.FC<EducationImpactViewProps> = ({
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                 {impactAreas.map((area) => (
                   <div
                     key={area.id}
                     onClick={() => showToast(`Área: ${area.title}`)}
-                    className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-2xs hover:shadow-xs hover:border-blue-300 transition-all cursor-pointer flex flex-col justify-between group"
+                    className="bg-white rounded-2xl p-3.5 sm:p-4 border border-slate-200/80 shadow-2xs hover:shadow-xs hover:border-blue-300 transition-all cursor-pointer flex flex-col justify-between group"
                   >
                     <div>
-                      <div className={`w-10 h-10 rounded-xl ${area.iconBg} border flex items-center justify-center mb-3 group-hover:scale-105 transition-transform`}>
+                      <div className={`w-9 h-9 rounded-xl ${area.iconBg} border flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform`}>
                         {area.icon}
                       </div>
-                      <h3 className="text-xs sm:text-sm font-bold text-[#0F1E3D] font-['Outfit'] mb-1">
+                      <h3 className="text-xs sm:text-[13px] font-bold text-[#0F1E3D] font-['Outfit'] mb-1">
                         {area.title}
                       </h3>
-                      <p className="text-[11.5px] text-slate-500 leading-relaxed">
+                      <p className="text-[11px] text-slate-500 leading-snug line-clamp-2">
                         {area.description}
                       </p>
                     </div>
-                    <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between">
+                    <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
                       <span className={`text-[11px] font-bold ${area.badgeColor}`}>
                         {area.initiativesCount}
                       </span>
-                      <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
                     </div>
                   </div>
                 ))}
               </div>
             </section>
 
-            <section id="projetos-destaque" className="space-y-3">
-              <div className="flex items-center justify-between">
-                <h2 className="text-base sm:text-lg font-black text-[#0F1E3D] font-['Outfit'] tracking-tight">
-                  Projetos em destaque
-                </h2>
-                <button
-                  onClick={() => showToast('Navegando projetos...')}
-                  className="w-7 h-7 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-600 cursor-pointer"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {featuredProjects.map((proj) => (
-                  <div
-                    key={proj.id}
-                    onClick={() => setSelectedProject(proj)}
-                    className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs hover:shadow-xs overflow-hidden transition-all cursor-pointer flex flex-col group"
-                  >
-                    <div className="relative h-40 overflow-hidden">
-                      <img src={proj.imageUrl} alt={proj.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" referrerPolicy="no-referrer" />
-                      <span className="absolute top-2.5 left-2.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#1D4ED8]/90 backdrop-blur-xs text-white shadow-xs">
-                        {proj.tag}
-                      </span>
-                    </div>
-
-                    <div className="p-4 flex-1 flex flex-col justify-between space-y-3">
-                      <div>
-                        <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                          {proj.location}
-                        </div>
-                        <h3 className="text-sm font-black text-[#0F1E3D] font-['Outfit'] mt-0.5 group-hover:text-[#1D4ED8] transition-colors">
-                          {proj.title}
-                        </h3>
-                        <p className="text-[11.5px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">
-                          {proj.description}
-                        </p>
-                      </div>
-
-                      <div className="space-y-1.5 pt-2 border-t border-slate-100">
-                        <div className="flex items-center justify-between text-[11px]">
-                          <span className="text-slate-500">
-                            Impactadas: <strong className="text-slate-800 font-bold">{proj.impactPeople}</strong>
-                          </span>
-                          <span className="font-bold text-[#1D4ED8]">{proj.progressPercent}% da meta</span>
-                        </div>
-                        <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                          <div className="h-full bg-[#1D4ED8] rounded-full transition-all duration-500" style={{ width: `${proj.progressPercent}%` }} />
-                        </div>
-                      </div>
+            {/* Projetos em destaque + Impacto por região (Lado a Lado) */}
+            <section id="projetos-destaque">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 items-start">
+                <div className="lg:col-span-8 space-y-3 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-base sm:text-lg font-black text-[#0F1E3D] font-['Outfit'] tracking-tight">
+                      Projetos em destaque
+                    </h2>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setCarouselIndex((prev) => (prev > 0 ? prev - 1 : Math.max(0, featuredProjects.length - 3)))}
+                        className="w-7 h-7 rounded-full border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-600 cursor-pointer shadow-2xs transition-colors"
+                        aria-label="Anterior"
+                        title="Projetos anteriores"
+                      >
+                        <ChevronRight className="w-4 h-4 rotate-180" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCarouselIndex((prev) => (prev < featuredProjects.length - 3 ? prev + 1 : 0))}
+                        className="w-7 h-7 rounded-full border border-slate-200 bg-white hover:bg-slate-50 flex items-center justify-center text-slate-600 cursor-pointer shadow-2xs transition-colors"
+                        aria-label="Seguinte"
+                        title="Próximos projetos"
+                      >
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
                     </div>
                   </div>
-                ))}
-              </div>
 
-              <ImpactRegionMapCard
-                category="educacao"
-                className="mt-4"
-                onOpenReport={() => setIsReportModalOpen(true)}
-                onSeeAll={() => setIsReportModalOpen(true)}
-              />
+                  <div className="relative">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5">
+                      {featuredProjects.slice(carouselIndex, carouselIndex + 3).map((proj) => (
+                        <div
+                          key={proj.id}
+                          onClick={() => setSelectedProject(proj)}
+                          className="bg-white rounded-2xl border border-slate-200/80 shadow-2xs hover:shadow-xs overflow-hidden transition-all cursor-pointer flex flex-col group"
+                        >
+                          <div className="relative h-28 sm:h-32 overflow-hidden bg-slate-100">
+                            <img
+                              src={proj.imageUrl}
+                              alt={proj.title}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              referrerPolicy="no-referrer"
+                            />
+                            <span className="absolute top-2 left-2 px-2 py-0.5 rounded-full text-[9.5px] font-bold bg-[#1D4ED8]/90 backdrop-blur-xs text-white shadow-xs">
+                              {proj.tag}
+                            </span>
+                          </div>
+
+                          <div className="p-3.5 flex-1 flex flex-col justify-between space-y-2.5">
+                            <div>
+                              <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                                {proj.location}
+                              </div>
+                              <h3 className="text-xs sm:text-[13px] font-bold text-[#0F1E3D] font-['Outfit'] mt-0.5 group-hover:text-[#1D4ED8] transition-colors line-clamp-1">
+                                {proj.title}
+                              </h3>
+                              <p className="text-[11px] text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                                {proj.description}
+                              </p>
+                            </div>
+
+                            <div className="space-y-1.5 pt-2 border-t border-slate-100">
+                              <div className="flex items-center justify-between text-[10.5px]">
+                                <span className="text-slate-500">
+                                  Impactadas: <strong className="text-slate-800 font-bold">{proj.impactPeople}</strong>
+                                </span>
+                                <span className="font-bold text-[#1D4ED8] shrink-0">{proj.progressPercent}% da meta</span>
+                              </div>
+                              <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                                <div
+                                  className="h-full bg-[#1D4ED8] rounded-full transition-all duration-500"
+                                  style={{ width: `${proj.progressPercent}%` }}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => setCarouselIndex((prev) => (prev < featuredProjects.length - 3 ? prev + 1 : 0))}
+                      className="hidden md:flex absolute -right-3 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white shadow-md border border-slate-200 items-center justify-center text-slate-700 hover:bg-slate-50 z-10 cursor-pointer"
+                      title="Ver mais projetos"
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="lg:col-span-4 min-w-0">
+                  <ImpactRegionMapCard
+                    category="educacao"
+                    title="Impacto por região"
+                    customRegions={[
+                      { id: 'africa', name: 'África', percent: 34, projectsCount: 460, highlight: true },
+                      { id: 'asia', name: 'Ásia', percent: 28, projectsCount: 380 },
+                      { id: 'latin-america', name: 'América Latina', percent: 20, projectsCount: 270 },
+                      { id: 'europe', name: 'Europa', percent: 12, projectsCount: 160 },
+                      { id: 'north-america', name: 'América do Norte', percent: 6, projectsCount: 85 },
+                    ]}
+                    onOpenReport={() => setIsReportModalOpen(true)}
+                    onSeeAll={() => setIsReportModalOpen(true)}
+                  />
+                </div>
+              </div>
             </section>
 
+            {/* O impacto em números (6 cards em linha) */}
             <section className="space-y-3">
               <h2 className="text-base sm:text-lg font-black text-[#0F1E3D] font-['Outfit'] tracking-tight">
                 O impacto em números
               </h2>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                 {impactCards.map((c) => (
-                  <div key={c.id} className="bg-white rounded-2xl p-4 border border-slate-200/80 shadow-2xs hover:shadow-xs transition-all">
-                    <div className="text-base sm:text-lg font-black text-[#0F1E3D] font-['Outfit'] tracking-tight">
-                      {c.value}
-                    </div>
-                    <div className="text-xs text-slate-500 font-medium mb-2">
-                      {c.label}
-                    </div>
-                    <div className="inline-block text-[10.5px] font-bold px-2 py-0.5 rounded-full mb-3 bg-blue-50 text-blue-700">
-                      ▲ {c.change}
+                  <div key={c.id} className="bg-white rounded-2xl p-3.5 border border-slate-200/80 shadow-2xs hover:shadow-xs transition-all flex flex-col justify-between">
+                    <div>
+                      <div className="text-sm sm:text-[15px] font-black text-[#0F1E3D] font-['Outfit'] tracking-tight truncate">
+                        {c.value}
+                      </div>
+                      <div className="text-[11px] text-slate-500 font-medium mb-1.5 truncate">
+                        {c.label}
+                      </div>
+                      <div className="inline-block text-[10px] font-bold px-2 py-0.5 rounded-full mb-2 bg-blue-50 text-blue-700">
+                        ▲ {c.change}
+                      </div>
                     </div>
 
-                    <div className="h-9 w-full pt-1">
+                    <div className="h-8 w-full pt-1">
                       <svg viewBox="0 0 100 30" className="w-full h-full overflow-visible">
                         <defs>
                           <linearGradient id={`spark-${c.id}`} x1="0%" y1="0%" x2="0%" y2="100%">
@@ -513,7 +584,7 @@ export const EducationImpactView: React.FC<EducationImpactViewProps> = ({
                           strokeWidth="2"
                           strokeLinecap="round"
                           strokeLinejoin="round"
-                          points={c.sparkline.map((val, idx) => `${idx * 12.5},${30 - (val / 100) * 25}`).join(' ')}
+                          points={c.sparkline.map((val, idx) => `${idx * 12.5},${30 - (val / 100) * 24}`).join(' ')}
                         />
                       </svg>
                     </div>

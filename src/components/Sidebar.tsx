@@ -178,7 +178,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 (currentTab === 'impacto-global' ||
                   currentTab === 'saude' ||
                   currentTab === 'tecnologia' ||
-                  currentTab === 'empreendedorismo')) ||
+                  currentTab === 'empreendedorismo' ||
+                  currentTab === 'direitos-humanos' ||
+                  currentTab === 'impacto-cultura' ||
+                  currentTab === 'cultura-impacto')) ||
               (item.id === 'sobre' && currentTab === 'sobre-a-vila') ||
               (item.id === 'definicoes' &&
                 (currentTab === 'preferencias' ||

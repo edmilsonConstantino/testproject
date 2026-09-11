@@ -30,6 +30,7 @@ export interface ImpactRegionMapCardProps {
   customRegions?: RegionImpactItem[];
   className?: string;
   showFooterButton?: boolean;
+  showPercentagesInLegend?: boolean;
 }
 
 // Mapeamento preciso de países para continentes geográficos
@@ -310,19 +311,19 @@ const THEME_STYLES: Record<
     },
   },
   'cultura': {
-    primaryDark: '#9D174D',
-    primaryMedium: '#DB2777',
-    border: '#FBCFE8',
-    hoverPin: '#9D174D',
-    btnText: '#BE185D',
-    btnHover: '#831843',
+    primaryDark: '#371B80',
+    primaryMedium: '#7C3AED',
+    border: '#DDD6FE',
+    hoverPin: '#371B80',
+    btnText: '#371B80',
+    btnHover: '#281363',
     palette: {
-      'europe': { fill: '#DB2777', stroke: '#BE185D', dot: 'bg-[#BE185D]' },
-      'latin-america': { fill: '#E11D48', stroke: '#BE185D', dot: 'bg-[#DB2777]' },
-      'africa': { fill: '#F472B6', stroke: '#DB2777', dot: 'bg-[#F472B6]' },
-      'asia': { fill: '#FB7185', stroke: '#DB2777', dot: 'bg-[#FB7185]' },
-      'north-america': { fill: '#FBCFE8', stroke: '#F472B6', dot: 'bg-[#FBCFE8]' },
-      'oceania': { fill: '#FCE7F3', stroke: '#F472B6', dot: 'bg-[#FCE7F3]' },
+      'africa': { fill: '#F59E0B', stroke: '#D97706', dot: 'bg-amber-500' },
+      'asia': { fill: '#7C3AED', stroke: '#6D28D9', dot: 'bg-violet-600' },
+      'latin-america': { fill: '#3B82F6', stroke: '#2563EB', dot: 'bg-blue-600' },
+      'europe': { fill: '#A855F7', stroke: '#9333EA', dot: 'bg-purple-500' },
+      'north-america': { fill: '#312E81', stroke: '#1E1B4B', dot: 'bg-indigo-900' },
+      'oceania': { fill: '#C084FC', stroke: '#A855F7', dot: 'bg-fuchsia-400' },
     },
   },
 };
@@ -343,6 +344,7 @@ export const ImpactRegionMapCard: React.FC<ImpactRegionMapCardProps> = ({
   customRegions,
   className = '',
   showFooterButton = false,
+  showPercentagesInLegend = false,
 }) => {
   const [hoveredRegionId, setHoveredRegionId] = useState<string | null>(null);
 
@@ -424,7 +426,7 @@ export const ImpactRegionMapCard: React.FC<ImpactRegionMapCardProps> = ({
 
   return (
     <div
-      className={`bg-white rounded-3xl p-5 sm:p-5.5 border border-slate-200/80 shadow-2xs flex flex-col justify-between ${className}`}
+      className={`bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-5 border border-slate-200/80 shadow-2xs flex flex-col justify-between ${className}`}
     >
       {/* 1. Header com Título e Ação "Ver todas" */}
       <div className="flex items-center justify-between pb-1">
@@ -446,7 +448,7 @@ export const ImpactRegionMapCard: React.FC<ImpactRegionMapCardProps> = ({
       </div>
 
       {/* 2. Mapa Mundi Autêntico com Projeção e Cores Fiéis ao Mockup */}
-      <div className="relative py-2 flex items-center justify-between gap-1 group/map">
+      <div className="relative py-1.5 flex items-center justify-between gap-1 group/map">
         <div className="flex-1 min-w-0">
           <svg
             viewBox="0 0 350 170"
@@ -525,14 +527,16 @@ export const ImpactRegionMapCard: React.FC<ImpactRegionMapCardProps> = ({
           </svg>
         </div>
 
-        {/* Escala Percentual Vertical na lateral direita como na imagem de referência */}
-        <div className="flex flex-col justify-between py-1 text-[9.5px] font-bold text-slate-400 select-none shrink-0 h-[100px] text-right pr-0.5">
-          <span>34%</span>
-          <span>26%</span>
-          <span>20%</span>
-          <span>12%</span>
-          <span>8%</span>
-        </div>
+        {/* Escala Percentual Vertical na lateral direita se showPercentagesInLegend for false */}
+        {!showPercentagesInLegend && (
+          <div className="flex flex-col justify-between py-1 text-[9.5px] font-bold text-slate-400 select-none shrink-0 h-[100px] text-right pr-0.5">
+            <span>{regions[0]?.percent || 34}%</span>
+            <span>{regions[1]?.percent || 26}%</span>
+            <span>{regions[2]?.percent || 20}%</span>
+            <span>{regions[3]?.percent || 12}%</span>
+            <span>{regions[4]?.percent || 8}%</span>
+          </div>
+        )}
 
         {/* Tooltip flutuante ao passar o cursor na região */}
         {hoveredRegionId && (
@@ -556,12 +560,19 @@ export const ImpactRegionMapCard: React.FC<ImpactRegionMapCardProps> = ({
               key={reg.id}
               onMouseEnter={() => setHoveredRegionId(reg.id)}
               onMouseLeave={() => setHoveredRegionId(null)}
-              className={`flex items-center gap-2 cursor-pointer transition-colors ${
+              className={`flex items-center justify-between cursor-pointer transition-colors ${
                 isHovered ? 'font-bold text-slate-950' : 'text-slate-600 hover:text-slate-900'
               }`}
             >
-              <span className={`w-2 h-2 rounded-full shrink-0 ${regPalette.dot}`} />
-              <span className="truncate">{reg.name}</span>
+              <div className="flex items-center gap-2">
+                <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${regPalette.dot}`} />
+                <span className="truncate">{reg.name}</span>
+              </div>
+              {showPercentagesInLegend ? (
+                <span className="font-bold text-[#0F172A] text-xs shrink-0">
+                  {reg.percent}%
+                </span>
+              ) : null}
             </div>
           );
         })}
