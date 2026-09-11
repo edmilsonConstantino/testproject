@@ -10,6 +10,7 @@ export interface AppLayoutProps {
   onSelectTab?: (tabId: string) => void;
   onOpenAuth?: (mode: 'login' | 'register') => void;
   onOpenImpactModal?: () => void;
+  onOpenSupportModal?: () => void;
   isMobileSidebarOpen?: boolean;
   onCloseMobileSidebar?: () => void;
   onOpenMobileSidebar?: () => void;
@@ -29,6 +30,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onSelectTab = () => {},
   onOpenAuth = () => {},
   onOpenImpactModal = () => {},
+  onOpenSupportModal = () => {},
   isMobileSidebarOpen = false,
   onCloseMobileSidebar = () => {},
   onOpenMobileSidebar = () => {},
@@ -49,6 +51,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         onSelectTab={onSelectTab}
         onOpenAuth={onOpenAuth}
         onOpenImpactModal={onOpenImpactModal}
+        onOpenSupportModal={onOpenSupportModal}
         isMobileOpen={isMobileSidebarOpen}
         onCloseMobile={onCloseMobileSidebar}
         isLoggedIn={isLoggedIn}

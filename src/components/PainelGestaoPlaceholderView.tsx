@@ -30,6 +30,7 @@ interface PainelGestaoPlaceholderViewProps {
   currentSection?: string;
   onNavigateToTab: (tabId: string) => void;
   onBreadcrumbChange?: (items: BreadcrumbItem[]) => void;
+  onOpenSupportModal?: () => void;
 }
 
 export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewProps> = ({
@@ -37,6 +38,7 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
   currentSection = 'painel-gestao',
   onNavigateToTab,
   onBreadcrumbChange,
+  onOpenSupportModal,
 }) => {
   const getSectionMetadata = () => {
     switch (currentSection) {
@@ -118,7 +120,13 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
               key={tab.id}
               type="button"
               id={`tab-plataforma-shortcut-${tab.id}`}
-              onClick={() => onNavigateToTab(tab.id)}
+              onClick={() => {
+                if ((tab.id === 'gestao-suporte' || tab.id === 'suporte') && onOpenSupportModal) {
+                  onOpenSupportModal();
+                } else {
+                  onNavigateToTab(tab.id);
+                }
+              }}
               className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                 isActive
                   ? 'bg-white text-[#0055FE] shadow-2xs border border-blue-200/70'
@@ -194,50 +202,73 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
 
       {/* Seção Condicional por Atalho Ativo */}
       {(currentSection === 'gestao-suporte' || currentSection === 'suporte') ? (
-        /* Caso Especial: Suporte (em validação com o usuário) */
-        <div className="bg-white border border-amber-200 rounded-3xl p-6 sm:p-8 shadow-xs space-y-6">
+        /* Opção 2: Central de Atendimento & Modal Rápido de Suporte */
+        <div className="bg-white border border-blue-200/80 rounded-3xl p-6 sm:p-8 shadow-xs space-y-6">
           <div className="flex items-start justify-between gap-4 flex-wrap">
             <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold">
-                <LifeBuoy className="w-3.5 h-3.5 text-amber-600" />
-                <span>Atalho em Validação de Escopo</span>
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-50 text-[#0055FE] border border-blue-200 text-xs font-bold">
+                <LifeBuoy className="w-3.5 h-3.5 text-[#0055FE]" />
+                <span>Atalho de Suporte Operacional (Opção 2 Ativa)</span>
               </div>
               <h2 className="text-xl font-black text-slate-900 font-['Outfit']">
-                Módulo de Suporte & Central de Ajuda
+                Central de Atendimento & Suporte Técnico
               </h2>
               <p className="text-sm text-slate-600 max-w-3xl leading-relaxed">
-                Este atalho está presente na imagem de referência <code>UI IMPACTO GLOBAL DA PLATAFORMA VILA.png</code> na secção <strong>PLATAFORMA</strong>, mas não faz parte do índice padrão de 12 telas do <code>UI PAINEL DE GESTAO.png</code>.
+                Canal direto e prioritário de assistência técnica para administradores municipais, regionais e globais da plataforma VILA.
               </p>
             </div>
 
-            <button
-              type="button"
-              onClick={() => onNavigateToTab('painel-gestao')}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold text-[#0055FE] bg-blue-50 hover:bg-blue-100 transition-colors cursor-pointer"
-            >
-              <span>Ver Painel Principal</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+            <div className="flex items-center gap-2">
+              {onOpenSupportModal && (
+                <button
+                  type="button"
+                  id="btn-open-support-modal-direct"
+                  onClick={onOpenSupportModal}
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-bold text-white bg-[#0055FE] hover:bg-blue-600 shadow-xs transition-colors cursor-pointer"
+                >
+                  <LifeBuoy className="w-4 h-4" />
+                  <span>Abrir Modal de Atendimento</span>
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => onNavigateToTab('painel-gestao')}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors cursor-pointer"
+              >
+                <span>Painel Principal</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
             <div className="p-5 rounded-2xl border border-blue-100 bg-blue-50/50 space-y-2">
               <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-blue-600" />
-                Opção 1: Nova Tela Interna de Suporte
+                <LifeBuoy className="w-4 h-4 text-blue-600" />
+                Modal Rápido Integrado
               </h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Construir uma central dedicada aos administradores com abertura de tickets técnicos, documentação de governança e canal direto com os desenvolvedores da VILA.
+                Envio imediato de tíquetes operacionais com categoria de incidentes, dúvidas de moderação e solicitação de permissões territoriais.
               </p>
             </div>
 
             <div className="p-5 rounded-2xl border border-slate-200 bg-slate-50/70 space-y-2">
               <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <ExternalLink className="w-4 h-4 text-slate-600" />
-                Opção 2: Modal ou Link Externo
+                E-mail & SLA Prioritário
               </h3>
               <p className="text-xs text-slate-600 leading-relaxed">
-                Abrir um modal de ajuda rápida para administradores ou apontar para a documentação e canal de apoio externo da rede.
+                Contacto institucional direto em <strong className="text-slate-800">suporte@vilaglobal.org</strong> com resposta média inferior a 2 horas.
+              </p>
+            </div>
+
+            <div className="p-5 rounded-2xl border border-emerald-100 bg-emerald-50/50 space-y-2">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <Shield className="w-4 h-4 text-emerald-600" />
+                Escopo {currentUser.scope}
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                As ocorrências são automaticamente vinculadas ao seu território de autoridade para resolução ágil.
               </p>
             </div>
           </div>

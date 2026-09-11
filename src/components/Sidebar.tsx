@@ -33,6 +33,7 @@ export interface SidebarProps {
   onSelectTab: (tabId: string) => void;
   onOpenAuth: (mode: 'login' | 'register') => void;
   onOpenImpactModal?: () => void;
+  onOpenSupportModal?: () => void;
   isMobileOpen?: boolean;
   onCloseMobile?: () => void;
   isLoggedIn?: boolean;
@@ -52,6 +53,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onSelectTab,
   onOpenAuth,
   onOpenImpactModal,
+  onOpenSupportModal,
   isMobileOpen = false,
   onCloseMobile,
   isLoggedIn = false,
@@ -299,7 +301,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     type="button"
                     id={`nav-item-plataforma-${shortcut.id}`}
                     onClick={() => {
-                      onSelectTab(shortcut.targetTab);
+                      if (shortcut.id === 'suporte' && onOpenSupportModal) {
+                        onOpenSupportModal();
+                      } else {
+                        onSelectTab(shortcut.targetTab);
+                      }
                       if (onCloseMobile) onCloseMobile();
                     }}
                     className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[12px] leading-tight transition-all duration-200 group cursor-pointer ${

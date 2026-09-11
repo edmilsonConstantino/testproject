@@ -22,6 +22,7 @@ import { SearchCommandModal } from './components/SearchCommandModal';
 import { VilaAiChatModal } from './components/VilaAiChatModal';
 import { AuthModal } from './components/AuthModal';
 import { ImpactModal } from './components/ImpactModal';
+import { SupportModal } from './components/SupportModal';
 import { COUNTRIES_DATA } from './data/countriesData';
 import { CountryData } from './types';
 import {
@@ -146,6 +147,7 @@ export default function App() {
   const [isSearchModalOpen, setIsSearchModalOpen] = useState(false);
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [isImpactModalOpen, setIsImpactModalOpen] = useState(false);
+  const [isSupportModalOpen, setIsSupportModalOpen] = useState(false);
   const [authModal, setAuthModal] = useState<{ isOpen: boolean; mode: 'login' | 'register' }>({
     isOpen: false,
     mode: 'login',
@@ -199,6 +201,16 @@ export default function App() {
         setCurrentTab(target);
       } else if (target === 'impacto' || target === 'impacto-global') {
         setCurrentTab('impacto');
+      } else if (
+        target === 'painel-gestao' ||
+        target === 'gestao' ||
+        target === 'admin' ||
+        PLATAFORMA_TABS.includes(target)
+      ) {
+        setCurrentTab(target);
+        if (target === 'gestao-suporte' || target === 'suporte') {
+          setIsSupportModalOpen(true);
+        }
       } else if (target === 'sobre' || target === 'sobre-a-vila' || target.includes('sobre')) {
         setCurrentTab('sobre');
       } else if (target === 'definicoes' || target === 'settings' || target === 'preferencias' || target === 'configuracoes') {
@@ -259,6 +271,7 @@ export default function App() {
         }}
         onOpenAuth={handleOpenAuth}
         onOpenImpactModal={() => setIsImpactModalOpen(true)}
+        onOpenSupportModal={() => setIsSupportModalOpen(true)}
         isMobileSidebarOpen={isMobileSidebarOpen}
         onCloseMobileSidebar={() => setIsMobileSidebarOpen(false)}
         onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
@@ -447,6 +460,7 @@ export default function App() {
             currentSection={currentTab}
             onNavigateToTab={handleNavigateToTab}
             onBreadcrumbChange={handleBreadcrumbChange}
+            onOpenSupportModal={() => setIsSupportModalOpen(true)}
           />
         ) : (currentTab === 'perfil-vila' || currentTab === 'perfil' || currentTab === 'meu-perfil') ? (
           /* Perfil VILA (Persona Cidadã Ativa) */
@@ -615,6 +629,12 @@ export default function App() {
       <ImpactModal
         isOpen={isImpactModalOpen}
         onClose={() => setIsImpactModalOpen(false)}
+      />
+
+      <SupportModal
+        isOpen={isSupportModalOpen}
+        onClose={() => setIsSupportModalOpen(false)}
+        currentUser={currentUser}
       />
     </>
   );
