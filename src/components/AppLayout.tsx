@@ -1,9 +1,12 @@
 import React from 'react';
 import { Sidebar } from './Sidebar';
 import { Topbar, BreadcrumbItem } from './Topbar';
+import { DemoUser } from '../data/demoUsers';
 
 export interface AppLayoutProps {
   currentTab?: string;
+  currentUser?: DemoUser;
+  onSelectDemoUser?: (user: DemoUser) => void;
   onSelectTab?: (tabId: string) => void;
   onOpenAuth?: (mode: 'login' | 'register') => void;
   onOpenImpactModal?: () => void;
@@ -21,6 +24,8 @@ export interface AppLayoutProps {
 
 export const AppLayout: React.FC<AppLayoutProps> = ({
   currentTab = 'noticias',
+  currentUser,
+  onSelectDemoUser,
   onSelectTab = () => {},
   onOpenAuth = () => {},
   onOpenImpactModal = () => {},
@@ -40,6 +45,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       {/* 1. Sidebar de navegação fixa à esquerda (Logo VILA, menu, widget de impacto, idioma, tema, login) */}
       <Sidebar
         currentTab={currentTab}
+        currentUser={currentUser}
         onSelectTab={onSelectTab}
         onOpenAuth={onOpenAuth}
         onOpenImpactModal={onOpenImpactModal}
@@ -54,6 +60,10 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         {/* Barra superior Topbar */}
         {showTopbar && (
           <Topbar
+            currentUser={currentUser}
+            onSelectDemoUser={onSelectDemoUser}
+            userName={currentUser?.name}
+            userAvatarUrl={currentUser?.avatarUrl}
             searchPlaceholder={searchPlaceholder}
             breadcrumb={breadcrumb}
             onOpenSearchModal={onOpenSearchModal}

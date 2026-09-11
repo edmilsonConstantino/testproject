@@ -22,9 +22,11 @@ import { InteressesCausasTab } from './InteressesCausasTab';
 import { InteressesComunidadesTab } from './InteressesComunidadesTab';
 import { InteressesOportunidadesTab } from './InteressesOportunidadesTab';
 import { BreadcrumbItem } from '../Topbar';
+import { DemoUser } from '../../data/demoUsers';
 
 interface PerfilVilaViewProps {
   initialTab?: PerfilVilaTabId;
+  currentUser?: DemoUser;
   onNavigateToTab?: (tabId: string) => void;
   onOpenAiAssistant?: () => void;
   onOpenAuth?: (mode: 'login' | 'register') => void;
@@ -33,6 +35,7 @@ interface PerfilVilaViewProps {
 
 export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
   initialTab = 'perfil',
+  currentUser,
   onNavigateToTab,
   onOpenAiAssistant,
   onOpenAuth,
@@ -168,6 +171,7 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
       <main className="max-w-[1600px] mx-auto px-3.5 sm:px-5 lg:px-6 pt-5 sm:pt-6">
         {activeTab === 'perfil' && (
           <VilaPerfilTab
+            currentUser={currentUser}
             onNavigateToSubTab={(subTab) => setActiveTab(subTab)}
             onOpenAiAssistant={onOpenAiAssistant}
             onNavigateToTab={onNavigateToTab}

@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Globe, ChevronDown, ChevronRight, Bell, Menu, X, Check, User, Settings, LogOut, ShieldCheck, Home, ArrowLeft } from 'lucide-react';
+import { Search, Globe, ChevronDown, ChevronRight, Bell, Menu, X, Check, User, Settings, LogOut, ShieldCheck, Home, ArrowLeft, Building2 } from 'lucide-react';
 import { Logo } from './Logo';
 import { GLOBAL_NOTIFICATIONS } from '../data/countriesData';
+import { DemoUser } from '../data/demoUsers';
+import { DemoUserSwitcher } from './DemoUserSwitcher';
 
 export interface BreadcrumbItem {
   label: string;
@@ -11,6 +13,8 @@ export interface BreadcrumbItem {
 export interface TopbarProps {
   userName?: string;
   userAvatarUrl?: string;
+  currentUser?: DemoUser;
+  onSelectDemoUser?: (user: DemoUser) => void;
   notificationCount?: number;
   currentLanguage?: 'PT' | 'EN' | 'ES';
   searchPlaceholder?: string;
@@ -27,6 +31,8 @@ export interface TopbarProps {
 export const Topbar: React.FC<TopbarProps> = ({
   userName = 'Ana Silva',
   userAvatarUrl = 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80',
+  currentUser,
+  onSelectDemoUser,
   notificationCount,
   currentLanguage = 'PT',
   searchPlaceholder = 'Pesquisar países, regiões, cidades, projetos, comunidades...',
@@ -404,116 +410,147 @@ export const Topbar: React.FC<TopbarProps> = ({
           )}
         </div>
 
-        {/* Avatar do Usuário + Indicador Online */}
-        <div className="relative" ref={avatarDropdownRef}>
-          <div
-            onClick={() => setIsAvatarMenuOpen(!isAvatarMenuOpen)}
-            id="topbar-user-avatar-trigger"
-            className="relative cursor-pointer group"
-            role="button"
-            tabIndex={0}
-            aria-haspopup="menu"
-            aria-expanded={isAvatarMenuOpen}
-            onKeyDown={(e) => e.key === 'Enter' && setIsAvatarMenuOpen(!isAvatarMenuOpen)}
-            title="Perfil do Utilizador"
-          >
-            {userAvatarUrl ? (
-              <img
-                src={userAvatarUrl}
-                alt={userName}
-                className="w-9 h-9 rounded-full object-cover border border-slate-200 group-hover:ring-2 group-hover:ring-blue-400/40 transition-all"
-              />
-            ) : (
-              <div className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200/90 flex items-center justify-center text-slate-600 group-hover:bg-slate-200/80 group-hover:ring-2 group-hover:ring-blue-400/40 transition-all shadow-2xs">
-                <User className="w-4.5 h-4.5 text-slate-600" />
-              </div>
-            )}
-            <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#22C55E] border-2 border-white rounded-full"></span>
-          </div>
+          {/* Seletor de Utilizador Demo (Troca rápida de papel em dev) */}
+          {currentUser && onSelectDemoUser && (
+            <DemoUserSwitcher
+              currentUser={currentUser}
+              onSelectUser={onSelectDemoUser}
+            />
+          )}
 
-          {/* Dropdown de Menu do Avatar */}
-          {isAvatarMenuOpen && (
+          {/* Avatar do Usuário + Indicador Online */}
+          <div className="relative" ref={avatarDropdownRef}>
             <div
-              id="topbar-user-dropdown"
-              role="menu"
-              className="absolute right-0 mt-2 w-56 bg-white border border-slate-100 rounded-2xl shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150"
+              onClick={() => setIsAvatarMenuOpen(!isAvatarMenuOpen)}
+              id="topbar-user-avatar-trigger"
+              className="relative cursor-pointer group"
+              role="button"
+              tabIndex={0}
+              aria-haspopup="menu"
+              aria-expanded={isAvatarMenuOpen}
+              onKeyDown={(e) => e.key === 'Enter' && setIsAvatarMenuOpen(!isAvatarMenuOpen)}
+              title="Perfil do Utilizador"
             >
-              <div className="px-4 py-2.5 border-b border-slate-100 flex items-center gap-3">
-                {userAvatarUrl ? (
-                  <img
-                    src={userAvatarUrl}
-                    alt={userName}
-                    className="w-8 h-8 rounded-full object-cover border border-slate-200"
-                  />
-                ) : (
-                  <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 shrink-0">
-                    <User className="w-4 h-4 text-slate-600" />
+              {userAvatarUrl ? (
+                <img
+                  src={userAvatarUrl}
+                  alt={userName}
+                  className="w-9 h-9 rounded-full object-cover border border-slate-200 group-hover:ring-2 group-hover:ring-blue-400/40 transition-all"
+                />
+              ) : (
+                <div className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200/90 flex items-center justify-center text-slate-600 group-hover:bg-slate-200/80 group-hover:ring-2 group-hover:ring-blue-400/40 transition-all shadow-2xs">
+                  <User className="w-4.5 h-4.5 text-slate-600" />
+                </div>
+              )}
+              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#22C55E] border-2 border-white rounded-full"></span>
+            </div>
+
+            {/* Dropdown de Menu do Avatar */}
+            {isAvatarMenuOpen && (
+              <div
+                id="topbar-user-dropdown"
+                role="menu"
+                className="absolute right-0 mt-2 w-60 bg-white border border-slate-100 rounded-2xl shadow-xl py-2 z-50 animate-in fade-in slide-in-from-top-1 duration-150"
+              >
+                <div className="px-4 py-2.5 border-b border-slate-100 flex items-center gap-3">
+                  {userAvatarUrl ? (
+                    <img
+                      src={userAvatarUrl}
+                      alt={userName}
+                      className="w-9 h-9 rounded-full object-cover border border-slate-200 shrink-0"
+                    />
+                  ) : (
+                    <div className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 shrink-0">
+                      <User className="w-4 h-4 text-slate-600" />
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-bold text-[#0F1E3D] truncate">{userName}</p>
+                    <p className="text-[10px] text-blue-600 font-semibold truncate">
+                      {currentUser?.roleLabel || 'Membro Global'}
+                    </p>
+                    {currentUser?.scope && currentUser.scope !== '—' && (
+                      <p className="text-[9.5px] text-slate-400 truncate mt-0.5">
+                        {currentUser.scope}
+                      </p>
+                    )}
                   </div>
-                )}
-                <div className="min-w-0 flex-1">
-                  <p className="text-xs font-bold text-[#0F1E3D] truncate">{userName}</p>
-                  <p className="text-[10px] text-slate-400 truncate">Membro Global</p>
+                </div>
+
+                <div className="py-1">
+                  {/* Atalho exclusivo para Administradores */}
+                  {currentUser?.isAdmin && (
+                    <button
+                      type="button"
+                      role="menuitem"
+                      onClick={() => {
+                        setIsAvatarMenuOpen(false);
+                        onNavigateToTab?.('painel-gestao');
+                      }}
+                      className="w-full px-4 py-2 text-left text-xs font-bold text-[#0055FE] bg-blue-50/60 hover:bg-blue-100/70 flex items-center gap-2.5 transition-colors cursor-pointer border-b border-slate-100 mb-1"
+                    >
+                      <Building2 className="w-3.5 h-3.5 text-[#0055FE]" />
+                      <span>Painel de Gestão</span>
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setIsAvatarMenuOpen(false);
+                      onNavigateToTab?.('perfil-vila');
+                    }}
+                    className="w-full px-4 py-2 text-left text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 transition-colors cursor-pointer"
+                  >
+                    <User className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Meu Perfil</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setIsAvatarMenuOpen(false);
+                      onNavigateToTab?.('definicoes');
+                    }}
+                    className="w-full px-4 py-2 text-left text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 transition-colors cursor-pointer"
+                  >
+                    <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Privacidade & Dados</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setIsAvatarMenuOpen(false);
+                      onNavigateToTab?.('definicoes');
+                    }}
+                    className="w-full px-4 py-2 text-left text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 transition-colors cursor-pointer"
+                  >
+                    <Settings className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Definições da Conta</span>
+                  </button>
+                </div>
+
+                <div className="pt-1 border-t border-slate-100">
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setIsAvatarMenuOpen(false);
+                      onOpenAuth?.('login');
+                    }}
+                    className="w-full px-4 py-2 text-left text-xs font-bold text-red-600 hover:bg-red-50/60 flex items-center gap-2.5 transition-colors cursor-pointer"
+                  >
+                    <LogOut className="w-3.5 h-3.5 text-red-500" />
+                    <span>Terminar Sessão</span>
+                  </button>
                 </div>
               </div>
-
-              <div className="py-1">
-                <button
-                  type="button"
-                  role="menuitem"
-                  onClick={() => {
-                    setIsAvatarMenuOpen(false);
-                    onNavigateToTab?.('perfil-vila');
-                  }}
-                  className="w-full px-4 py-2 text-left text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 transition-colors cursor-pointer"
-                >
-                  <User className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Meu Perfil</span>
-                </button>
-
-                <button
-                  type="button"
-                  role="menuitem"
-                  onClick={() => {
-                    setIsAvatarMenuOpen(false);
-                    onNavigateToTab?.('definicoes');
-                  }}
-                  className="w-full px-4 py-2 text-left text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 transition-colors cursor-pointer"
-                >
-                  <ShieldCheck className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Privacidade & Dados</span>
-                </button>
-
-                <button
-                  type="button"
-                  role="menuitem"
-                  onClick={() => {
-                    setIsAvatarMenuOpen(false);
-                    onNavigateToTab?.('definicoes');
-                  }}
-                  className="w-full px-4 py-2 text-left text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 transition-colors cursor-pointer"
-                >
-                  <Settings className="w-3.5 h-3.5 text-slate-400" />
-                  <span>Definições da Conta</span>
-                </button>
-              </div>
-
-              <div className="pt-1 border-t border-slate-100">
-                <button
-                  type="button"
-                  role="menuitem"
-                  onClick={() => {
-                    setIsAvatarMenuOpen(false);
-                    onOpenAuth?.('login');
-                  }}
-                  className="w-full px-4 py-2 text-left text-xs font-bold text-red-600 hover:bg-red-50/60 flex items-center gap-2.5 transition-colors cursor-pointer"
-                >
-                  <LogOut className="w-3.5 h-3.5 text-red-500" />
-                  <span>Terminar Sessão</span>
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
       </div>
     </header>
   );

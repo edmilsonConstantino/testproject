@@ -16,13 +16,16 @@ import {
   Moon,
   X,
   Check,
-  LogOut
+  LogOut,
+  Building2,
 } from 'lucide-react';
 import { Logo } from './Logo';
+import { DemoUser } from '../data/demoUsers';
 
 export interface SidebarProps {
   currentTab: string;
   settingsSubTab?: string;
+  currentUser?: DemoUser;
   onSelectTab: (tabId: string) => void;
   onOpenAuth: (mode: 'login' | 'register') => void;
   onOpenImpactModal?: () => void;
@@ -41,6 +44,7 @@ interface NavItem {
 
 export const Sidebar: React.FC<SidebarProps> = ({
   currentTab,
+  currentUser,
   onSelectTab,
   onOpenAuth,
   onOpenImpactModal,
@@ -237,6 +241,58 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </button>
             );
           })}
+
+          {/* Secção Extra PLATAFORMA: visível exclusivamente para utilizadores com papel de Administrador */}
+          {currentUser?.isAdmin && (
+            <div className="pt-2 mt-1.5 border-t border-slate-100 flex flex-col gap-1">
+              <div className="px-2 py-0.5 flex items-center justify-between">
+                <span className="text-[9.5px] font-black uppercase tracking-wider text-slate-400">
+                  Plataforma
+                </span>
+                <span className="text-[8.5px] font-bold px-1.5 py-0.2 rounded-md bg-amber-50 text-amber-700 border border-amber-200 truncate max-w-[110px]">
+                  {currentUser.roleLabel.replace('Administradora ', '').replace('Administrador ', '')}
+                </span>
+              </div>
+
+              <button
+                type="button"
+                id="nav-item-painel-gestao"
+                onClick={() => {
+                  onSelectTab('painel-gestao');
+                  if (onCloseMobile) onCloseMobile();
+                }}
+                className={`w-full flex items-center justify-between px-2.5 py-1.5 rounded-xl text-[12px] leading-tight transition-all duration-200 group cursor-pointer ${
+                  currentTab === 'painel-gestao'
+                    ? 'bg-gradient-to-r from-[#0055FE] to-[#0096C7] text-white font-bold shadow-xs'
+                    : 'text-[#122244] hover:bg-slate-50 hover:text-[#0055FE] font-medium'
+                }`}
+                aria-current={currentTab === 'painel-gestao' ? 'page' : undefined}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <span
+                    className={`shrink-0 transition-colors ${
+                      currentTab === 'painel-gestao'
+                        ? 'text-white'
+                        : 'text-amber-600 group-hover:text-[#0055FE]'
+                    }`}
+                  >
+                    <Building2 className="w-4 h-4" strokeWidth={2.2} />
+                  </span>
+                  <span className="truncate tracking-tight font-semibold">Painel de Gestão</span>
+                </div>
+
+                <span
+                  className={`ml-1 px-1.5 py-0.5 rounded-full text-[8px] font-extrabold tracking-wider uppercase shrink-0 transition-colors ${
+                    currentTab === 'painel-gestao'
+                      ? 'bg-white/25 text-white'
+                      : 'bg-amber-100/80 text-amber-800 border border-amber-200'
+                  }`}
+                >
+                  Admin
+                </span>
+              </button>
+            </div>
+          )}
         </nav>
 
         {/* 3. Bloco Inferior Fixo: Card Promocional + Idioma + Tema + Autenticação */}

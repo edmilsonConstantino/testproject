@@ -13,8 +13,9 @@ import { AboutVilaView } from './components/AboutVilaView';
 import { SettingsView } from './components/SettingsView';
 import { VilaAiView } from './components/VilaAiView';
 import { GlobalPartnersView } from './components/GlobalPartnersView';
-import { UserProfileView } from './components/UserProfileView';
 import { PerfilVilaView } from './components/perfil-vila/PerfilVilaView';
+import { PainelGestaoPlaceholderView } from './components/PainelGestaoPlaceholderView';
+import { DEMO_USERS, DemoUser } from './data/demoUsers';
 import { CountryDetailModal } from './components/CountryDetailModal';
 import { VideoModal } from './components/VideoModal';
 import { SearchCommandModal } from './components/SearchCommandModal';
@@ -50,6 +51,7 @@ const BREADCRUMB_TABS = [
   'perfil',
   'meu-perfil',
   'perfil-vila',
+  'painel-gestao',
 ];
 
 const getInitialTab = (): string => {
@@ -84,6 +86,8 @@ const getInitialTab = (): string => {
     return 'impacto';
   } else if (target === 'perfil-vila' || target === 'perfil' || target === 'meu-perfil') {
     return 'perfil-vila';
+  } else if (target === 'painel-gestao' || target === 'gestao' || target === 'admin') {
+    return 'painel-gestao';
   } else if (target === 'sobre' || target === 'sobre-a-vila' || target.includes('sobre')) {
     return 'sobre';
   } else if (target === 'definicoes' || target === 'settings' || target === 'preferencias' || target === 'configuracoes' || target === 'privacidade' || target === 'seguranca') {
@@ -98,6 +102,7 @@ const getInitialTab = (): string => {
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState(getInitialTab);
+  const [currentUser, setCurrentUser] = useState<DemoUser>(DEMO_USERS[0]);
   const [selectedCountry, setSelectedCountry] = useState<CountryData>(COUNTRIES_DATA[0]); // Portugal by default
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [breadcrumb, setBreadcrumb] = useState<BreadcrumbItem[]>([]);
@@ -212,6 +217,8 @@ export default function App() {
     <>
       <AppLayout
         currentTab={currentTab}
+        currentUser={currentUser}
+        onSelectDemoUser={setCurrentUser}
         onSelectTab={(tabId) => {
           if (tabId === 'ia') {
             setIsAiModalOpen(true);
@@ -246,6 +253,7 @@ export default function App() {
           currentTab === 'noticias' ||
           currentTab === 'movimento' ||
           currentTab === 'eventos' ||
+          currentTab === 'painel-gestao' ||
           COMMUNITY_TABS.includes(currentTab) ||
           IMPACT_TABS.includes(currentTab)
         }
@@ -402,9 +410,17 @@ export default function App() {
             onOpenAiAssistant={() => setIsAiModalOpen(true)}
             onBreadcrumbChange={handleBreadcrumbChange}
           />
+        ) : currentTab === 'painel-gestao' ? (
+          /* Painel de Gestão da Plataforma (Área de Governança & Administração) */
+          <PainelGestaoPlaceholderView
+            currentUser={currentUser}
+            onNavigateToTab={handleNavigateToTab}
+            onBreadcrumbChange={handleBreadcrumbChange}
+          />
         ) : (currentTab === 'perfil-vila' || currentTab === 'perfil' || currentTab === 'meu-perfil') ? (
           /* Perfil VILA (Persona Cidadã Ativa) */
           <PerfilVilaView
+            currentUser={currentUser}
             onNavigateToTab={handleNavigateToTab}
             onOpenAuth={handleOpenAuth}
             onOpenAiAssistant={() => setIsAiModalOpen(true)}

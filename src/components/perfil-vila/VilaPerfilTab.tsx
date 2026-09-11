@@ -28,18 +28,27 @@ import {
   Plus,
 } from 'lucide-react';
 import { PerfilVilaTabId } from './types';
+import { DemoUser } from '../../data/demoUsers';
 
 interface VilaPerfilTabProps {
+  currentUser?: DemoUser;
   onNavigateToSubTab?: (tabId: PerfilVilaTabId) => void;
   onOpenAiAssistant?: () => void;
   onNavigateToTab?: (tabId: string) => void;
 }
 
 export const VilaPerfilTab: React.FC<VilaPerfilTabProps> = ({
+  currentUser,
   onNavigateToSubTab,
   onOpenAiAssistant,
   onNavigateToTab,
 }) => {
+  const profileName = currentUser?.name || 'Ana Silva';
+  const profileAvatar = currentUser?.avatarUrl || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=250';
+  const profileRole = currentUser?.roleLabel || 'Cidadã Global VILA';
+  const profileLocation = currentUser?.location || 'Faro, Algarve, Portugal';
+  const profileScope = currentUser?.scope && currentUser.scope !== '—' ? currentUser.scope : null;
+
   return (
     <div className="grid grid-cols-1 xl:grid-cols-12 gap-4 sm:gap-5 items-start">
       {/* =========================================================================
@@ -54,8 +63,8 @@ export const VilaPerfilTab: React.FC<VilaPerfilTabProps> = ({
               {/* Avatar com Badge de Verificação */}
               <div className="relative mb-3">
                 <img
-                  src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=250"
-                  alt="Inês Pereira"
+                  src={profileAvatar}
+                  alt={profileName}
                   className="w-20 h-20 sm:w-22 sm:h-22 rounded-full object-cover ring-4 ring-slate-100 shadow-sm"
                 />
                 <div
@@ -69,22 +78,27 @@ export const VilaPerfilTab: React.FC<VilaPerfilTabProps> = ({
               {/* Nome e Cargo */}
               <div className="flex items-center gap-1.5 justify-center">
                 <h2 className="text-base sm:text-lg font-black text-[#0F172A] font-['Outfit']">
-                  Inês Pereira
+                  {profileName}
                 </h2>
                 <CheckCircle2 className="w-4 h-4 text-[#0055FE] fill-[#0055FE]/15" />
               </div>
 
               <div className="inline-flex items-center gap-1 px-2.5 py-0.5 mt-1 rounded-full text-[11px] font-bold bg-purple-50 text-purple-700">
                 <Sparkles className="w-3 h-3 text-purple-600" />
-                <span>Cidadã Global VILA</span>
+                <span>{profileRole}</span>
               </div>
 
-              {/* Localização e Data de Entrada */}
+              {/* Localização e Escopo */}
               <div className="mt-3 space-y-1 text-xs text-slate-500">
                 <div className="flex items-center justify-center gap-1.5">
                   <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                  <span>Faro, Algarve, Portugal</span>
+                  <span>{profileLocation}</span>
                 </div>
+                {profileScope && (
+                  <div className="flex items-center justify-center gap-1 text-[11px] text-blue-600 font-medium">
+                    <span>Escopo: {profileScope}</span>
+                  </div>
+                )}
                 <div className="flex items-center justify-center gap-1.5">
                   <Calendar className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                   <span>Membro desde março de 2024</span>
