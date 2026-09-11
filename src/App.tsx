@@ -572,6 +572,11 @@ export default function App() {
       <AuthModal
         isOpen={authModal.isOpen}
         initialMode={authModal.mode}
+        currentUser={currentUser}
+        onSelectUser={(user) => {
+          setCurrentUser(user);
+          setIsLoggedIn(true);
+        }}
         onClose={() => setAuthModal({ isOpen: false, mode: 'login' })}
         onLoginSuccess={() => setIsLoggedIn(true)}
       />
