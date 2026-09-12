@@ -182,7 +182,7 @@ export const VisaoGeralView: React.FC<VisaoGeralViewProps> = ({
         const regionId = COUNTRY_TO_REGION[name] || 'asia';
         const d = pathGen(f) || '';
         const uniqueId = f.id !== undefined && f.id !== null && String(f.id) !== 'undefined'
-          ? `vg-geo-${f.id}`
+          ? `vg-geo-${f.id}-${index}`
           : `vg-geo-${name ? name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase() : 'feat'}-${index}`;
         return {
           id: uniqueId,

@@ -380,7 +380,7 @@ export const ImpactRegionMapCard: React.FC<ImpactRegionMapCardProps> = ({
         const regionId = COUNTRY_TO_REGION[name] || 'asia'; // default para Ásia se não estiver listado
         const d = pathGen(f) || '';
         const uniqueId = f.id !== undefined && f.id !== null && String(f.id) !== 'undefined'
-          ? `geo-${f.id}`
+          ? `geo-${f.id}-${index}`
           : `geo-${name ? name.replace(/[^a-zA-Z0-9]/g, '-').toLowerCase() : 'feat'}-${index}`;
         return {
           id: uniqueId,

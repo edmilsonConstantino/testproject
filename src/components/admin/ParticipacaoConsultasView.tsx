@@ -321,7 +321,7 @@ export const ParticipacaoConsultasView: React.FC<ParticipacaoConsultasViewProps>
         }
 
         return {
-          key: `pc-map-${f.id !== undefined ? f.id : index}`,
+          key: `pc-map-${f.id !== undefined && f.id !== null ? f.id : index}-${index}`,
           d,
           name,
           fill,
