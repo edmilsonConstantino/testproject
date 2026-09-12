@@ -11,6 +11,16 @@ import {
   Award,
   ChevronRight,
   Sliders,
+  CreditCard,
+  Shield,
+  Lock,
+  Key,
+  Laptop,
+  Smartphone,
+  Check,
+  ArrowRight,
+  Eye,
+  Download,
 } from 'lucide-react';
 import { PerfilVilaTabId } from './types';
 import { VilaPerfilTab } from './VilaPerfilTab';
@@ -50,16 +60,17 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
     }
   }, [initialTab]);
 
-  // Definição oficial das 8 abas solicitadas
+  // Definição das abas principais mostradas no cabeçalho (conforme UI VILA PERFIL.png)
   const tabs: { id: PerfilVilaTabId; label: string; icon: React.FC<{ className?: string }> }[] = [
     { id: 'perfil', label: 'Perfil', icon: User },
     { id: 'identidade', label: 'Identidade VILA', icon: ShieldCheck },
     { id: 'territorios', label: 'Territórios', icon: MapPin },
     { id: 'interesses-geral', label: 'Interesses', icon: Heart },
-    { id: 'interesses-temas', label: 'Temas', icon: Compass },
-    { id: 'interesses-causas', label: 'Causas', icon: Sparkles },
-    { id: 'interesses-comunidades', label: 'Comunidades', icon: Users },
-    { id: 'interesses-oportunidades', label: 'Oportunidades', icon: Lightbulb },
+    { id: 'participacao', label: 'Participação', icon: Users },
+    { id: 'conquistas', label: 'Conquistas', icon: Award },
+    { id: 'assinaturas', label: 'Assinaturas', icon: CreditCard },
+    { id: 'seguranca', label: 'Segurança', icon: Shield },
+    { id: 'privacidade', label: 'Privacidade', icon: Lock },
   ];
 
   // Metadados dinâmicos por aba
@@ -86,6 +97,31 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
       title: 'Interesses e Causas',
       subtitle: 'Os seus interesses conectam-no a comunidades, territórios, projetos e oportunidades para gerar impacto positivo.',
       breadcrumb: 'Interesses e Causas',
+    },
+    participacao: {
+      title: 'Participação Cívica',
+      subtitle: 'Histórico e resumo das suas consultas, apoios e contribuições nos territórios.',
+      breadcrumb: 'Participação',
+    },
+    conquistas: {
+      title: 'As Minhas Conquistas',
+      subtitle: 'Medalhas, níveis e reconhecimento pelo seu contributo e cidadania ativa.',
+      breadcrumb: 'Conquistas',
+    },
+    assinaturas: {
+      title: 'Assinaturas e Planos',
+      subtitle: 'Gerencie o seu plano VILA Premium, benefícios ativos e faturas.',
+      breadcrumb: 'Assinaturas',
+    },
+    seguranca: {
+      title: 'Segurança da Conta',
+      subtitle: 'Controle palavras-passe, autenticação de dois fatores e sessões ativas.',
+      breadcrumb: 'Segurança',
+    },
+    privacidade: {
+      title: 'Privacidade e Dados',
+      subtitle: 'Gerencie a visibilidade do seu perfil e o controlo sobre os seus dados pessoais.',
+      breadcrumb: 'Privacidade',
     },
     'interesses-temas': {
       title: 'Interesses e Causas — Temas',
@@ -204,6 +240,217 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
         )}
         {activeTab === 'interesses-oportunidades' && (
           <InteressesOportunidadesTab onNavigateToTab={onNavigateToTab} />
+        )}
+
+        {/* Aba Participação Cívica */}
+        {activeTab === 'participacao' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Consultas</span>
+                <div className="text-2xl font-black text-[#0F172A] font-['Outfit'] mt-1">34</div>
+                <span className="text-xs text-emerald-600 font-semibold">+6 este mês</span>
+              </div>
+              <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Comentários</span>
+                <div className="text-2xl font-black text-[#0F172A] font-['Outfit'] mt-1">21</div>
+                <span className="text-xs text-[#0055FE] font-semibold">100% construtivos</span>
+              </div>
+              <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Projetos Apoiados</span>
+                <div className="text-2xl font-black text-[#0F172A] font-['Outfit'] mt-1">56</div>
+                <span className="text-xs text-indigo-600 font-semibold">4 municípios</span>
+              </div>
+              <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs">
+                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Ideias Aprovadas</span>
+                <div className="text-2xl font-black text-[#0F172A] font-['Outfit'] mt-1">4 / 12</div>
+                <span className="text-xs text-amber-600 font-semibold">33% taxa de aprovação</span>
+              </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs">
+              <h3 className="text-base font-bold text-[#0F172A] mb-4 font-['Outfit']">Histórico de Atividade Recente</h3>
+              <div className="space-y-3">
+                {[
+                  { title: 'Votação no Orçamento Participativo de Faro 2026', type: 'Voto Registado', date: 'Há 2 dias', badge: 'bg-purple-50 text-purple-700' },
+                  { title: 'Apoio à proposta de Ciclovia Urbana Faro-Olhão', type: 'Projeto Apoiado', date: 'Há 5 dias', badge: 'bg-emerald-50 text-emerald-700' },
+                  { title: 'Comentário técnico sobre Eficiência Hídrica no Algarve', type: 'Comentário', date: 'Há 1 semana', badge: 'bg-blue-50 text-blue-700' },
+                  { title: 'Submissão de ideia para Hortas Comunitárias na Penha', type: 'Ideia Submetida', date: 'Há 2 semanas', badge: 'bg-amber-50 text-amber-700' },
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center justify-between p-3.5 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors">
+                    <div>
+                      <h4 className="text-sm font-semibold text-slate-900">{item.title}</h4>
+                      <span className="text-xs text-slate-400">{item.date}</span>
+                    </div>
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${item.badge}`}>
+                      {item.type}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Aba Conquistas */}
+        {activeTab === 'conquistas' && (
+          <div className="space-y-6">
+            <div className="bg-gradient-to-br from-[#7C3AED] to-[#4F46E5] text-white p-6 rounded-2xl shadow-md">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-purple-200">Nível Atual</span>
+                  <h2 className="text-2xl font-black font-['Outfit'] mt-1">Embaixadora da Comunidade</h2>
+                  <p className="text-sm text-purple-100 mt-1">Faltam 550 XP para alcançar o nível Líder Global</p>
+                </div>
+                <div className="text-left sm:text-right">
+                  <div className="text-3xl font-black font-['Outfit']">2.450 XP</div>
+                  <span className="text-xs text-purple-200">Total acumulado</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+              {[
+                { name: 'Semente', desc: 'Primeiros passos na cidadania ativa', status: 'Conquistada', icon: '🌱', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+                { name: 'Guardião', desc: 'Cuida da comunidade e protege recursos', status: 'Conquistada', icon: '🛡️', color: 'bg-emerald-50 text-emerald-700 border-emerald-200' },
+                { name: 'Embaixador', desc: 'Impacto reconhecido em múltiplos territórios', status: 'Conquistada', icon: '⭐', color: 'bg-amber-50 text-amber-700 border-amber-200' },
+                { name: 'Líder Comunitário', desc: 'Lidera pelo exemplo e mobiliza', status: 'Em progresso (80%)', icon: '👥', color: 'bg-purple-50 text-purple-700 border-purple-200' },
+                { name: 'Lenda VILA', desc: 'Máximo reconhecimento cívico e impacto perene', status: 'Em progresso (25%)', icon: '👑', color: 'bg-slate-100 text-slate-700 border-slate-200' },
+              ].map((badge, idx) => (
+                <div key={idx} className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs text-center flex flex-col justify-between">
+                  <div>
+                    <div className="text-3xl mb-2">{badge.icon}</div>
+                    <h4 className="font-bold text-slate-900">{badge.name}</h4>
+                    <p className="text-xs text-slate-500 mt-1">{badge.desc}</p>
+                  </div>
+                  <span className={`mt-4 px-2.5 py-1 rounded-full text-[11px] font-bold border ${badge.color}`}>
+                    {badge.status}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Aba Assinaturas */}
+        {activeTab === 'assinaturas' && (
+          <div className="max-w-4xl space-y-6">
+            <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 border-b border-slate-100">
+                <div>
+                  <span className="text-xs font-bold text-purple-600 uppercase">Plano Ativo</span>
+                  <h3 className="text-xl font-bold text-slate-900 font-['Outfit'] mt-0.5">VILA Premium (Anual)</h3>
+                  <p className="text-xs text-slate-500 mt-1">Renovação automática em 12 de maio de 2026</p>
+                </div>
+                <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-xs">
+                  Ativa
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
+                <div className="space-y-2">
+                  <h4 className="text-xs font-bold text-slate-400 uppercase">Benefícios Incluídos</h4>
+                  <div className="space-y-1.5 text-xs text-slate-700">
+                    <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-600" /> Acesso a projetos exclusivos</div>
+                    <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-600" /> Relatórios avançados de impacto territorial</div>
+                    <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-600" /> Prioridade em sessões de co-criação</div>
+                    <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-600" /> Assistente VILA AI ilimitado</div>
+                  </div>
+                </div>
+                <div className="flex flex-col justify-end gap-2">
+                  <button className="py-2.5 px-4 rounded-xl bg-[#0055FE] text-white font-semibold text-xs hover:bg-blue-700 transition-colors cursor-pointer">
+                    Mudar de Plano
+                  </button>
+                  <button className="py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 font-semibold text-xs hover:bg-slate-50 transition-colors cursor-pointer">
+                    Ver Histórico de Faturas
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Aba Segurança */}
+        {activeTab === 'seguranca' && (
+          <div className="max-w-4xl space-y-4">
+            <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-4">
+              <h3 className="text-base font-bold text-slate-900 font-['Outfit']">Credenciais e Autenticação</h3>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-4 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <Key className="w-5 h-5 text-slate-400" />
+                    <div>
+                      <h4 className="text-sm font-semibold text-slate-900">Palavra-passe</h4>
+                      <p className="text-xs text-slate-500">Última alteração há 30 dias</p>
+                    </div>
+                  </div>
+                  <button className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-white cursor-pointer">
+                    Alterar
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between p-4 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                    <div>
+                      <h4 className="text-sm font-semibold text-slate-900">Autenticação de Dois Fatores (2FA)</h4>
+                      <p className="text-xs text-emerald-600 font-medium">Ativada via Authenticator App</p>
+                    </div>
+                  </div>
+                  <button className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-white cursor-pointer">
+                    Gerir
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between p-4 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <Laptop className="w-5 h-5 text-slate-400" />
+                    <div>
+                      <h4 className="text-sm font-semibold text-slate-900">Sessões Ativas</h4>
+                      <p className="text-xs text-slate-500">3 dispositivos com sessão iniciada atualmente</p>
+                    </div>
+                  </div>
+                  <button className="px-3 py-1.5 rounded-lg border border-red-200 text-xs font-semibold text-red-600 hover:bg-red-50 cursor-pointer">
+                    Terminar Outras Sessões
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Aba Privacidade */}
+        {activeTab === 'privacidade' && (
+          <div className="max-w-4xl space-y-4">
+            <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-4">
+              <h3 className="text-base font-bold text-slate-900 font-['Outfit']">Visibilidade e Dados</h3>
+              <div className="space-y-3 text-xs">
+                <div className="flex items-center justify-between p-4 rounded-xl border border-slate-100">
+                  <div className="flex items-center gap-3">
+                    <Eye className="w-5 h-5 text-slate-400" />
+                    <div>
+                      <h4 className="text-sm font-semibold text-slate-900">Visibilidade do Perfil</h4>
+                      <p className="text-slate-500">Visível para outros cidadãos na comunidade VILA</p>
+                    </div>
+                  </div>
+                  <span className="text-emerald-600 font-bold">Público</span>
+                </div>
+
+                <div className="flex items-center justify-between p-4 rounded-xl border border-slate-100">
+                  <div className="flex items-center gap-3">
+                    <Download className="w-5 h-5 text-slate-400" />
+                    <div>
+                      <h4 className="text-sm font-semibold text-slate-900">Descarregar os Meus Dados (RGPD)</h4>
+                      <p className="text-slate-500">Exportar cópia integral de participações e dados da conta</p>
+                    </div>
+                  </div>
+                  <button className="px-3 py-1.5 rounded-lg border border-slate-200 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer">
+                    Exportar JSON
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </main>
     </div>

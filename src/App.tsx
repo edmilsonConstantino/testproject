@@ -54,6 +54,17 @@ const BREADCRUMB_TABS = [
   'perfil',
   'meu-perfil',
   'perfil-vila',
+  'territorios',
+  'os-meus-territorios',
+  'meus-territorios',
+  'identidade',
+  'identidade-vila',
+  'interesses',
+  'interesses-geral',
+  'interesses-temas',
+  'interesses-causas',
+  'interesses-comunidades',
+  'interesses-oportunidades',
   'painel-gestao',
   'gestao-utilizadores',
   'gestao-parceiros',
@@ -569,9 +580,37 @@ export default function App() {
               onBreadcrumbChange={handleBreadcrumbChange}
             />
           )
-        ) : (currentTab === 'perfil-vila' || currentTab === 'perfil' || currentTab === 'meu-perfil') ? (
+        ) : (
+          currentTab === 'perfil-vila' ||
+          currentTab === 'perfil' ||
+          currentTab === 'meu-perfil' ||
+          currentTab === 'territorios' ||
+          currentTab === 'os-meus-territorios' ||
+          currentTab === 'meus-territorios' ||
+          currentTab === 'identidade' ||
+          currentTab === 'identidade-vila' ||
+          currentTab === 'interesses' ||
+          currentTab.startsWith('interesses-')
+        ) ? (
           /* Perfil VILA (Persona Cidadã Ativa) */
           <PerfilVilaView
+            initialTab={
+              (currentTab === 'territorios' || currentTab === 'os-meus-territorios' || currentTab === 'meus-territorios')
+                ? 'territorios'
+                : (currentTab === 'identidade' || currentTab === 'identidade-vila')
+                ? 'identidade'
+                : currentTab === 'interesses' || currentTab === 'interesses-geral'
+                ? 'interesses-geral'
+                : currentTab === 'interesses-temas'
+                ? 'interesses-temas'
+                : currentTab === 'interesses-causas'
+                ? 'interesses-causas'
+                : currentTab === 'interesses-comunidades'
+                ? 'interesses-comunidades'
+                : currentTab === 'interesses-oportunidades'
+                ? 'interesses-oportunidades'
+                : 'perfil'
+            }
             currentUser={currentUser}
             onNavigateToTab={handleNavigateToTab}
             onOpenAuth={handleOpenAuth}

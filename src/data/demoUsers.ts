@@ -22,17 +22,17 @@ export interface DemoUser {
 
 export const DEMO_USERS: DemoUser[] = [
   {
-    id: 'ana-silva',
-    name: 'Ana Silva',
+    id: 'ines-pereira',
+    name: 'Inês Pereira',
     role: 'cidadao',
-    roleLabel: 'Cidadã',
+    roleLabel: 'Cidadã Ativa',
     scope: '—',
-    avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=250',
-    email: 'ana.silva@vilaglobal.org',
+    avatarUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=250',
+    email: 'ines.pereira@vilaglobal.org',
     location: 'Faro, Algarve, Portugal',
-    headline: 'Bióloga Marinha & Ativista Comunitária • Guardiã da Ria Formosa',
+    headline: 'Cidadã Global VILA • Apaixonada por cidades sustentáveis e comunidades inovadoras',
     isAdmin: false,
-    badgeLabel: 'Cidadã',
+    badgeLabel: 'Cidadã Ativa',
   },
   {
     id: 'carlos-mendes',

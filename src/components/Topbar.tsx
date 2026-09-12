@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Search, Globe, ChevronDown, ChevronRight, Bell, Menu, X, Check, User, Settings, LogOut, ShieldCheck, Home, ArrowLeft, Building2 } from 'lucide-react';
+import { Search, Globe, ChevronDown, ChevronRight, Bell, Menu, X, Check, User, Settings, LogOut, ShieldCheck, Home, ArrowLeft, Building2, MapPin } from 'lucide-react';
 import { Logo } from './Logo';
 import { GLOBAL_NOTIFICATIONS } from '../data/countriesData';
 import { DemoUser } from '../data/demoUsers';
@@ -505,6 +505,19 @@ export const Topbar: React.FC<TopbarProps> = ({
                   >
                     <User className="w-3.5 h-3.5 text-slate-400" />
                     <span>Meu Perfil</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setIsAvatarMenuOpen(false);
+                      onNavigateToTab?.('territorios');
+                    }}
+                    className="w-full px-4 py-2 text-left text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2.5 transition-colors cursor-pointer"
+                  >
+                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                    <span>Os Meus Territórios</span>
                   </button>
 
                   <button
