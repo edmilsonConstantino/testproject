@@ -11,7 +11,7 @@ import {
   Boxes,
   BarChart3,
   Settings,
-  HelpCircle,
+  TrendingUp,
   PlusCircle,
   MessageSquarePlus,
   CalendarPlus,
@@ -125,10 +125,10 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       matches: ['configuracoes-plataforma', 'gestao-configuracoes'],
     },
     {
-      id: 'gestao-suporte',
-      label: 'Suporte',
-      icon: <HelpCircle className="w-4 h-4" strokeWidth={2.2} />,
-      matches: ['gestao-suporte', 'suporte'],
+      id: 'impacto-global-plataforma',
+      label: 'Impacto Global',
+      icon: <TrendingUp className="w-4 h-4" strokeWidth={2.2} />,
+      matches: ['impacto-global-plataforma', 'gestao-impacto', 'impacto-plataforma'],
     },
   ];
 
@@ -229,9 +229,6 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
                 type="button"
                 id={`admin-nav-item-${item.id}`}
                 onClick={() => {
-                  if ((item.id === 'gestao-suporte' || item.id === 'suporte') && onOpenSupportModal) {
-                    onOpenSupportModal();
-                  }
                   onSelectTab(item.id);
                   if (onCloseMobile) onCloseMobile();
                 }}

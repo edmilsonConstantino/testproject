@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   User,
   ShieldCheck,
@@ -109,16 +109,19 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
     },
   };
 
+  const onBreadcrumbChangeRef = useRef(onBreadcrumbChange);
+  onBreadcrumbChangeRef.current = onBreadcrumbChange;
+  const onNavigateToTabRef = useRef(onNavigateToTab);
+  onNavigateToTabRef.current = onNavigateToTab;
+
   // Atualiza breadcrumb global
   useEffect(() => {
-    if (onBreadcrumbChange) {
-      onBreadcrumbChange([
-        { label: 'Início', onClick: () => onNavigateToTab?.('inicio') },
-        { label: 'A Minha Conta', onClick: () => setActiveTab('perfil') },
-        { label: tabMetadata[activeTab].breadcrumb },
-      ]);
-    }
-  }, [activeTab, onBreadcrumbChange, onNavigateToTab]);
+    onBreadcrumbChangeRef.current?.([
+      { label: 'Início', onClick: () => onNavigateToTabRef.current?.('inicio') },
+      { label: 'A Minha Conta', onClick: () => setActiveTab('perfil') },
+      { label: tabMetadata[activeTab].breadcrumb },
+    ]);
+  }, [activeTab]);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-16">

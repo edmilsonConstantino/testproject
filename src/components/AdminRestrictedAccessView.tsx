@@ -29,20 +29,28 @@ export const AdminRestrictedAccessView: React.FC<AdminRestrictedAccessViewProps>
   onSwitchToAdmin,
   onBreadcrumbChange,
 }) => {
-  // Informa o Topbar sobre o breadcrumb contextual de Acesso Restrito
+  const onBackToHomeRef = React.useRef(onBackToHome);
+  onBackToHomeRef.current = onBackToHome;
+  const onBreadcrumbChangeRef = React.useRef(onBreadcrumbChange);
+  onBreadcrumbChangeRef.current = onBreadcrumbChange;
+
+  // Informa o Topbar sobre o breadcrumb contextual de Acesso Restrito uma única vez
   useEffect(() => {
-    onBreadcrumbChange?.([
-      { label: 'Início', onClick: onBackToHome },
+    onBreadcrumbChangeRef.current?.([
+      { label: 'Início', onClick: () => onBackToHomeRef.current() },
       { label: 'Painel de Gestão' },
       { label: 'Acesso Restrito' },
     ]);
-  }, [onBreadcrumbChange, onBackToHome]);
+  }, []);
 
   // Filtra administradores disponíveis no mock para facilitar a validação
   const adminUsers = DEMO_USERS.filter((u) => u.isAdmin);
 
   const getRouteFriendlyName = (route: string) => {
     switch (route) {
+      case 'impacto-global-plataforma':
+      case 'gestao-impacto':
+        return 'Impacto Global da Plataforma';
       case 'membros':
       case 'gestao-utilizadores':
         return 'Membros e Utilizadores';

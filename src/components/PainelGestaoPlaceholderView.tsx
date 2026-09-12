@@ -160,6 +160,16 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
           badge: 'Módulo: Configurações',
           icon: <Settings className="w-5 h-5 text-slate-400" />,
         };
+      case 'impacto-global-plataforma':
+      case 'gestao-impacto':
+      case 'impacto-plataforma':
+        return {
+          title: 'Impacto Global da Plataforma VILA',
+          breadcrumb: 'Impacto Global',
+          subtitle: 'Visão geral do impacto coletivo gerado pela plataforma VILA e pela sua rede global de pessoas, comunidades e territórios.',
+          badge: 'Módulo: Impacto Global',
+          icon: <TrendingUp className="w-5 h-5 text-emerald-400" />,
+        };
       case 'gestao-suporte':
       case 'suporte':
         return {
@@ -184,13 +194,17 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
   };
 
   const meta = getSectionMetadata();
+  const onBreadcrumbChangeRef = React.useRef(onBreadcrumbChange);
+  onBreadcrumbChangeRef.current = onBreadcrumbChange;
+  const onNavigateToTabRef = React.useRef(onNavigateToTab);
+  onNavigateToTabRef.current = onNavigateToTab;
 
   React.useEffect(() => {
-    onBreadcrumbChange?.([
-      { label: 'Plataforma VILA', onClick: () => onNavigateToTab('painel-gestao') },
+    onBreadcrumbChangeRef.current?.([
+      { label: 'Plataforma VILA', onClick: () => onNavigateToTabRef.current('painel-gestao') },
       { label: meta.breadcrumb },
     ]);
-  }, [onBreadcrumbChange, onNavigateToTab, meta.breadcrumb]);
+  }, [meta.breadcrumb]);
 
   // Se não for o Painel de Gestão principal, exibe a visualização de gestão específica
   if (currentSection !== 'painel-gestao' && currentSection !== 'gestao' && currentSection !== 'admin') {

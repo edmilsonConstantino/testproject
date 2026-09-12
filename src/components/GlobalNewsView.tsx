@@ -287,7 +287,7 @@ export const GlobalNewsView: React.FC<GlobalNewsViewProps> = ({
         }
       }
 
-      setVisiblePillIds(fittingIds);
+      setVisiblePillIds((prev) => (prev.join(',') === fittingIds.join(',') ? prev : fittingIds));
     };
 
     recalcVisiblePills();

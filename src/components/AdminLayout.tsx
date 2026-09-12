@@ -23,6 +23,11 @@ export interface AdminLayoutProps {
   children: React.ReactNode;
 }
 
+const DEFAULT_ADMIN_BREADCRUMB: BreadcrumbItem[] = [
+  { label: 'Plataforma VILA' },
+  { label: 'Painel de Gestão' },
+];
+
 export const AdminLayout: React.FC<AdminLayoutProps> = ({
   currentTab = 'painel-gestao',
   currentUser,
@@ -71,10 +76,7 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({
             breadcrumb={
               breadcrumb && breadcrumb.length > 0
                 ? breadcrumb
-                : [
-                    { label: 'Plataforma VILA', onClick: () => onSelectTab?.('painel-gestao') },
-                    { label: 'Painel de Gestão' },
-                  ]
+                : DEFAULT_ADMIN_BREADCRUMB
             }
             onOpenSearchModal={onOpenSearchModal}
             onOpenMobileMenu={onOpenMobileSidebar}

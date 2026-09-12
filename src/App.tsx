@@ -59,6 +59,9 @@ const BREADCRUMB_TABS = [
   'gestao-parceiros',
   'gestao-recursos',
   'gestao-suporte',
+  'impacto-global-plataforma',
+  'gestao-impacto',
+  'impacto-plataforma',
   'membros',
   'recursos',
   'suporte',
@@ -89,6 +92,9 @@ const PLATAFORMA_TABS = [
   'gestao-relatorios',
   'configuracoes-plataforma',
   'gestao-configuracoes',
+  'impacto-global-plataforma',
+  'gestao-impacto',
+  'impacto-plataforma',
   'gestao-suporte',
   'suporte',
 ];
@@ -106,6 +112,9 @@ export const isPlataformaTab = (tab: string): boolean => {
     tab === 'eventos-globais-admin' ||
     tab === 'relatorios-dados' ||
     tab === 'configuracoes-plataforma' ||
+    tab === 'impacto-global-plataforma' ||
+    tab === 'gestao-impacto' ||
+    tab === 'impacto-plataforma' ||
     tab.startsWith('gestao-')
   );
 };
@@ -175,7 +184,15 @@ export default function App() {
   const [breadcrumb, setBreadcrumb] = useState<BreadcrumbItem[]>([]);
 
   const handleBreadcrumbChange = useCallback((items: BreadcrumbItem[]) => {
-    setBreadcrumb(items);
+    setBreadcrumb((prev) => {
+      if (
+        prev.length === items.length &&
+        prev.every((item, idx) => item.label === items[idx]?.label)
+      ) {
+        return prev;
+      }
+      return items;
+    });
   }, []);
 
   // Modals state
@@ -207,13 +224,23 @@ export default function App() {
   // Limpa o breadcrumb do Topbar ao sair das áreas que o alimentam via onBreadcrumbChange
   useEffect(() => {
     if (!BREADCRUMB_TABS.includes(currentTab) && !isPlataformaTab(currentTab)) {
-      setBreadcrumb([]);
+      setBreadcrumb((prev) => (prev.length === 0 ? prev : []));
     }
   }, [currentTab]);
 
   const handleNavigateToTab = useCallback((tabId: string) => {
     setCurrentTab(tabId);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const handleBackToHome = useCallback(() => {
+    setCurrentTab('inicio');
+    window.location.hash = 'inicio';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  const handleSwitchToAdmin = useCallback((adminUser: DemoUser) => {
+    setCurrentUser(adminUser);
   }, []);
 
   // URL hash, query parameter and pathname router sync
@@ -522,15 +549,9 @@ export default function App() {
             <AdminRestrictedAccessView
               currentUser={currentUser}
               attemptedRoute={currentTab}
-              onBackToHome={() => {
-                setCurrentTab('inicio');
-                window.location.hash = 'inicio';
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
+              onBackToHome={handleBackToHome}
               onNavigateToTab={handleNavigateToTab}
-              onSwitchToAdmin={(adminUser) => {
-                setCurrentUser(adminUser);
-              }}
+              onSwitchToAdmin={handleSwitchToAdmin}
               onBreadcrumbChange={handleBreadcrumbChange}
             />
           )
