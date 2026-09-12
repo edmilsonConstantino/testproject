@@ -135,6 +135,29 @@ const getInitialTab = (): string => {
     target.includes('noticia')
   ) {
     return 'noticias';
+  } else if (
+    target === 'painel-gestao' ||
+    target === 'gestao' ||
+    target === 'admin' ||
+    target === 'visao-geral' ||
+    target === 'gestao-utilizadores' ||
+    target === 'utilizadores-comunidades' ||
+    target === 'membros' ||
+    target === 'territorios-paises' ||
+    target === 'projetos-iniciativas' ||
+    target === 'participacao-consultas' ||
+    target === 'eventos-globais-admin' ||
+    target === 'gestao-parceiros' ||
+    target === 'gestao-recursos' ||
+    target === 'relatorios-dados' ||
+    target === 'configuracoes-plataforma' ||
+    target === 'impacto-global-plataforma' ||
+    target === 'gestao-suporte' ||
+    target === 'recursos' ||
+    target === 'suporte' ||
+    target.startsWith('gestao-')
+  ) {
+    return target;
   } else if (target === 'criar-comunidade') {
     return 'criar-comunidade';
   } else if (target === 'mais' || target === 'mais-categorias') {
@@ -151,19 +174,6 @@ const getInitialTab = (): string => {
     return 'impacto';
   } else if (target === 'perfil-vila' || target === 'perfil' || target === 'meu-perfil') {
     return 'perfil-vila';
-  } else if (
-    target === 'painel-gestao' ||
-    target === 'gestao' ||
-    target === 'admin' ||
-    target === 'gestao-utilizadores' ||
-    target === 'gestao-parceiros' ||
-    target === 'gestao-recursos' ||
-    target === 'gestao-suporte' ||
-    target === 'membros' ||
-    target === 'recursos' ||
-    target === 'suporte'
-  ) {
-    return target;
   } else if (target === 'sobre' || target === 'sobre-a-vila' || target.includes('sobre')) {
     return 'sobre';
   } else if (target === 'definicoes' || target === 'settings' || target === 'preferencias' || target === 'configuracoes' || target === 'privacidade' || target === 'seguranca') {

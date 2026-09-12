@@ -43,6 +43,8 @@ import {
 import { DemoUser } from '../data/demoUsers';
 import { BreadcrumbItem } from './Topbar';
 import { VisaoGeralView } from './admin/VisaoGeralView';
+import { UtilizadoresComunidadesView } from './admin/UtilizadoresComunidadesView';
+import { TerritoriosPaisesView } from './admin/TerritoriosPaisesView';
 
 interface PainelGestaoPlaceholderViewProps {
   currentUser: DemoUser;
@@ -206,7 +208,15 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
   onNavigateToTabRef.current = onNavigateToTab;
 
   React.useEffect(() => {
-    if (currentSection === 'visao-geral') return;
+    if (
+      currentSection === 'visao-geral' ||
+      currentSection === 'gestao-utilizadores' ||
+      currentSection === 'utilizadores-comunidades' ||
+      currentSection === 'membros' ||
+      currentSection === 'territorios-paises' ||
+      currentSection === 'gestao-territorios' ||
+      currentSection === 'paises'
+    ) return;
     onBreadcrumbChangeRef.current?.([
       { label: 'Plataforma VILA', onClick: () => onNavigateToTabRef.current('painel-gestao') },
       { label: meta.breadcrumb },
@@ -220,6 +230,38 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
         currentUser={currentUser}
         onNavigateToTab={onNavigateToTab}
         onBreadcrumbChange={onBreadcrumbChange}
+      />
+    );
+  }
+
+  // Se a secção for Utilizadores e Comunidades, renderiza a tela completa com fidelidade visual à referência UI UTILIZADORES E COMUNIDADES.png
+  if (
+    currentSection === 'gestao-utilizadores' ||
+    currentSection === 'utilizadores-comunidades' ||
+    currentSection === 'membros'
+  ) {
+    return (
+      <UtilizadoresComunidadesView
+        currentUser={currentUser}
+        onNavigateToTab={onNavigateToTab}
+        onBreadcrumbChange={onBreadcrumbChange}
+        onOpenSupportModal={onOpenSupportModal}
+      />
+    );
+  }
+
+  // Se a secção for Territórios e Países, renderiza a tela completa com fidelidade visual à referência UI TERRITÓRIOS E PAÍSES
+  if (
+    currentSection === 'territorios-paises' ||
+    currentSection === 'gestao-territorios' ||
+    currentSection === 'paises'
+  ) {
+    return (
+      <TerritoriosPaisesView
+        currentUser={currentUser}
+        onNavigateToTab={onNavigateToTab}
+        onBreadcrumbChange={onBreadcrumbChange}
+        onOpenSupportModal={onOpenSupportModal}
       />
     );
   }
