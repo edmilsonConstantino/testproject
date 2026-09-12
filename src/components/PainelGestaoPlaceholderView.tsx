@@ -45,6 +45,7 @@ import { BreadcrumbItem } from './Topbar';
 import { VisaoGeralView } from './admin/VisaoGeralView';
 import { UtilizadoresComunidadesView } from './admin/UtilizadoresComunidadesView';
 import { TerritoriosPaisesView } from './admin/TerritoriosPaisesView';
+import { ProjetosIniciativasView } from './admin/ProjetosIniciativasView';
 
 interface PainelGestaoPlaceholderViewProps {
   currentUser: DemoUser;
@@ -215,7 +216,10 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
       currentSection === 'membros' ||
       currentSection === 'territorios-paises' ||
       currentSection === 'gestao-territorios' ||
-      currentSection === 'paises'
+      currentSection === 'paises' ||
+      currentSection === 'projetos-iniciativas' ||
+      currentSection === 'gestao-projetos' ||
+      currentSection === 'projetos'
     ) return;
     onBreadcrumbChangeRef.current?.([
       { label: 'Plataforma VILA', onClick: () => onNavigateToTabRef.current('painel-gestao') },
@@ -258,6 +262,22 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
   ) {
     return (
       <TerritoriosPaisesView
+        currentUser={currentUser}
+        onNavigateToTab={onNavigateToTab}
+        onBreadcrumbChange={onBreadcrumbChange}
+        onOpenSupportModal={onOpenSupportModal}
+      />
+    );
+  }
+
+  // Se a secção for Projetos e Iniciativas, renderiza a tela completa com fidelidade visual à referência UI PROJETOS E INICIATIVAS
+  if (
+    currentSection === 'projetos-iniciativas' ||
+    currentSection === 'gestao-projetos' ||
+    currentSection === 'projetos'
+  ) {
+    return (
+      <ProjetosIniciativasView
         currentUser={currentUser}
         onNavigateToTab={onNavigateToTab}
         onBreadcrumbChange={onBreadcrumbChange}

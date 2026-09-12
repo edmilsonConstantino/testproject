@@ -583,47 +583,47 @@ export const UtilizadoresComunidadesView: React.FC<UtilizadoresComunidadesViewPr
       </div>
 
       {/* ========================================================================= */}
-      {/* 2. TOP KPI ROW: 6 CARDS (Layout refinado como na secção Painel de Gestão)  */}
+      {/* 2. TOP KPI ROW: 6 CARDS (Design compacto, refinado e organizado)           */}
       {/* ========================================================================= */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-3.5">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6 gap-2.5 sm:gap-3">
         {kpis.map((kpi) => {
           return (
             <div
               key={kpi.id}
               onClick={() => setActiveDetailModal(kpi.label)}
-              className="bg-white rounded-2xl border border-slate-200/70 p-3 sm:p-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:border-purple-200/90 transition-all duration-200 flex flex-col justify-between group min-w-0 cursor-pointer"
+              className="bg-white rounded-xl border border-slate-200/80 p-2.5 sm:p-3 shadow-2xs hover:shadow-xs hover:border-purple-300 transition-all duration-200 flex flex-col justify-between group min-w-0 cursor-pointer"
             >
               {/* Linha Superior: Ícone + Indicador/Delta */}
               <div className="flex items-center justify-between gap-1.5">
-                <div className={`w-8 h-8 rounded-xl ${kpi.bgClass} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-2xs`}>
-                  {kpi.icon === 'users' && <Users className="w-4 h-4" strokeWidth={2.2} />}
-                  {kpi.icon === 'user-plus' && <UserPlus className="w-4 h-4" strokeWidth={2.2} />}
-                  {kpi.icon === 'flag' && <Flag className="w-4 h-4" strokeWidth={2.2} />}
-                  {kpi.icon === 'globe' && <Globe className="w-4 h-4" strokeWidth={2.2} />}
-                  {kpi.icon === 'heart' && <Heart className="w-4 h-4" strokeWidth={2.2} />}
-                  {kpi.icon === 'community' && <Users className="w-4 h-4" strokeWidth={2.2} />}
+                <div className={`w-7 h-7 sm:w-7.5 sm:h-7.5 rounded-lg ${kpi.bgClass} flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-2xs`}>
+                  {kpi.icon === 'users' && <Users className="w-3.5 h-3.5" strokeWidth={2.2} />}
+                  {kpi.icon === 'user-plus' && <UserPlus className="w-3.5 h-3.5" strokeWidth={2.2} />}
+                  {kpi.icon === 'flag' && <Flag className="w-3.5 h-3.5" strokeWidth={2.2} />}
+                  {kpi.icon === 'globe' && <Globe className="w-3.5 h-3.5" strokeWidth={2.2} />}
+                  {kpi.icon === 'heart' && <Heart className="w-3.5 h-3.5" strokeWidth={2.2} />}
+                  {kpi.icon === 'community' && <Users className="w-3.5 h-3.5" strokeWidth={2.2} />}
                 </div>
-                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50/90 border border-emerald-200/60 px-1.5 py-0.5 rounded-md whitespace-nowrap shadow-2xs">
+                <span className="text-[9.5px] sm:text-[10px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/70 px-1.5 py-0.5 rounded whitespace-nowrap shadow-2xs">
                   {kpi.trend}
                 </span>
               </div>
 
-              {/* Conteúdo Central: Métrica de Alto Impacto (Tamanho Proporcional) + Rótulo com Quebra Natural (sem cortes) */}
-              <div className="mt-3">
-                <p className="text-xl sm:text-2xl font-extrabold text-[#0D1E3A] font-['Outfit'] tracking-tight leading-none">
+              {/* Conteúdo Central: Métrica Compacta + Rótulo Elegante */}
+              <div className="mt-2">
+                <p className="text-lg sm:text-[20px] font-bold text-[#0D1E3A] font-['Outfit'] tracking-tight leading-tight">
                   {kpi.value}
                 </p>
-                <p className="text-[11.5px] sm:text-xs font-semibold text-slate-700 mt-1.5 leading-snug whitespace-normal break-words min-h-[32px] flex items-center">
-                  <span>{kpi.label}</span>
+                <p className="text-[11px] sm:text-[11.5px] font-medium text-slate-700 mt-0.5 leading-tight truncate" title={kpi.label}>
+                  {kpi.label}
                 </p>
-                <p className="text-[10px] sm:text-[10.5px] font-normal text-slate-400 mt-0.5 truncate">
+                <p className="text-[9.5px] sm:text-[10px] text-slate-400 mt-0.5 truncate">
                   {kpi.trendPeriod}
                 </p>
               </div>
 
-              {/* Rodapé: Divisor com link e transição suave */}
-              <div className="pt-2 mt-2.5 border-t border-slate-100/90 flex items-center justify-between">
-                <span className="text-[11px] font-semibold text-[#5B21B6] group-hover:text-purple-800 inline-flex items-center gap-1 transition-colors cursor-pointer group-hover:underline">
+              {/* Rodapé: Divisor com link compacto */}
+              <div className="pt-1.5 mt-2 border-t border-slate-100 flex items-center justify-between">
+                <span className="text-[10.5px] font-semibold text-[#5B21B6] group-hover:text-purple-800 inline-flex items-center gap-1 transition-colors cursor-pointer group-hover:underline">
                   <span>Ver detalhes</span>
                   <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
                 </span>
