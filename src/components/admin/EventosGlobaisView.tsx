@@ -117,8 +117,10 @@ export const EventosGlobaisView: React.FC<EventosGlobaisViewProps> = ({
       value: '9.580',
       trend: '↑ 18%',
       period: 'desde o ano passado',
-      icon: <Calendar className="w-5 h-5 text-blue-600" />,
-      iconBg: 'bg-blue-50 border border-blue-100/80',
+      icon: Calendar,
+      iconBg: 'bg-blue-50/90',
+      iconColor: 'text-blue-600',
+      borderColor: 'border-blue-100/70',
     },
     {
       id: 'kpi-eventos-ativos',
@@ -126,8 +128,10 @@ export const EventosGlobaisView: React.FC<EventosGlobaisViewProps> = ({
       value: '342',
       trend: '↑ 22%',
       period: 'desde o ano passado',
-      icon: <CalendarCheck2 className="w-5 h-5 text-emerald-600" />,
-      iconBg: 'bg-emerald-50 border border-emerald-100/80',
+      icon: CalendarCheck2,
+      iconBg: 'bg-emerald-50/90',
+      iconColor: 'text-emerald-600',
+      borderColor: 'border-emerald-100/70',
     },
     {
       id: 'kpi-participantes-totais',
@@ -135,8 +139,10 @@ export const EventosGlobaisView: React.FC<EventosGlobaisViewProps> = ({
       value: '2,8M+',
       trend: '↑ 25%',
       period: 'desde o ano passado',
-      icon: <Users className="w-5 h-5 text-purple-600" />,
-      iconBg: 'bg-purple-50 border border-purple-100/80',
+      icon: Users,
+      iconBg: 'bg-purple-50/90',
+      iconColor: 'text-purple-600',
+      borderColor: 'border-purple-100/70',
     },
     {
       id: 'kpi-paises-eventos',
@@ -144,8 +150,10 @@ export const EventosGlobaisView: React.FC<EventosGlobaisViewProps> = ({
       value: '156',
       trend: '↑ 12%',
       period: 'desde o ano passado',
-      icon: <Globe2 className="w-5 h-5 text-amber-600" />,
-      iconBg: 'bg-amber-50 border border-amber-100/80',
+      icon: Globe2,
+      iconBg: 'bg-amber-50/90',
+      iconColor: 'text-amber-600',
+      borderColor: 'border-amber-100/70',
     },
     {
       id: 'kpi-eventos-online',
@@ -153,8 +161,10 @@ export const EventosGlobaisView: React.FC<EventosGlobaisViewProps> = ({
       value: '2.145',
       trend: '↑ 28%',
       period: 'desde o ano passado',
-      icon: <Wifi className="w-5 h-5 text-purple-600" />,
-      iconBg: 'bg-purple-50 border border-purple-100/80',
+      icon: Wifi,
+      iconBg: 'bg-purple-50/90',
+      iconColor: 'text-purple-600',
+      borderColor: 'border-purple-100/70',
     },
     {
       id: 'kpi-taxa-participacao',
@@ -162,8 +172,10 @@ export const EventosGlobaisView: React.FC<EventosGlobaisViewProps> = ({
       value: '67%',
       trend: '↑ 8 pp',
       period: 'desde o ano passado',
-      icon: <TrendingUp className="w-5 h-5 text-cyan-600" />,
-      iconBg: 'bg-cyan-50 border border-cyan-100/80',
+      icon: TrendingUp,
+      iconBg: 'bg-cyan-50/90',
+      iconColor: 'text-cyan-600',
+      borderColor: 'border-cyan-100/70',
     },
   ];
 
@@ -663,50 +675,52 @@ export const EventosGlobaisView: React.FC<EventosGlobaisViewProps> = ({
       {/* =====================================================================
           LINHA 1: 6 CARDS KPI (Grid 6 Colunas)
           ===================================================================== */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
-        {kpiCards.map((kpi) => (
-          <div
-            key={kpi.id}
-            className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex flex-col justify-between hover:border-slate-300 hover:shadow-xs transition-all"
-          >
-            <div>
-              {/* Ícone e Título */}
-              <div className="flex items-center gap-2.5">
-                <div className={`p-2 rounded-xl shrink-0 ${kpi.iconBg}`}>
-                  {kpi.icon}
+      <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-3.5">
+        {kpiCards.map((kpi) => {
+          const Icon = kpi.icon;
+          return (
+            <div
+              key={kpi.id}
+              id={kpi.id}
+              className="bg-white rounded-2xl border border-slate-200/70 p-3 sm:p-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:border-purple-200/90 transition-all duration-200 flex flex-col justify-between group min-w-0"
+            >
+              {/* Linha Superior: Ícone + Indicador/Delta */}
+              <div className="flex items-center justify-between gap-1.5">
+                <div className={`w-8 h-8 rounded-xl ${kpi.iconBg} ${kpi.iconColor} ${kpi.borderColor} border flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-2xs`}>
+                  <Icon className="w-4 h-4" strokeWidth={2.2} />
                 </div>
-                <h3 className="text-xs font-bold text-slate-700 leading-tight">
-                  {kpi.title}
-                </h3>
-              </div>
-
-              {/* Valor Principal */}
-              <div className="mt-3">
-                <span className="text-2xl sm:text-[26px] font-black text-[#0D1E3A] font-['Outfit'] tracking-tight">
-                  {kpi.value}
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50/90 border border-emerald-200/60 px-1.5 py-0.5 rounded-md whitespace-nowrap">
+                  {kpi.trend}
                 </span>
               </div>
 
-              {/* Variação percentual */}
-              <div className="mt-1 flex items-center gap-1.5 text-[11px]">
-                <span className="font-bold text-emerald-600">{kpi.trend}</span>
-                <span className="text-slate-400">{kpi.period}</span>
+              {/* Conteúdo Central: Métrica de Alto Impacto + Rótulo com Quebra Natural */}
+              <div className="mt-3">
+                <p className="text-xl sm:text-2xl font-extrabold text-[#0D1E3A] font-['Outfit'] tracking-tight leading-none">
+                  {kpi.value}
+                </p>
+                <p className="text-[11.5px] font-semibold text-[#64748B] mt-1.5 leading-snug whitespace-normal break-words min-h-[32px] flex items-center">
+                  <span>{kpi.title}</span>
+                </p>
+                <p className="text-[10px] font-medium text-slate-400 mt-0.5">
+                  {kpi.period}
+                </p>
+              </div>
+
+              {/* Rodapé: Divisor com link e transição suave */}
+              <div className="pt-2 mt-2.5 border-t border-slate-100/90 flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => showToast(`A abrir detalhes: ${kpi.title}`)}
+                  className="text-[11px] font-semibold text-[#5B21B6] hover:text-purple-800 inline-flex items-center gap-1 transition-colors cursor-pointer group-hover:underline"
+                >
+                  <span>Ver detalhes</span>
+                  <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                </button>
               </div>
             </div>
-
-            {/* Link Ver Detalhes */}
-            <div className="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between">
-              <button
-                type="button"
-                onClick={() => showToast(`A abrir detalhes: ${kpi.title}`)}
-                className="text-xs font-bold text-[#4F46E5] hover:text-indigo-800 inline-flex items-center gap-1 cursor-pointer transition-colors"
-              >
-                <span>Ver detalhes</span>
-                <ArrowRight className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* =====================================================================

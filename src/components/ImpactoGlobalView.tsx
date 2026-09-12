@@ -74,9 +74,12 @@ export const ImpactoGlobalView: React.FC<ImpactoGlobalViewProps> = ({
       id: 'pessoas',
       title: 'Pessoas Alcançadas',
       value: '2.847.562',
-      trend: '+24% desde o mês passado',
-      icon: <Users className="w-5 h-5 text-purple-600" />,
-      bg: 'bg-purple-50',
+      trend: '↑ 24%',
+      period: 'desde o mês passado',
+      icon: Users,
+      iconBg: 'bg-purple-50/90',
+      iconColor: 'text-purple-600',
+      borderColor: 'border-purple-100/70',
       details: [
         { label: 'Utilizadores Diretos', val: '1.248.300' },
         { label: 'Beneficiários Indiretos', val: '1.599.262' },
@@ -87,9 +90,12 @@ export const ImpactoGlobalView: React.FC<ImpactoGlobalViewProps> = ({
       id: 'comunidades',
       title: 'Comunidades Ativas',
       value: '18.732',
-      trend: '+18% desde o mês passado',
-      icon: <Users className="w-5 h-5 text-indigo-600" />,
-      bg: 'bg-indigo-50',
+      trend: '↑ 18%',
+      period: 'desde o mês passado',
+      icon: Users,
+      iconBg: 'bg-indigo-50/90',
+      iconColor: 'text-indigo-600',
+      borderColor: 'border-indigo-100/70',
       details: [
         { label: 'Comunidades Rurais', val: '7.420' },
         { label: 'Comunidades Urbanas', val: '11.312' },
@@ -100,9 +106,12 @@ export const ImpactoGlobalView: React.FC<ImpactoGlobalViewProps> = ({
       id: 'territorios',
       title: 'Territórios Ativos',
       value: '1.248',
-      trend: '+15% desde o mês passado',
-      icon: <Flag className="w-5 h-5 text-purple-500" />,
-      bg: 'bg-purple-50/70',
+      trend: '↑ 15%',
+      period: 'desde o mês passado',
+      icon: Flag,
+      iconBg: 'bg-rose-50/90',
+      iconColor: 'text-rose-600',
+      borderColor: 'border-rose-100/70',
       details: [
         { label: 'Municípios Digitais', val: '864' },
         { label: 'Regiões Transfronteiriças', val: '384' },
@@ -113,9 +122,12 @@ export const ImpactoGlobalView: React.FC<ImpactoGlobalViewProps> = ({
       id: 'paises',
       title: 'Países Envolvidos',
       value: '156',
-      trend: '+8% desde o mês passado',
-      icon: <Globe2 className="w-5 h-5 text-blue-600" />,
-      bg: 'bg-blue-50',
+      trend: '↑ 8%',
+      period: 'desde o mês passado',
+      icon: Globe2,
+      iconBg: 'bg-blue-50/90',
+      iconColor: 'text-blue-600',
+      borderColor: 'border-blue-100/70',
       details: [
         { label: 'CPLP & Lusofonia', val: '9 países (100%)' },
         { label: 'Europa', val: '38 países' },
@@ -126,9 +138,12 @@ export const ImpactoGlobalView: React.FC<ImpactoGlobalViewProps> = ({
       id: 'iniciativas',
       title: 'Iniciativas Ativas',
       value: '24.963',
-      trend: '+27% desde o mês passado',
-      icon: <Zap className="w-5 h-5 text-emerald-600" />,
-      bg: 'bg-emerald-50',
+      trend: '↑ 27%',
+      period: 'desde o mês passado',
+      icon: Zap,
+      iconBg: 'bg-emerald-50/90',
+      iconColor: 'text-emerald-600',
+      borderColor: 'border-emerald-100/70',
       details: [
         { label: 'Projetos em Curso', val: '16.420' },
         { label: 'Consultas Populares', val: '5.120' },
@@ -139,9 +154,12 @@ export const ImpactoGlobalView: React.FC<ImpactoGlobalViewProps> = ({
       id: 'parceiros',
       title: 'Parceiros Globais',
       value: '342',
-      trend: '+12% desde o mês passado',
-      icon: <Handshake className="w-5 h-5 text-amber-600" />,
-      bg: 'bg-amber-50',
+      trend: '↑ 12%',
+      period: 'desde o mês passado',
+      icon: Handshake,
+      iconBg: 'bg-amber-50/90',
+      iconColor: 'text-amber-600',
+      borderColor: 'border-amber-100/70',
       details: [
         { label: 'Governos & Municípios', val: '184' },
         { label: 'ONGs & Fundações', val: '98' },
@@ -392,49 +410,59 @@ export const ImpactoGlobalView: React.FC<ImpactoGlobalViewProps> = ({
       </div>
 
       {/* 2. LINHA 1 (6 KPI Cards): Pessoas Alcançadas, Comunidades, Territórios, Países, Iniciativas, Parceiros */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3.5">
-        {kpis.map((kpi) => (
-          <div
-            key={kpi.id}
-            className="bg-white border border-slate-100 rounded-2xl p-4 shadow-[0_1px_3px_rgba(0,0,0,0.02)] flex flex-col justify-between hover:border-slate-200 transition-all"
-          >
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <div className={`w-8 h-8 rounded-xl ${kpi.bg} flex items-center justify-center`}>
-                  {kpi.icon}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-3 sm:gap-3.5">
+        {kpis.map((kpi) => {
+          const Icon = kpi.icon;
+          return (
+            <div
+              key={kpi.id}
+              id={`kpi-impact-${kpi.id}`}
+              className="bg-white rounded-2xl border border-slate-200/70 p-3 sm:p-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:border-purple-200/90 transition-all duration-200 flex flex-col justify-between group min-w-0"
+            >
+              {/* Linha Superior: Ícone + Indicador/Delta */}
+              <div className="flex items-center justify-between gap-1.5">
+                <div className={`w-8 h-8 rounded-xl ${kpi.iconBg} ${kpi.iconColor} ${kpi.borderColor} border flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-2xs`}>
+                  <Icon className="w-4 h-4" strokeWidth={2.2} />
                 </div>
+                <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50/90 border border-emerald-200/60 px-1.5 py-0.5 rounded-md whitespace-nowrap">
+                  {kpi.trend}
+                </span>
               </div>
 
-              <div className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                {kpi.title}
+              {/* Conteúdo Central: Métrica de Alto Impacto + Rótulo com Quebra Natural */}
+              <div className="mt-3">
+                <p className="text-xl sm:text-2xl font-extrabold text-[#0D1E3A] font-['Outfit'] tracking-tight leading-none">
+                  {kpi.value}
+                </p>
+                <p className="text-[11.5px] font-semibold text-[#64748B] mt-1.5 leading-snug whitespace-normal break-words min-h-[32px] flex items-center">
+                  <span>{kpi.title}</span>
+                </p>
+                <p className="text-[10px] font-medium text-slate-400 mt-0.5">
+                  {kpi.period}
+                </p>
               </div>
-              <div className="text-xl sm:text-2xl font-extrabold text-[#0D1E3A] mt-1 font-['Outfit']">
-                {kpi.value}
-              </div>
-              <div className="text-[10.5px] font-semibold text-emerald-600 mt-1 flex items-center gap-1">
-                <span>↑</span>
-                <span>{kpi.trend}</span>
-              </div>
-            </div>
 
-            <div className="pt-3 border-t border-slate-50 mt-3 flex justify-start">
-              <button
-                onClick={() =>
-                  setActiveKpiModal({
-                    title: kpi.title,
-                    value: kpi.value,
-                    growth: kpi.trend,
-                    details: kpi.details,
-                  })
-                }
-                className="text-[11px] font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-1 group cursor-pointer"
-              >
-                <span>Ver detalhes</span>
-                <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
-              </button>
+              {/* Rodapé: Divisor com link e transição suave */}
+              <div className="pt-2 mt-2.5 border-t border-slate-100/90 flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setActiveKpiModal({
+                      title: kpi.title,
+                      value: kpi.value,
+                      growth: kpi.trend,
+                      details: kpi.details,
+                    })
+                  }
+                  className="text-[11px] font-semibold text-[#5B21B6] hover:text-purple-800 inline-flex items-center gap-1 transition-colors cursor-pointer group-hover:underline"
+                >
+                  <span>Ver detalhes</span>
+                  <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* 3. LINHA 2 (3 CARDS): Evolução do Impacto (45%), Impacto por Dimensão (27%), Presença Global (28%) */}

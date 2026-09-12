@@ -181,7 +181,11 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
           />
         )}
         {activeTab === 'identidade' && (
-          <IdentidadeVilaTab onNavigateToTab={onNavigateToTab} />
+          <IdentidadeVilaTab
+            currentUser={currentUser}
+            onNavigateToTab={onNavigateToTab}
+            onNavigateToSubTab={(subTab) => setActiveTab(subTab)}
+          />
         )}
         {activeTab === 'territorios' && (
           <TerritoriosTab onNavigateToTab={onNavigateToTab} />
