@@ -25,6 +25,7 @@ import { VilaAiChatModal } from './components/VilaAiChatModal';
 import { AuthModal } from './components/AuthModal';
 import { ImpactModal } from './components/ImpactModal';
 import { SupportModal } from './components/SupportModal';
+import { AcessoRestritoAdminView } from './components/AcessoRestritoAdminView';
 import { COUNTRIES_DATA } from './data/countriesData';
 import { CountryData } from './types';
 import {

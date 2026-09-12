@@ -21,6 +21,8 @@ import {
   ArrowRight,
   Eye,
   Download,
+  Share2,
+  SlidersHorizontal,
 } from 'lucide-react';
 import { PerfilVilaTabId } from './types';
 import { VilaPerfilTab } from './VilaPerfilTab';
@@ -60,7 +62,7 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
     }
   }, [initialTab]);
 
-  // Definição das abas principais mostradas no cabeçalho (conforme UI VILA PERFIL.png)
+  // Definição das abas principais mostradas no cabeçalho
   const tabs: { id: PerfilVilaTabId; label: string; icon: React.FC<{ className?: string }> }[] = [
     { id: 'perfil', label: 'Perfil', icon: User },
     { id: 'identidade', label: 'Identidade VILA', icon: ShieldCheck },
@@ -161,22 +163,41 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-16">
-      {/* 1. Header do Perfil VILA (Padrão visual de SettingsView) */}
-      <div className="bg-white border-b border-slate-200/80 sticky top-14 z-20 shadow-2xs">
-        <div className="max-w-[1600px] mx-auto px-3.5 sm:px-5 lg:px-6 pt-5 sm:pt-6 space-y-4">
-          {/* Título e Subtítulo dinâmico */}
-          <div className="space-y-1">
-            <h1 className="text-xl sm:text-2xl font-black text-[#0F172A] font-['Outfit'] tracking-tight">
-              {tabMetadata[activeTab].title}
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500">
-              {tabMetadata[activeTab].subtitle}
-            </p>
+      {/* 1. Header do Perfil VILA (Alinhado visualmente com as outras páginas administrativas e de módulo) */}
+      <div className="bg-white border-b border-slate-200/80 sticky top-14 z-20 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+        <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-5 sm:pt-6 space-y-4">
+          {/* Título, Subtítulo e Telemetria */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex items-start sm:items-center gap-3.5">
+              <div className="w-11 h-11 rounded-2xl bg-[#EDE9FE]/80 border border-purple-200/60 flex items-center justify-center text-[#5B21B6] shrink-0 shadow-2xs">
+                <User className="w-5 h-5" />
+              </div>
+              <div>
+                <h1 className="text-2xl sm:text-[28px] font-bold text-[#0D1E3A] font-['Outfit'] tracking-tight">
+                  {tabMetadata[activeTab].title}
+                </h1>
+                <p className="text-xs sm:text-sm text-slate-500 max-w-2xl mt-0.5 leading-relaxed">
+                  {tabMetadata[activeTab].subtitle}
+                </p>
+              </div>
+            </div>
+
+            {/* Badges de Status / Ações */}
+            <div className="flex items-center gap-3 w-full sm:w-auto justify-start sm:justify-end">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-semibold">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>Identidade Verificada</span>
+              </div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-50 text-purple-700 border border-purple-200 text-xs font-semibold">
+                <Award className="w-3.5 h-3.5" />
+                <span>Nível Embaixadora</span>
+              </div>
+            </div>
           </div>
 
-          {/* Barra de Navegação das 8 Abas (Padrão de SettingsView com linha sublinhada) */}
+          {/* Barra de Navegação das Abas */}
           <div className="border-t border-slate-100 overflow-x-auto no-scrollbar">
-            <div className="flex items-center gap-2 sm:gap-6 min-w-max">
+            <div className="flex items-center gap-1 sm:gap-4 min-w-max">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
                 const isActive = activeTab === tab.id;
@@ -185,18 +206,18 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
                     key={tab.id}
                     type="button"
                     onClick={() => setActiveTab(tab.id)}
-                    className={`py-3 px-2 flex items-center gap-2 text-xs sm:text-[13px] font-semibold transition-all relative cursor-pointer ${
+                    className={`py-3 px-2.5 flex items-center gap-2 text-xs sm:text-[13px] font-semibold transition-all relative cursor-pointer ${
                       isActive
-                        ? 'text-[#0055FE]'
+                        ? 'text-blue-600'
                         : 'text-slate-500 hover:text-slate-900'
                     }`}
                   >
-                    <Icon className={`w-4 h-4 ${isActive ? 'text-[#0055FE]' : 'text-slate-400'}`} />
+                    <Icon className={`w-4 h-4 ${isActive ? 'text-blue-600' : 'text-slate-400'}`} />
                     <span>{tab.label}</span>
 
                     {/* Linha azul sublinhada para aba ativa */}
                     {isActive && (
-                      <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#0055FE] rounded-full" />
+                      <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600 rounded-full" />
                     )}
                   </button>
                 );
@@ -207,7 +228,7 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
       </div>
 
       {/* 2. Conteúdo da Aba Ativa */}
-      <main className="max-w-[1600px] mx-auto px-3.5 sm:px-5 lg:px-6 pt-5 sm:pt-6">
+      <main className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 pt-5 sm:pt-6">
         {activeTab === 'perfil' && (
           <VilaPerfilTab
             currentUser={currentUser}
@@ -246,40 +267,40 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
         {activeTab === 'participacao' && (
           <div className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Consultas</span>
-                <div className="text-2xl font-black text-[#0F172A] font-['Outfit'] mt-1">34</div>
+              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Consultas</span>
+                <div className="text-2xl font-bold text-[#0D1E3A] font-['Outfit'] mt-1">34</div>
                 <span className="text-xs text-emerald-600 font-semibold">+6 este mês</span>
               </div>
-              <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Comentários</span>
-                <div className="text-2xl font-black text-[#0F172A] font-['Outfit'] mt-1">21</div>
-                <span className="text-xs text-[#0055FE] font-semibold">100% construtivos</span>
+              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Comentários</span>
+                <div className="text-2xl font-bold text-[#0D1E3A] font-['Outfit'] mt-1">21</div>
+                <span className="text-xs text-blue-600 font-semibold">100% construtivos</span>
               </div>
-              <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Projetos Apoiados</span>
-                <div className="text-2xl font-black text-[#0F172A] font-['Outfit'] mt-1">56</div>
+              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Projetos Apoiados</span>
+                <div className="text-2xl font-bold text-[#0D1E3A] font-['Outfit'] mt-1">56</div>
                 <span className="text-xs text-indigo-600 font-semibold">4 municípios</span>
               </div>
-              <div className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Ideias Aprovadas</span>
-                <div className="text-2xl font-black text-[#0F172A] font-['Outfit'] mt-1">4 / 12</div>
+              <div className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Ideias Aprovadas</span>
+                <div className="text-2xl font-bold text-[#0D1E3A] font-['Outfit'] mt-1">4 / 12</div>
                 <span className="text-xs text-amber-600 font-semibold">33% taxa de aprovação</span>
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs">
-              <h3 className="text-base font-bold text-[#0F172A] mb-4 font-['Outfit']">Histórico de Atividade Recente</h3>
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
+              <h3 className="text-base font-bold text-[#0D1E3A] mb-4 font-['Outfit']">Histórico de Atividade Recente</h3>
               <div className="space-y-3">
                 {[
-                  { title: 'Votação no Orçamento Participativo de Faro 2026', type: 'Voto Registado', date: 'Há 2 dias', badge: 'bg-purple-50 text-purple-700' },
-                  { title: 'Apoio à proposta de Ciclovia Urbana Faro-Olhão', type: 'Projeto Apoiado', date: 'Há 5 dias', badge: 'bg-emerald-50 text-emerald-700' },
-                  { title: 'Comentário técnico sobre Eficiência Hídrica no Algarve', type: 'Comentário', date: 'Há 1 semana', badge: 'bg-blue-50 text-blue-700' },
-                  { title: 'Submissão de ideia para Hortas Comunitárias na Penha', type: 'Ideia Submetida', date: 'Há 2 semanas', badge: 'bg-amber-50 text-amber-700' },
+                  { title: 'Votação no Orçamento Participativo de Faro 2026', type: 'Voto Registado', date: 'Há 2 dias', badge: 'bg-purple-50 text-purple-700 border border-purple-200' },
+                  { title: 'Apoio à proposta de Ciclovia Urbana Faro-Olhão', type: 'Projeto Apoiado', date: 'Há 5 dias', badge: 'bg-emerald-50 text-emerald-700 border border-emerald-200' },
+                  { title: 'Comentário técnico sobre Eficiência Hídrica no Algarve', type: 'Comentário', date: 'Há 1 semana', badge: 'bg-blue-50 text-blue-700 border border-blue-200' },
+                  { title: 'Submissão de ideia para Hortas Comunitárias na Penha', type: 'Ideia Submetida', date: 'Há 2 semanas', badge: 'bg-amber-50 text-amber-700 border border-amber-200' },
                 ].map((item, i) => (
                   <div key={i} className="flex items-center justify-between p-3.5 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors">
                     <div>
-                      <h4 className="text-sm font-semibold text-slate-900">{item.title}</h4>
+                      <h4 className="text-sm font-semibold text-[#0D1E3A]">{item.title}</h4>
                       <span className="text-xs text-slate-400">{item.date}</span>
                     </div>
                     <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${item.badge}`}>
@@ -299,11 +320,11 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div>
                   <span className="text-xs font-bold uppercase tracking-wider text-purple-200">Nível Atual</span>
-                  <h2 className="text-2xl font-black font-['Outfit'] mt-1">Embaixadora da Comunidade</h2>
+                  <h2 className="text-2xl font-bold font-['Outfit'] mt-1">Embaixadora da Comunidade</h2>
                   <p className="text-sm text-purple-100 mt-1">Faltam 550 XP para alcançar o nível Líder Global</p>
                 </div>
                 <div className="text-left sm:text-right">
-                  <div className="text-3xl font-black font-['Outfit']">2.450 XP</div>
+                  <div className="text-3xl font-bold font-['Outfit']">2.450 XP</div>
                   <span className="text-xs text-purple-200">Total acumulado</span>
                 </div>
               </div>
@@ -317,10 +338,10 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
                 { name: 'Líder Comunitário', desc: 'Lidera pelo exemplo e mobiliza', status: 'Em progresso (80%)', icon: '👥', color: 'bg-purple-50 text-purple-700 border-purple-200' },
                 { name: 'Lenda VILA', desc: 'Máximo reconhecimento cívico e impacto perene', status: 'Em progresso (25%)', icon: '👑', color: 'bg-slate-100 text-slate-700 border-slate-200' },
               ].map((badge, idx) => (
-                <div key={idx} className="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs text-center flex flex-col justify-between">
+                <div key={idx} className="bg-white p-5 rounded-2xl border border-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)] text-center flex flex-col justify-between">
                   <div>
                     <div className="text-3xl mb-2">{badge.icon}</div>
-                    <h4 className="font-bold text-slate-900">{badge.name}</h4>
+                    <h4 className="font-bold text-[#0D1E3A]">{badge.name}</h4>
                     <p className="text-xs text-slate-500 mt-1">{badge.desc}</p>
                   </div>
                   <span className={`mt-4 px-2.5 py-1 rounded-full text-[11px] font-bold border ${badge.color}`}>
@@ -335,11 +356,11 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
         {/* Aba Assinaturas */}
         {activeTab === 'assinaturas' && (
           <div className="max-w-4xl space-y-6">
-            <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs">
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)]">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 border-b border-slate-100">
                 <div>
-                  <span className="text-xs font-bold text-purple-600 uppercase">Plano Ativo</span>
-                  <h3 className="text-xl font-bold text-slate-900 font-['Outfit'] mt-0.5">VILA Premium (Anual)</h3>
+                  <span className="text-xs font-bold text-purple-600 uppercase tracking-wider">Plano Ativo</span>
+                  <h3 className="text-xl font-bold text-[#0D1E3A] font-['Outfit'] mt-0.5">VILA Premium (Anual)</h3>
                   <p className="text-xs text-slate-500 mt-1">Renovação automática em 12 de maio de 2026</p>
                 </div>
                 <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-xs">
@@ -349,7 +370,7 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-5">
                 <div className="space-y-2">
-                  <h4 className="text-xs font-bold text-slate-400 uppercase">Benefícios Incluídos</h4>
+                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">Benefícios Incluídos</h4>
                   <div className="space-y-1.5 text-xs text-slate-700">
                     <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-600" /> Acesso a projetos exclusivos</div>
                     <div className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-emerald-600" /> Relatórios avançados de impacto territorial</div>
@@ -358,7 +379,7 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
                   </div>
                 </div>
                 <div className="flex flex-col justify-end gap-2">
-                  <button className="py-2.5 px-4 rounded-xl bg-[#0055FE] text-white font-semibold text-xs hover:bg-blue-700 transition-colors cursor-pointer">
+                  <button className="py-2.5 px-4 rounded-xl bg-blue-600 text-white font-semibold text-xs hover:bg-blue-700 transition-colors cursor-pointer">
                     Mudar de Plano
                   </button>
                   <button className="py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 font-semibold text-xs hover:bg-slate-50 transition-colors cursor-pointer">
@@ -373,14 +394,14 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
         {/* Aba Segurança */}
         {activeTab === 'seguranca' && (
           <div className="max-w-4xl space-y-4">
-            <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-4">
-              <h3 className="text-base font-bold text-slate-900 font-['Outfit']">Credenciais e Autenticação</h3>
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-4">
+              <h3 className="text-base font-bold text-[#0D1E3A] font-['Outfit']">Credenciais e Autenticação</h3>
               <div className="space-y-3">
                 <div className="flex items-center justify-between p-4 rounded-xl border border-slate-100 hover:bg-slate-50 transition-colors">
                   <div className="flex items-center gap-3">
                     <Key className="w-5 h-5 text-slate-400" />
                     <div>
-                      <h4 className="text-sm font-semibold text-slate-900">Palavra-passe</h4>
+                      <h4 className="text-sm font-semibold text-[#0D1E3A]">Palavra-passe</h4>
                       <p className="text-xs text-slate-500">Última alteração há 30 dias</p>
                     </div>
                   </div>
@@ -393,7 +414,7 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
                   <div className="flex items-center gap-3">
                     <ShieldCheck className="w-5 h-5 text-emerald-600" />
                     <div>
-                      <h4 className="text-sm font-semibold text-slate-900">Autenticação de Dois Fatores (2FA)</h4>
+                      <h4 className="text-sm font-semibold text-[#0D1E3A]">Autenticação de Dois Fatores (2FA)</h4>
                       <p className="text-xs text-emerald-600 font-medium">Ativada via Authenticator App</p>
                     </div>
                   </div>
@@ -406,7 +427,7 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
                   <div className="flex items-center gap-3">
                     <Laptop className="w-5 h-5 text-slate-400" />
                     <div>
-                      <h4 className="text-sm font-semibold text-slate-900">Sessões Ativas</h4>
+                      <h4 className="text-sm font-semibold text-[#0D1E3A]">Sessões Ativas</h4>
                       <p className="text-xs text-slate-500">3 dispositivos com sessão iniciada atualmente</p>
                     </div>
                   </div>
@@ -422,14 +443,14 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
         {/* Aba Privacidade */}
         {activeTab === 'privacidade' && (
           <div className="max-w-4xl space-y-4">
-            <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-4">
-              <h3 className="text-base font-bold text-slate-900 font-['Outfit']">Visibilidade e Dados</h3>
+            <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-[0_1px_3px_rgba(0,0,0,0.03)] space-y-4">
+              <h3 className="text-base font-bold text-[#0D1E3A] font-['Outfit']">Visibilidade e Dados</h3>
               <div className="space-y-3 text-xs">
                 <div className="flex items-center justify-between p-4 rounded-xl border border-slate-100">
                   <div className="flex items-center gap-3">
                     <Eye className="w-5 h-5 text-slate-400" />
                     <div>
-                      <h4 className="text-sm font-semibold text-slate-900">Visibilidade do Perfil</h4>
+                      <h4 className="text-sm font-semibold text-[#0D1E3A]">Visibilidade do Perfil</h4>
                       <p className="text-slate-500">Visível para outros cidadãos na comunidade VILA</p>
                     </div>
                   </div>
@@ -440,7 +461,7 @@ export const PerfilVilaView: React.FC<PerfilVilaViewProps> = ({
                   <div className="flex items-center gap-3">
                     <Download className="w-5 h-5 text-slate-400" />
                     <div>
-                      <h4 className="text-sm font-semibold text-slate-900">Descarregar os Meus Dados (RGPD)</h4>
+                      <h4 className="text-sm font-semibold text-[#0D1E3A]">Descarregar os Meus Dados (RGPD)</h4>
                       <p className="text-slate-500">Exportar cópia integral de participações e dados da conta</p>
                     </div>
                   </div>
