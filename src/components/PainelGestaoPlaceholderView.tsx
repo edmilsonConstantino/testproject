@@ -34,9 +34,15 @@ import {
   TrendingUp,
   Radio,
   Share2,
+  RotateCw,
+  Flag,
+  Map,
+  MessageSquare,
+  Server,
 } from 'lucide-react';
 import { DemoUser } from '../data/demoUsers';
 import { BreadcrumbItem } from './Topbar';
+import { VisaoGeralView } from './admin/VisaoGeralView';
 
 interface PainelGestaoPlaceholderViewProps {
   currentUser: DemoUser;
@@ -200,11 +206,23 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
   onNavigateToTabRef.current = onNavigateToTab;
 
   React.useEffect(() => {
+    if (currentSection === 'visao-geral') return;
     onBreadcrumbChangeRef.current?.([
       { label: 'Plataforma VILA', onClick: () => onNavigateToTabRef.current('painel-gestao') },
       { label: meta.breadcrumb },
     ]);
-  }, [meta.breadcrumb]);
+  }, [meta.breadcrumb, currentSection]);
+
+  // Se a secção for Visão Geral, renderiza a tela completa com fidelidade visual à referência UI VISAO GERAL.png
+  if (currentSection === 'visao-geral') {
+    return (
+      <VisaoGeralView
+        currentUser={currentUser}
+        onNavigateToTab={onNavigateToTab}
+        onBreadcrumbChange={onBreadcrumbChange}
+      />
+    );
+  }
 
   // Se não for o Painel de Gestão principal, exibe a visualização de gestão específica
   if (currentSection !== 'painel-gestao' && currentSection !== 'gestao' && currentSection !== 'admin') {
@@ -285,223 +303,234 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
     );
   }
 
-  // Visualização Principal: Painel de Gestão (exatamente como na referência UI PAINEL DE GESTAO.png)
+  // Visualização Principal: Painel de Gestão (alinhado rigorosamente aos traços de ExploreWorldView)
+  const KPI_STATS = [
+    {
+      id: 'kpi-users-online',
+      title: 'Utilizadores Online',
+      subtitle: '',
+      value: '4.382',
+      delta: '↑ 12%',
+      deltaLabel: 'vs ontem',
+      deltaType: 'positive' as const,
+      icon: Users,
+      iconBg: 'bg-purple-50/90',
+      iconColor: 'text-[#5B21B6]',
+      borderColor: 'border-purple-100/70',
+      tab: 'gestao-utilizadores',
+    },
+    {
+      id: 'kpi-new-users',
+      title: 'Novos Utilizadores',
+      subtitle: '(Hoje)',
+      value: '1.248',
+      delta: '↑ 18%',
+      deltaLabel: 'vs ontem',
+      deltaType: 'positive' as const,
+      icon: Users,
+      iconBg: 'bg-emerald-50/90',
+      iconColor: 'text-emerald-600',
+      borderColor: 'border-emerald-100/70',
+      tab: 'gestao-utilizadores',
+    },
+    {
+      id: 'kpi-new-communities',
+      title: 'Novas Comunidades',
+      subtitle: '(Hoje)',
+      value: '14',
+      delta: '↑ 7%',
+      deltaLabel: 'vs ontem',
+      deltaType: 'positive' as const,
+      icon: Flag,
+      iconBg: 'bg-blue-50/90',
+      iconColor: 'text-[#0055FE]',
+      borderColor: 'border-blue-100/70',
+      tab: 'gestao-utilizadores',
+    },
+    {
+      id: 'kpi-new-projects',
+      title: 'Novos Projetos',
+      subtitle: '(Hoje)',
+      value: '28',
+      delta: '↑ 22%',
+      deltaLabel: 'vs ontem',
+      deltaType: 'positive' as const,
+      icon: Map,
+      iconBg: 'bg-amber-50/90',
+      iconColor: 'text-amber-600',
+      borderColor: 'border-amber-100/70',
+      tab: 'projetos-iniciativas',
+    },
+    {
+      id: 'kpi-active-consultations',
+      title: 'Consultas Ativas',
+      subtitle: '',
+      value: '25',
+      badge: 'Ativas',
+      deltaLabel: 'em debate',
+      deltaType: 'neutral' as const,
+      icon: MessageSquare,
+      iconBg: 'bg-rose-50/90',
+      iconColor: 'text-rose-600',
+      borderColor: 'border-rose-100/70',
+      tab: 'participacao-consultas',
+    },
+    {
+      id: 'kpi-active-events',
+      title: 'Eventos Ativos',
+      subtitle: '',
+      value: '12',
+      badge: 'Agendados',
+      deltaLabel: 'este mês',
+      deltaType: 'neutral' as const,
+      icon: Calendar,
+      iconBg: 'bg-sky-50/90',
+      iconColor: 'text-sky-600',
+      borderColor: 'border-sky-100/70',
+      tab: 'eventos-globais-admin',
+    },
+    {
+      id: 'kpi-pending-tasks',
+      title: 'Tarefas Pendentes',
+      subtitle: '',
+      value: '36',
+      badge: 'Pendente',
+      deltaLabel: 'ação requerida',
+      deltaType: 'warning' as const,
+      icon: FileText,
+      iconBg: 'bg-purple-50/90',
+      iconColor: 'text-[#5B21B6]',
+      borderColor: 'border-purple-100/70',
+      tab: 'painel-gestao',
+    },
+  ];
+
   return (
-    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-6">
-      {/* 1. Header do Painel de Gestão */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="flex items-start sm:items-center gap-3.5">
+    <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-6 animate-in fade-in duration-200">
+      {/* 1. Header do Painel de Gestão com os traços refinados de ExploreWorld */}
+      <header className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 pb-1">
+        <div className="flex items-start gap-3.5">
           {/* Quadrant Icon */}
-          <div className="w-12 h-12 rounded-2xl bg-[#EDE9FE] border border-purple-200/80 flex items-center justify-center text-[#5B21B6] shrink-0 shadow-2xs">
-            <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current">
+          <div className="w-12 h-12 rounded-2xl bg-[#EDE9FE] border border-purple-200/80 flex items-center justify-center text-[#5B21B6] shrink-0 shadow-[0_1px_3px_rgba(0,0,0,0.04)]">
+            <svg viewBox="0 0 24 24" className="w-6 h-6 text-[#5B21B6]" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
               <rect x="3" y="3" width="7" height="7" rx="2" />
               <rect x="14" y="3" width="7" height="7" rx="2" />
               <rect x="3" y="14" width="7" height="7" rx="2" />
               <rect x="14" y="14" width="7" height="7" rx="2" />
+              <path d="M6.5 6.5v1M17.5 6.5v1M6.5 17.5v1M17.5 17.5v1" strokeWidth="2.5" />
             </svg>
           </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-black text-slate-900 font-['Outfit'] tracking-tight">
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0D1E3A] font-['Outfit'] tracking-tight">
               Painel de Gestão
             </h1>
-            <p className="text-xs sm:text-sm text-slate-500 leading-relaxed max-w-2xl">
-              Monitorização operacional em tempo real da plataforma VILA. Acompanhe atividades, serviços, alertas e ações em curso.
+            <p className="text-xs sm:text-[13px] text-[#64748B] mt-1 font-normal leading-relaxed">
+              Monitorização operacional em tempo real da plataforma VILA.
+              <br className="hidden sm:inline" /> Acompanhe atividades, serviços, alertas e ações em curso.
             </p>
           </div>
         </div>
 
-        {/* Status em tempo real + Botão Atualizar */}
-        <div className="flex items-center gap-3 shrink-0 self-start sm:self-center">
-          <div className="text-right text-xs">
-            <span className="text-slate-400">Última atualização: </span>
-            <strong className="text-slate-700">{lastUpdated}</strong>
+        {/* Painel Consolidado de Status + Ação Atualizar (mesmo traço do header de ExploreWorld) */}
+        <div className="flex items-center gap-3 bg-white rounded-2xl border border-slate-200/80 px-3.5 sm:px-4 py-2 shadow-[0_1px_3px_rgba(0,0,0,0.04)] shrink-0 self-start xl:self-center flex-wrap sm:flex-nowrap">
+          <div className="text-xs text-[#64748B] font-medium pr-3 border-r border-slate-200/80">
+            Última atualização: <strong className="text-[#0D1E3A] font-bold font-mono">{lastUpdated}</strong>
           </div>
-          <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="hidden sm:inline">Dados em tempo real</span>
+          <div className="flex items-center gap-1.5 text-xs text-[#0D1E3A] font-semibold pr-3 border-r border-slate-200/80">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.6)]" />
+            <span>Dados em tempo real</span>
           </div>
           <button
             type="button"
             onClick={handleRefresh}
             id="btn-refresh-painel"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-bold text-slate-700 shadow-2xs transition-colors cursor-pointer"
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border border-purple-200/90 bg-purple-50/70 hover:bg-[#5B21B6] hover:text-white text-xs font-bold text-[#5B21B6] transition-all cursor-pointer shadow-2xs group"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin text-purple-600' : ''}`} />
             <span>Atualizar</span>
+            <RotateCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : 'group-hover:rotate-180 transition-transform duration-500'}`} />
           </button>
         </div>
-      </div>
+      </header>
 
-      {/* 2. 7 KPI Stat Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3">
-        {/* Card 1: Utilizadores Online */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 flex flex-col justify-between shadow-2xs">
-          <div className="flex items-center gap-2 text-slate-500">
-            <div className="p-1.5 rounded-lg bg-purple-50 text-purple-600">
-              <Users className="w-4 h-4" />
-            </div>
-            <span className="text-[11px] font-medium leading-tight">Utilizadores Online</span>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-black text-slate-900 font-['Outfit']">4.382</div>
-            <div className="flex items-center gap-1 text-[10.5px] font-semibold text-emerald-600 mt-0.5">
-              <span>↑ 12%</span>
-              <span className="text-slate-400 font-normal">vs ontem</span>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => onNavigateToTab('gestao-utilizadores')}
-            className="mt-2 text-[10.5px] font-bold text-purple-600 hover:text-purple-800 text-left cursor-pointer"
-          >
-            Ver detalhes
-          </button>
-        </div>
+      {/* 2. 7 KPI Stat Cards - Layout sem cortes nem truncamentos, seguindo os traços de ExploreWorldView */}
+      <section className="w-full" id="faixa-kpis-gestao">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3 sm:gap-3.5">
+          {KPI_STATS.map((kpi) => {
+            const Icon = kpi.icon;
+            return (
+              <div
+                key={kpi.id}
+                id={kpi.id}
+                className="bg-white rounded-2xl border border-slate-200/70 p-3 sm:p-3.5 shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:border-purple-200/90 transition-all duration-200 flex flex-col justify-between group min-w-0"
+              >
+                {/* Linha Superior: Ícone + Indicador/Delta */}
+                <div className="flex items-center justify-between gap-1.5">
+                  <div className={`w-8 h-8 rounded-xl ${kpi.iconBg} ${kpi.iconColor} ${kpi.borderColor} border flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform shadow-2xs`}>
+                    <Icon className="w-4 h-4" strokeWidth={2.2} />
+                  </div>
+                  {kpi.delta ? (
+                    <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50/90 border border-emerald-200/60 px-1.5 py-0.5 rounded-md whitespace-nowrap">
+                      {kpi.delta}
+                    </span>
+                  ) : kpi.badge ? (
+                    <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-md whitespace-nowrap ${
+                      kpi.deltaType === 'warning'
+                        ? 'text-amber-700 bg-amber-50/90 border border-amber-200/60'
+                        : 'text-slate-600 bg-slate-50/90 border border-slate-200/60'
+                    }`}>
+                      {kpi.badge}
+                    </span>
+                  ) : null}
+                </div>
 
-        {/* Card 2: Novos Utilizadores (Hoje) */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 flex flex-col justify-between shadow-2xs">
-          <div className="flex items-center gap-2 text-slate-500">
-            <div className="p-1.5 rounded-lg bg-emerald-50 text-emerald-600">
-              <UserCheck className="w-4 h-4" />
-            </div>
-            <span className="text-[11px] font-medium leading-tight">Novos Utilizadores (Hoje)</span>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-black text-slate-900 font-['Outfit']">1.248</div>
-            <div className="flex items-center gap-1 text-[10.5px] font-semibold text-emerald-600 mt-0.5">
-              <span>↑ 18%</span>
-              <span className="text-slate-400 font-normal">vs ontem</span>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => onNavigateToTab('gestao-utilizadores')}
-            className="mt-2 text-[10.5px] font-bold text-purple-600 hover:text-purple-800 text-left cursor-pointer"
-          >
-            Ver detalhes
-          </button>
-        </div>
+                {/* Conteúdo Central: Métrica de Alto Impacto + Rótulo com Quebra Natural (sem elipses) */}
+                <div className="mt-3">
+                  <p className="text-xl sm:text-2xl font-extrabold text-[#0D1E3A] font-['Outfit'] tracking-tight leading-none">
+                    {kpi.value}
+                  </p>
+                  <p className="text-[11.5px] font-semibold text-[#64748B] mt-1.5 leading-snug whitespace-normal break-words min-h-[32px] flex items-center">
+                    <span>
+                      {kpi.title}{' '}
+                      {kpi.subtitle && (
+                        <span className="text-[10px] font-medium text-slate-400 block sm:inline">
+                          {kpi.subtitle}
+                        </span>
+                      )}
+                    </span>
+                  </p>
+                  <p className="text-[10px] font-medium text-slate-400 mt-0.5">
+                    {kpi.deltaLabel}
+                  </p>
+                </div>
 
-        {/* Card 3: Novas Comunidades (Hoje) */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 flex flex-col justify-between shadow-2xs">
-          <div className="flex items-center gap-2 text-slate-500">
-            <div className="p-1.5 rounded-lg bg-blue-50 text-blue-600">
-              <MapPin className="w-4 h-4" />
-            </div>
-            <span className="text-[11px] font-medium leading-tight">Novas Comunidades (Hoje)</span>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-black text-slate-900 font-['Outfit']">14</div>
-            <div className="flex items-center gap-1 text-[10.5px] font-semibold text-emerald-600 mt-0.5">
-              <span>↑ 7%</span>
-              <span className="text-slate-400 font-normal">vs ontem</span>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => onNavigateToTab('gestao-utilizadores')}
-            className="mt-2 text-[10.5px] font-bold text-purple-600 hover:text-purple-800 text-left cursor-pointer"
-          >
-            Ver detalhes
-          </button>
+                {/* Rodapé: Divisor com link e transição suave */}
+                <div className="pt-2 mt-2.5 border-t border-slate-100/90 flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={() => onNavigateToTab(kpi.tab)}
+                    className="text-[11px] font-semibold text-[#5B21B6] hover:text-purple-800 inline-flex items-center gap-1 transition-colors cursor-pointer group-hover:underline"
+                  >
+                    <span>Ver detalhes</span>
+                    <ArrowRight className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
         </div>
-
-        {/* Card 4: Novos Projetos (Hoje) */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 flex flex-col justify-between shadow-2xs">
-          <div className="flex items-center gap-2 text-slate-500">
-            <div className="p-1.5 rounded-lg bg-amber-50 text-amber-600">
-              <FolderKanban className="w-4 h-4" />
-            </div>
-            <span className="text-[11px] font-medium leading-tight">Novos Projetos (Hoje)</span>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-black text-slate-900 font-['Outfit']">28</div>
-            <div className="flex items-center gap-1 text-[10.5px] font-semibold text-emerald-600 mt-0.5">
-              <span>↑ 22%</span>
-              <span className="text-slate-400 font-normal">vs ontem</span>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => onNavigateToTab('projetos-iniciativas')}
-            className="mt-2 text-[10.5px] font-bold text-purple-600 hover:text-purple-800 text-left cursor-pointer"
-          >
-            Ver detalhes
-          </button>
-        </div>
-
-        {/* Card 5: Consultas Ativas */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 flex flex-col justify-between shadow-2xs">
-          <div className="flex items-center gap-2 text-slate-500">
-            <div className="p-1.5 rounded-lg bg-rose-50 text-rose-600">
-              <MessageSquareMore className="w-4 h-4" />
-            </div>
-            <span className="text-[11px] font-medium leading-tight">Consultas Ativas</span>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-black text-slate-900 font-['Outfit']">25</div>
-          </div>
-          <button
-            type="button"
-            onClick={() => onNavigateToTab('participacao-consultas')}
-            className="mt-2 text-[10.5px] font-bold text-purple-600 hover:text-purple-800 text-left cursor-pointer"
-          >
-            Ver detalhes
-          </button>
-        </div>
-
-        {/* Card 6: Eventos Ativos */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 flex flex-col justify-between shadow-2xs">
-          <div className="flex items-center gap-2 text-slate-500">
-            <div className="p-1.5 rounded-lg bg-cyan-50 text-cyan-600">
-              <Calendar className="w-4 h-4" />
-            </div>
-            <span className="text-[11px] font-medium leading-tight">Eventos Ativos</span>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-black text-slate-900 font-['Outfit']">12</div>
-          </div>
-          <button
-            type="button"
-            onClick={() => onNavigateToTab('eventos-globais-admin')}
-            className="mt-2 text-[10.5px] font-bold text-purple-600 hover:text-purple-800 text-left cursor-pointer"
-          >
-            Ver detalhes
-          </button>
-        </div>
-
-        {/* Card 7: Tarefas Pendentes */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 flex flex-col justify-between shadow-2xs">
-          <div className="flex items-center gap-2 text-slate-500">
-            <div className="p-1.5 rounded-lg bg-indigo-50 text-indigo-600">
-              <FileText className="w-4 h-4" />
-            </div>
-            <span className="text-[11px] font-medium leading-tight">Tarefas Pendentes</span>
-          </div>
-          <div className="mt-3">
-            <div className="text-2xl font-black text-slate-900 font-['Outfit']">36</div>
-          </div>
-          <button
-            type="button"
-            onClick={() => onNavigateToTab('painel-gestao')}
-            className="mt-2 text-[10.5px] font-bold text-purple-600 hover:text-purple-800 text-left cursor-pointer"
-          >
-            Ver detalhes
-          </button>
-        </div>
-      </div>
+      </section>
 
       {/* 3. Middle Row: Atividade em Tempo Real, Atividades Recentes, Alertas */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Atividade em Tempo Real */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-5 flex flex-col justify-between shadow-2xs">
+        <div className="bg-white border border-slate-200/70 rounded-2xl p-5 flex flex-col justify-between shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:border-slate-300/80 transition-all duration-200 group">
           <div>
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold text-slate-900">Atividade em Tempo Real</h2>
+              <h2 className="text-sm sm:text-[15px] font-extrabold text-[#0D1E3A] font-['Outfit'] tracking-tight">Atividade em Tempo Real</h2>
               <select
                 value={timeFilter}
                 onChange={(e) => setTimeFilter(e.target.value)}
-                className="text-xs bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-slate-700 cursor-pointer"
+                className="text-xs bg-slate-50/90 border border-slate-200/80 rounded-xl px-2.5 py-1 text-slate-700 cursor-pointer font-medium hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500/20"
               >
                 <option>Últimas 24 horas</option>
                 <option>Últimos 7 dias</option>
@@ -511,19 +540,19 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
 
             {/* Legenda */}
             <div className="flex flex-wrap items-center gap-4 mt-3 text-[11px]">
-              <span className="flex items-center gap-1.5 text-slate-600">
-                <span className="w-2.5 h-2.5 rounded-full bg-purple-600" />
+              <span className="flex items-center gap-1.5 text-[#64748B] font-medium">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#7C3AED]" />
                 Utilizadores
               </span>
-              <span className="flex items-center gap-1.5 text-slate-600">
+              <span className="flex items-center gap-1.5 text-[#64748B] font-medium">
                 <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
                 Comunidades
               </span>
-              <span className="flex items-center gap-1.5 text-slate-600">
-                <span className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+              <span className="flex items-center gap-1.5 text-[#64748B] font-medium">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#0055FE]" />
                 Projetos
               </span>
-              <span className="flex items-center gap-1.5 text-slate-600">
+              <span className="flex items-center gap-1.5 text-[#64748B] font-medium">
                 <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
                 Consultas
               </span>
@@ -539,10 +568,10 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
                 <line x1="40" y1="140" x2="390" y2="140" stroke="#E2E8F0" strokeWidth="1" />
 
                 {/* Eixo Y */}
-                <text x="10" y="24" fontSize="9" fill="#94A3B8">2.5K</text>
-                <text x="10" y="64" fontSize="9" fill="#94A3B8">2K</text>
-                <text x="10" y="104" fontSize="9" fill="#94A3B8">1.5K</text>
-                <text x="10" y="144" fontSize="9" fill="#94A3B8">500</text>
+                <text x="10" y="24" fontSize="9" fill="#94A3B8" fontWeight="600">2.5K</text>
+                <text x="10" y="64" fontSize="9" fill="#94A3B8" fontWeight="600">2K</text>
+                <text x="10" y="104" fontSize="9" fill="#94A3B8" fontWeight="600">1.5K</text>
+                <text x="10" y="144" fontSize="9" fill="#94A3B8" fontWeight="600">500</text>
 
                 {/* Curva 1: Utilizadores (Roxo) */}
                 <path
@@ -595,7 +624,7 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
             </div>
 
             {/* Eixo X */}
-            <div className="flex justify-between pl-8 text-[9.5px] text-slate-400 mt-1">
+            <div className="flex justify-between pl-8 text-[9.5px] text-slate-400 mt-1 font-mono font-medium">
               <span>12:00</span>
               <span>16:00</span>
               <span>20:00</span>
@@ -606,20 +635,22 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => onNavigateToTab('relatorios-dados')}
-            className="mt-4 text-xs font-bold text-purple-600 hover:text-purple-800 flex items-center justify-end gap-1 cursor-pointer"
-          >
-            <span>Ver relatório completo</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          <div className="pt-3 mt-3 border-t border-slate-100/90 flex items-center justify-end">
+            <button
+              type="button"
+              onClick={() => onNavigateToTab('relatorios-dados')}
+              className="text-xs font-semibold text-[#5B21B6] hover:text-purple-800 flex items-center gap-1 cursor-pointer group-hover:underline"
+            >
+              <span>Ver relatório completo</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          </div>
         </div>
 
         {/* Atividades Recentes */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-5 flex flex-col justify-between shadow-2xs">
+        <div className="bg-white border border-slate-200/70 rounded-2xl p-5 flex flex-col justify-between shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:border-slate-300/80 transition-all duration-200 group">
           <div>
-            <h2 className="text-sm font-bold text-slate-900">Atividades Recentes</h2>
+            <h2 className="text-sm sm:text-[15px] font-extrabold text-[#0D1E3A] font-['Outfit'] tracking-tight">Atividades Recentes</h2>
 
             <div className="mt-3.5 space-y-3">
               {[
@@ -634,7 +665,7 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
                   title: 'Projeto submetido para aprovação',
                   desc: 'Mobilidade Urbana Sustentável - Lisboa',
                   time: 'há 5 min',
-                  icon: <FolderKanban className="w-3.5 h-3.5 text-blue-600" />,
+                  icon: <FolderKanban className="w-3.5 h-3.5 text-[#0055FE]" />,
                   bg: 'bg-blue-50',
                 },
                 {
@@ -661,39 +692,41 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
               ].map((act, idx) => (
                 <div key={idx} className="flex items-start justify-between gap-3 text-xs">
                   <div className="flex items-start gap-2.5 min-w-0">
-                    <div className={`p-1.5 rounded-lg ${act.bg} shrink-0 mt-0.5`}>
+                    <div className={`p-2 rounded-xl ${act.bg} shrink-0 shadow-2xs`}>
                       {act.icon}
                     </div>
                     <div className="min-w-0">
-                      <div className="font-bold text-slate-900 truncate">{act.title}</div>
-                      <div className="text-[11px] text-slate-500 truncate">{act.desc}</div>
+                      <div className="font-bold text-[#0D1E3A] truncate">{act.title}</div>
+                      <div className="text-[11.5px] text-[#64748B] truncate mt-0.5">{act.desc}</div>
                     </div>
                   </div>
-                  <span className="text-[10.5px] text-slate-400 whitespace-nowrap shrink-0">{act.time}</span>
+                  <span className="text-[10.5px] text-slate-400 whitespace-nowrap shrink-0 font-medium">{act.time}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => onNavigateToTab('painel-gestao')}
-            className="mt-4 text-xs font-bold text-purple-600 hover:text-purple-800 flex items-center justify-end gap-1 cursor-pointer"
-          >
-            <span>Ver todas as atividades</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          <div className="pt-3 mt-3 border-t border-slate-100/90 flex items-center justify-end">
+            <button
+              type="button"
+              onClick={() => onNavigateToTab('painel-gestao')}
+              className="text-xs font-semibold text-[#5B21B6] hover:text-purple-800 flex items-center gap-1 cursor-pointer group-hover:underline"
+            >
+              <span>Ver todas as atividades</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          </div>
         </div>
 
         {/* Alertas e Notificações */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-5 flex flex-col justify-between shadow-2xs">
+        <div className="bg-white border border-slate-200/70 rounded-2xl p-5 flex flex-col justify-between shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:border-slate-300/80 transition-all duration-200 group">
           <div>
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold text-slate-900">Alertas e Notificações</h2>
+              <h2 className="text-sm sm:text-[15px] font-extrabold text-[#0D1E3A] font-['Outfit'] tracking-tight">Alertas e Notificações</h2>
               <select
                 value={alertFilter}
                 onChange={(e) => setAlertFilter(e.target.value)}
-                className="text-xs bg-slate-50 border border-slate-200 rounded-lg px-2 py-1 text-slate-700 cursor-pointer"
+                className="text-xs bg-slate-50/90 border border-slate-200/80 rounded-xl px-2.5 py-1 text-slate-700 cursor-pointer font-medium hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500/20"
               >
                 <option>Todos</option>
                 <option>Críticos</option>
@@ -741,12 +774,12 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
               ].map((alert, idx) => (
                 <div key={idx} className="flex items-center justify-between gap-3 text-xs">
                   <div className="flex items-start gap-2.5 min-w-0">
-                    <div className="p-1 rounded-md bg-slate-50 shrink-0 mt-0.5">
+                    <div className="p-2 rounded-xl bg-slate-50 shrink-0 shadow-2xs">
                       {alert.icon}
                     </div>
                     <div className="min-w-0">
-                      <div className="font-bold text-slate-900 truncate">{alert.title}</div>
-                      <div className="text-[11px] text-slate-500 truncate">{alert.desc}</div>
+                      <div className="font-bold text-[#0D1E3A] truncate">{alert.title}</div>
+                      <div className="text-[11.5px] text-[#64748B] truncate mt-0.5">{alert.desc}</div>
                     </div>
                   </div>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${alert.badgeBg}`}>
@@ -757,262 +790,335 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => onNavigateToTab('painel-gestao')}
-            className="mt-4 text-xs font-bold text-purple-600 hover:text-purple-800 flex items-center justify-end gap-1 cursor-pointer"
-          >
-            <span>Ver todos os alertas</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          <div className="pt-3 mt-3 border-t border-slate-100/90 flex items-center justify-end">
+            <button
+              type="button"
+              onClick={() => onNavigateToTab('painel-gestao')}
+              className="text-xs font-semibold text-[#5B21B6] hover:text-purple-800 flex items-center gap-1 cursor-pointer group-hover:underline"
+            >
+              <span>Ver todos os alertas</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          </div>
         </div>
       </div>
 
       {/* 4. Saúde da Plataforma, Uso de Recursos, Ações Rápidas */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Saúde da Plataforma */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-5 flex flex-col justify-between shadow-2xs">
+        <div className="bg-white border border-slate-200/70 rounded-2xl p-4 sm:p-4.5 flex flex-col justify-between shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:border-slate-300/80 transition-all duration-200 group">
           <div>
             <div className="flex items-center justify-between">
-              <h2 className="text-sm font-bold text-slate-900">Saúde da Plataforma</h2>
-              <span className="inline-flex items-center gap-1 text-[10.5px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              <h2 className="text-sm sm:text-[14.5px] font-bold text-[#0D1E3A] font-['Outfit'] tracking-tight">Saúde da Plataforma</h2>
+              <span className="inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-[#EAFBF1] text-[#087443] border border-[#B7EBCE] shadow-2xs">
                 <span>Sistema Operacional</span>
-                <CheckCircle2 className="w-3 h-3" />
+                <CheckCircle2 className="w-3 h-3 text-[#087443]" />
               </span>
             </div>
 
-            <div className="grid grid-cols-5 gap-2 mt-4 text-center">
-              <div>
-                <div className="text-[10px] text-slate-500">Disponibilidade</div>
-                <div className="text-sm font-black text-slate-900 mt-1 font-['Outfit']">99,98%</div>
-                <div className="text-[9.5px] text-emerald-600 font-semibold">↑ 0,02%</div>
-                {/* Mini sparkline */}
-                <div className="mt-1 h-3 flex items-end justify-center">
-                  <span className="w-1 h-2 bg-emerald-400 mx-0.5 rounded-xs" />
-                  <span className="w-1 h-3 bg-emerald-500 mx-0.5 rounded-xs" />
-                  <span className="w-1 h-2.5 bg-emerald-400 mx-0.5 rounded-xs" />
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-3.5 mt-4 w-full">
+              {/* Disponibilidade */}
+              <div className="min-w-0 flex flex-col justify-between">
+                <div>
+                  <div className="text-[10.5px] sm:text-[11px] text-[#64748B] font-medium leading-snug whitespace-normal break-words min-h-[26px] sm:min-h-[28px] flex items-start">
+                    Disponibilidade
+                  </div>
+                  <div className="text-sm sm:text-base lg:text-[17px] font-extrabold text-[#0D1E3A] mt-0.5 font-['Outfit'] tracking-tight leading-none">
+                    99,98%
+                  </div>
+                  <div className="text-[10px] sm:text-[10.5px] text-emerald-600 font-semibold mt-0.5 flex items-center gap-0.5">
+                    ↑ 0,02%
+                  </div>
+                </div>
+                <div className="h-6 sm:h-7 w-full mt-2">
+                  <svg viewBox="0 0 100 28" preserveAspectRatio="none" className="w-full h-full overflow-visible">
+                    <defs>
+                      <linearGradient id="spark-disp" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#10B981" stopOpacity="0.25" />
+                        <stop offset="100%" stopColor="#10B981" stopOpacity="0.0" />
+                      </linearGradient>
+                    </defs>
+                    <line x1="0" y1="27.5" x2="100" y2="27.5" stroke="#E2E8F0" strokeWidth="0.8" />
+                    <path d="M 0,21 L 14,21 L 20,17 L 28,18 L 36,14 L 46,17 L 56,19 L 68,10 L 78,15 L 88,13 L 100,16 L 100,27.5 L 0,27.5 Z" fill="url(#spark-disp)" />
+                    <path d="M 0,21 L 14,21 L 20,17 L 28,18 L 36,14 L 46,17 L 56,19 L 68,10 L 78,15 L 88,13 L 100,16" fill="none" stroke="#10B981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                 </div>
               </div>
 
-              <div>
-                <div className="text-[10px] text-slate-500">Tempo de Resposta</div>
-                <div className="text-sm font-black text-slate-900 mt-1 font-['Outfit']">120ms</div>
-                <div className="text-[9.5px] text-emerald-600 font-semibold">↓ 15ms</div>
-                <div className="mt-1 h-3 flex items-end justify-center">
-                  <span className="w-1 h-3 bg-blue-400 mx-0.5 rounded-xs" />
-                  <span className="w-1 h-2 bg-blue-500 mx-0.5 rounded-xs" />
-                  <span className="w-1 h-2.5 bg-blue-400 mx-0.5 rounded-xs" />
+              {/* Tempo de Resposta */}
+              <div className="min-w-0 flex flex-col justify-between">
+                <div>
+                  <div className="text-[10.5px] sm:text-[11px] text-[#64748B] font-medium leading-snug whitespace-normal break-words min-h-[26px] sm:min-h-[28px] flex items-start">
+                    Tempo de Resposta (média)
+                  </div>
+                  <div className="text-sm sm:text-base lg:text-[17px] font-extrabold text-[#0D1E3A] mt-0.5 font-['Outfit'] tracking-tight leading-none">
+                    120ms
+                  </div>
+                  <div className="text-[10px] sm:text-[10.5px] text-emerald-600 font-semibold mt-0.5 flex items-center gap-0.5">
+                    ↓ 15ms
+                  </div>
+                </div>
+                <div className="h-6 sm:h-7 w-full mt-2">
+                  <svg viewBox="0 0 100 28" preserveAspectRatio="none" className="w-full h-full overflow-visible">
+                    <defs>
+                      <linearGradient id="spark-resp" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#10B981" stopOpacity="0.25" />
+                        <stop offset="100%" stopColor="#10B981" stopOpacity="0.0" />
+                      </linearGradient>
+                    </defs>
+                    <line x1="0" y1="27.5" x2="100" y2="27.5" stroke="#E2E8F0" strokeWidth="0.8" />
+                    <path d="M 0,21 L 12,21 L 18,17 L 28,18 L 38,14 L 48,16 L 58,12 L 68,19 L 78,10 L 88,16 L 100,15 L 100,27.5 L 0,27.5 Z" fill="url(#spark-resp)" />
+                    <path d="M 0,21 L 12,21 L 18,17 L 28,18 L 38,14 L 48,16 L 58,12 L 68,19 L 78,10 L 88,16 L 100,15" fill="none" stroke="#10B981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                 </div>
               </div>
 
-              <div>
-                <div className="text-[10px] text-slate-500">Serviços Operacionais</div>
-                <div className="text-sm font-black text-slate-900 mt-1 font-['Outfit']">98%</div>
-                <div className="text-[9.5px] text-emerald-600 font-semibold">↑ 2%</div>
-                <div className="mt-1 h-3 flex items-end justify-center">
-                  <span className="w-1 h-2 bg-emerald-400 mx-0.5 rounded-xs" />
-                  <span className="w-1 h-3 bg-emerald-500 mx-0.5 rounded-xs" />
-                  <span className="w-1 h-2.5 bg-emerald-400 mx-0.5 rounded-xs" />
+              {/* Serviços Operacionais */}
+              <div className="min-w-0 flex flex-col justify-between">
+                <div>
+                  <div className="text-[10.5px] sm:text-[11px] text-[#64748B] font-medium leading-snug whitespace-normal break-words min-h-[26px] sm:min-h-[28px] flex items-start">
+                    Serviços Operacionais
+                  </div>
+                  <div className="text-sm sm:text-base lg:text-[17px] font-extrabold text-[#0D1E3A] mt-0.5 font-['Outfit'] tracking-tight leading-none">
+                    98%
+                  </div>
+                  <div className="text-[10px] sm:text-[10.5px] text-emerald-600 font-semibold mt-0.5 flex items-center gap-0.5">
+                    ↑ 2%
+                  </div>
+                </div>
+                <div className="h-6 sm:h-7 w-full mt-2">
+                  <svg viewBox="0 0 100 28" preserveAspectRatio="none" className="w-full h-full overflow-visible">
+                    <defs>
+                      <linearGradient id="spark-serv" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#10B981" stopOpacity="0.25" />
+                        <stop offset="100%" stopColor="#10B981" stopOpacity="0.0" />
+                      </linearGradient>
+                    </defs>
+                    <line x1="0" y1="27.5" x2="100" y2="27.5" stroke="#E2E8F0" strokeWidth="0.8" />
+                    <path d="M 0,23 L 16,7 L 26,16 L 36,18 L 46,13 L 56,19 L 66,18 L 76,14 L 88,19 L 100,21 L 100,27.5 L 0,27.5 Z" fill="url(#spark-serv)" />
+                    <path d="M 0,23 L 16,7 L 26,16 L 36,18 L 46,13 L 56,19 L 66,18 L 76,14 L 88,19 L 100,21" fill="none" stroke="#10B981" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                 </div>
               </div>
 
-              <div>
-                <div className="text-[10px] text-slate-500">Incidentes Abertos</div>
-                <div className="text-sm font-black text-slate-900 mt-1 font-['Outfit']">2</div>
-                <div className="text-[9.5px] text-rose-600 font-semibold">↑ 1</div>
-                <div className="mt-1 h-3 flex items-end justify-center">
-                  <span className="w-1 h-1 bg-rose-400 mx-0.5 rounded-xs" />
-                  <span className="w-1 h-3 bg-rose-500 mx-0.5 rounded-xs" />
+              {/* APIs Ativas */}
+              <div className="min-w-0 flex flex-col justify-between">
+                <div>
+                  <div className="text-[10.5px] sm:text-[11px] text-[#64748B] font-medium leading-snug whitespace-normal break-words min-h-[26px] sm:min-h-[28px] flex items-start">
+                    APIs Ativas
+                  </div>
+                  <div className="text-sm sm:text-base lg:text-[17px] font-extrabold text-[#0D1E3A] mt-0.5 font-['Outfit'] tracking-tight leading-none">
+                    44 / 50
+                  </div>
+                  <div className="text-[10px] sm:text-[10.5px] text-[#64748B] font-semibold mt-0.5">
+                    88%
+                  </div>
                 </div>
-              </div>
-
-              <div>
-                <div className="text-[10px] text-slate-500">APIs Ativas</div>
-                <div className="text-sm font-black text-slate-900 mt-1 font-['Outfit']">44 / 50</div>
-                <div className="text-[9.5px] text-slate-600 font-semibold">88%</div>
-                <div className="mt-1 h-3 flex items-end justify-center">
-                  <span className="w-1 h-2.5 bg-purple-400 mx-0.5 rounded-xs" />
-                  <span className="w-1 h-3 bg-purple-500 mx-0.5 rounded-xs" />
+                <div className="h-6 sm:h-7 w-full mt-2">
+                  <svg viewBox="0 0 100 28" preserveAspectRatio="none" className="w-full h-full overflow-visible">
+                    <defs>
+                      <linearGradient id="spark-api" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#8B5CF6" stopOpacity="0.25" />
+                        <stop offset="100%" stopColor="#8B5CF6" stopOpacity="0.0" />
+                      </linearGradient>
+                    </defs>
+                    <line x1="0" y1="27.5" x2="100" y2="27.5" stroke="#E2E8F0" strokeWidth="0.8" />
+                    <path d="M 0,21 L 14,14 L 26,18 L 40,12 L 52,9 L 66,14 L 78,11 L 88,16 L 100,15 L 100,27.5 L 0,27.5 Z" fill="url(#spark-api)" />
+                    <path d="M 0,21 L 14,14 L 26,18 L 40,12 L 52,9 L 66,14 L 78,11 L 88,16 L 100,15" fill="none" stroke="#8B5CF6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
                 </div>
               </div>
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => onNavigateToTab('gestao-recursos')}
-            className="mt-4 text-xs font-bold text-purple-600 hover:text-purple-800 flex items-center justify-end gap-1 cursor-pointer"
-          >
-            <span>Ver monitorização completa</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          <div className="pt-2.5 mt-2 border-t border-slate-100/90 flex items-center justify-end">
+            <button
+              type="button"
+              onClick={() => onNavigateToTab('gestao-recursos')}
+              className="text-[11px] sm:text-xs font-semibold text-[#6D28D9] hover:text-[#5B21B6] flex items-center gap-1 cursor-pointer group-hover:underline"
+            >
+              <span>Ver monitorização completa</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          </div>
         </div>
 
         {/* Uso de Recursos (Atual) */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-5 flex flex-col justify-between shadow-2xs">
+        <div className="bg-white border border-slate-200/70 rounded-2xl p-4 sm:p-4.5 flex flex-col justify-between shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:border-slate-300/80 transition-all duration-200 group">
           <div>
-            <h2 className="text-sm font-bold text-slate-900">Uso de Recursos (Atual)</h2>
+            <h2 className="text-sm sm:text-[15px] font-extrabold text-[#0D1E3A] font-['Outfit'] tracking-tight">Uso de Recursos (Atual)</h2>
 
-            <div className="mt-3.5 space-y-2.5 text-xs">
-              <div>
-                <div className="flex justify-between items-center text-slate-600 mb-1">
-                  <span className="flex items-center gap-1.5">
-                    <Cpu className="w-3.5 h-3.5 text-slate-500" />
-                    CPU
-                  </span>
-                  <span className="font-bold text-slate-800">68%</span>
+            <div className="mt-5 space-y-4">
+              {/* CPU */}
+              <div className="flex items-center text-xs">
+                <div className="w-28 sm:w-32 flex items-center gap-2 shrink-0 font-semibold text-slate-700">
+                  <Cpu className="w-4 h-4 text-slate-500 shrink-0" />
+                  <span>CPU</span>
                 </div>
-                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-purple-600 rounded-full" style={{ width: '68%' }} />
+                <div className="flex-1 h-2 bg-slate-100 rounded-full mx-3 sm:mx-4 overflow-hidden">
+                  <div className="h-full bg-[#5B21B6] rounded-full" style={{ width: '68%' }} />
+                </div>
+                <div className="text-right text-xs font-bold text-[#0D1E3A] shrink-0 min-w-[36px]">
+                  68%
                 </div>
               </div>
 
-              <div>
-                <div className="flex justify-between items-center text-slate-600 mb-1">
-                  <span className="flex items-center gap-1.5">
-                    <Activity className="w-3.5 h-3.5 text-slate-500" />
-                    Memória
-                  </span>
-                  <span className="font-bold text-slate-800">62%</span>
+              {/* Memória */}
+              <div className="flex items-center text-xs">
+                <div className="w-28 sm:w-32 flex items-center gap-2 shrink-0 font-semibold text-slate-700">
+                  <Server className="w-4 h-4 text-slate-500 shrink-0" />
+                  <span>Memória</span>
                 </div>
-                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-purple-600 rounded-full" style={{ width: '62%' }} />
+                <div className="flex-1 h-2 bg-slate-100 rounded-full mx-3 sm:mx-4 overflow-hidden">
+                  <div className="h-full bg-[#5B21B6] rounded-full" style={{ width: '62%' }} />
                 </div>
-              </div>
-
-              <div>
-                <div className="flex justify-between items-center text-slate-600 mb-1">
-                  <span className="flex items-center gap-1.5">
-                    <HardDrive className="w-3.5 h-3.5 text-slate-500" />
-                    Armazenamento
-                  </span>
-                  <span className="font-bold text-slate-800">71% <span className="text-[10px] text-slate-400 font-normal">(6,8 TB / 10 TB)</span></span>
-                </div>
-                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-purple-600 rounded-full" style={{ width: '71%' }} />
+                <div className="text-right text-xs font-bold text-[#0D1E3A] shrink-0 min-w-[36px]">
+                  62%
                 </div>
               </div>
 
-              <div>
-                <div className="flex justify-between items-center text-slate-600 mb-1">
-                  <span className="flex items-center gap-1.5">
-                    <Radio className="w-3.5 h-3.5 text-slate-500" />
-                    Banda de Rede
-                  </span>
-                  <span className="font-bold text-slate-800">52% <span className="text-[10px] text-slate-400 font-normal">(5,2 TB / 10 TB)</span></span>
+              {/* Armazenamento */}
+              <div className="flex items-center text-xs">
+                <div className="w-28 sm:w-32 flex items-center gap-2 shrink-0 font-semibold text-slate-700">
+                  <HardDrive className="w-4 h-4 text-slate-500 shrink-0" />
+                  <span>Armazenamento</span>
                 </div>
-                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-purple-600 rounded-full" style={{ width: '52%' }} />
+                <div className="flex-1 h-2 bg-slate-100 rounded-full mx-3 sm:mx-4 overflow-hidden">
+                  <div className="h-full bg-[#5B21B6] rounded-full" style={{ width: '71%' }} />
+                </div>
+                <div className="text-right text-xs shrink-0 whitespace-nowrap">
+                  <span className="font-bold text-[#0D1E3A]">71%</span>
+                  <span className="text-[10.5px] text-slate-400 font-normal ml-1.5">6,8 TB / 10 TB</span>
                 </div>
               </div>
 
-              <div>
-                <div className="flex justify-between items-center text-slate-600 mb-1">
-                  <span className="flex items-center gap-1.5">
-                    <Shield className="w-3.5 h-3.5 text-slate-500" />
-                    Serviços de IA
-                  </span>
-                  <span className="font-bold text-rose-600">94%</span>
+              {/* Banda de Rede */}
+              <div className="flex items-center text-xs">
+                <div className="w-28 sm:w-32 flex items-center gap-2 shrink-0 font-semibold text-slate-700">
+                  <Radio className="w-4 h-4 text-slate-500 shrink-0" />
+                  <span>Banda de Rede</span>
                 </div>
-                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                  <div className="h-full bg-rose-500 rounded-full" style={{ width: '94%' }} />
+                <div className="flex-1 h-2 bg-slate-100 rounded-full mx-3 sm:mx-4 overflow-hidden">
+                  <div className="h-full bg-[#5B21B6] rounded-full" style={{ width: '52%' }} />
+                </div>
+                <div className="text-right text-xs shrink-0 whitespace-nowrap">
+                  <span className="font-bold text-[#0D1E3A]">52%</span>
+                  <span className="text-[10.5px] text-slate-400 font-normal ml-1.5">5,2 TB / 10 TB</span>
+                </div>
+              </div>
+
+              {/* Serviços de IA */}
+              <div className="flex items-center text-xs">
+                <div className="w-28 sm:w-32 flex items-center gap-2 shrink-0 font-semibold text-slate-700">
+                  <Shield className="w-4 h-4 text-slate-500 shrink-0" />
+                  <span>Serviços de IA</span>
+                </div>
+                <div className="flex-1 h-2 bg-slate-100 rounded-full mx-3 sm:mx-4 overflow-hidden">
+                  <div className="h-full bg-[#5B21B6] rounded-full" style={{ width: '94%' }} />
+                </div>
+                <div className="text-right text-xs font-bold text-[#0D1E3A] shrink-0 min-w-[36px]">
+                  94%
                 </div>
               </div>
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => onNavigateToTab('gestao-recursos')}
-            className="mt-4 text-xs font-bold text-purple-600 hover:text-purple-800 flex items-center justify-end gap-1 cursor-pointer"
-          >
-            <span>Ver todos os recursos</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          <div className="pt-4 mt-2 flex items-center justify-end">
+            <button
+              type="button"
+              onClick={() => onNavigateToTab('gestao-recursos')}
+              className="text-xs font-semibold text-[#5B21B6] hover:text-purple-800 flex items-center gap-1 cursor-pointer group-hover:underline"
+            >
+              <span>Ver todos os recursos</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          </div>
         </div>
 
         {/* Ações Rápidas */}
-        <div className="bg-white border border-slate-200/90 rounded-2xl p-5 flex flex-col justify-between shadow-2xs">
+        <div className="bg-white border border-slate-200/70 rounded-2xl p-4 sm:p-4.5 flex flex-col justify-between shadow-[0_1px_3px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.06)] hover:border-slate-300/80 transition-all duration-200 group">
           <div>
-            <h2 className="text-sm font-bold text-slate-900">Ações Rápidas</h2>
+            <h2 className="text-sm sm:text-[15px] font-extrabold text-[#0D1E3A] font-['Outfit'] tracking-tight">Ações Rápidas</h2>
 
-            <div className="grid grid-cols-2 gap-2.5 mt-3.5">
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-3 mt-4">
               <button
                 type="button"
                 onClick={() => onNavigateToTab('projetos-iniciativas')}
-                className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:border-purple-300 hover:bg-purple-50/50 text-slate-700 text-xs font-bold transition-all text-left cursor-pointer"
+                className="flex items-center gap-3 p-3 rounded-xl border border-slate-200/80 bg-white hover:bg-slate-50/80 hover:border-purple-300 transition-all text-left shadow-2xs group cursor-pointer"
               >
-                <div className="p-1 rounded-md bg-purple-100 text-purple-700">
-                  <PlusCircle className="w-3.5 h-3.5" />
+                <div className="w-9 h-9 rounded-xl bg-purple-50 text-[#7C3AED] border border-purple-100/90 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <CalendarPlus className="w-4 h-4" />
                 </div>
-                <span>Adicionar Projeto</span>
+                <span className="text-xs sm:text-[12.5px] font-bold text-[#0D1E3A] leading-snug">Adicionar Projeto</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => onNavigateToTab('participacao-consultas')}
-                className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:border-emerald-300 hover:bg-emerald-50/50 text-slate-700 text-xs font-bold transition-all text-left cursor-pointer"
+                className="flex items-center gap-3 p-3 rounded-xl border border-slate-200/80 bg-white hover:bg-slate-50/80 hover:border-emerald-300 transition-all text-left shadow-2xs group cursor-pointer"
               >
-                <div className="p-1 rounded-md bg-emerald-100 text-emerald-700">
-                  <MessageSquarePlus className="w-3.5 h-3.5" />
+                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100/90 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <MessageSquarePlus className="w-4 h-4" />
                 </div>
-                <span>Criar Consulta</span>
+                <span className="text-xs sm:text-[12.5px] font-bold text-[#0D1E3A] leading-snug">Criar Consulta</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => onNavigateToTab('eventos-globais-admin')}
-                className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:border-amber-300 hover:bg-amber-50/50 text-slate-700 text-xs font-bold transition-all text-left cursor-pointer"
+                className="flex items-center gap-3 p-3 rounded-xl border border-slate-200/80 bg-white hover:bg-slate-50/80 hover:border-amber-300 transition-all text-left shadow-2xs group cursor-pointer"
               >
-                <div className="p-1 rounded-md bg-amber-100 text-amber-700">
-                  <CalendarPlus className="w-3.5 h-3.5" />
+                <div className="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 border border-amber-100/90 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <Calendar className="w-4 h-4" />
                 </div>
-                <span>Publicar Evento</span>
+                <span className="text-xs sm:text-[12.5px] font-bold text-[#0D1E3A] leading-snug">Publicar Evento</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => onNavigateToTab('gestao-utilizadores')}
-                className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:border-blue-300 hover:bg-blue-50/50 text-slate-700 text-xs font-bold transition-all text-left cursor-pointer"
+                className="flex items-center gap-3 p-3 rounded-xl border border-slate-200/80 bg-white hover:bg-slate-50/80 hover:border-blue-300 transition-all text-left shadow-2xs group cursor-pointer"
               >
-                <div className="p-1 rounded-md bg-blue-100 text-blue-700">
-                  <Users className="w-3.5 h-3.5" />
+                <div className="w-9 h-9 rounded-xl bg-blue-50 text-[#0055FE] border border-blue-100/90 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <Users className="w-4 h-4" />
                 </div>
-                <span>Adicionar Comunidade</span>
+                <span className="text-xs sm:text-[12.5px] font-bold text-[#0D1E3A] leading-snug">Adicionar Comunidade</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => onNavigateToTab('relatorios-dados')}
-                className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/50 text-slate-700 text-xs font-bold transition-all text-left cursor-pointer"
+                className="flex items-center gap-3 p-3 rounded-xl border border-slate-200/80 bg-white hover:bg-slate-50/80 hover:border-sky-300 transition-all text-left shadow-2xs group cursor-pointer"
               >
-                <div className="p-1 rounded-md bg-indigo-100 text-indigo-700">
-                  <FileText className="w-3.5 h-3.5" />
+                <div className="w-9 h-9 rounded-xl bg-sky-50 text-sky-600 border border-sky-100/90 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <BarChart3 className="w-4 h-4" />
                 </div>
-                <span>Gerar Relatório</span>
+                <span className="text-xs sm:text-[12.5px] font-bold text-[#0D1E3A] leading-snug">Gerar Relatório</span>
               </button>
 
               <button
                 type="button"
                 onClick={() => onNavigateToTab('painel-gestao')}
-                className="flex items-center gap-2 p-2.5 rounded-xl border border-slate-200 hover:border-rose-300 hover:bg-rose-50/50 text-slate-700 text-xs font-bold transition-all text-left cursor-pointer"
+                className="flex items-center gap-3 p-3 rounded-xl border border-slate-200/80 bg-white hover:bg-slate-50/80 hover:border-orange-300 transition-all text-left shadow-2xs group cursor-pointer"
               >
-                <div className="p-1 rounded-md bg-rose-100 text-rose-700">
-                  <Share2 className="w-3.5 h-3.5" />
+                <div className="w-9 h-9 rounded-xl bg-orange-50 text-orange-600 border border-orange-100/90 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                  <MessageSquareMore className="w-4 h-4" />
                 </div>
-                <span>Enviar Comunicado</span>
+                <span className="text-xs sm:text-[12.5px] font-bold text-[#0D1E3A] leading-snug">Enviar Comunicado</span>
               </button>
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => onNavigateToTab('painel-gestao')}
-            className="mt-4 text-xs font-bold text-purple-600 hover:text-purple-800 flex items-center justify-end gap-1 cursor-pointer"
-          >
-            <span>Ver todas as ações</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
+          <div className="pt-4 mt-2 flex items-center justify-end">
+            <button
+              type="button"
+              onClick={() => onNavigateToTab('painel-gestao')}
+              className="text-xs font-semibold text-[#5B21B6] hover:text-purple-800 flex items-center gap-1 cursor-pointer group-hover:underline"
+            >
+              <span>Ver todos as ações</span>
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+            </button>
+          </div>
         </div>
       </div>
 
