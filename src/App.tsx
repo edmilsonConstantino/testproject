@@ -90,8 +90,10 @@ const PLATAFORMA_TABS = [
   'recursos',
   'relatorios-dados',
   'gestao-relatorios',
+  'relatorios',
   'configuracoes-plataforma',
   'gestao-configuracoes',
+  'configuracoes',
   'impacto-global-plataforma',
   'gestao-impacto',
   'impacto-plataforma',
@@ -150,7 +152,9 @@ const getInitialTab = (): string => {
     target === 'gestao-parceiros' ||
     target === 'gestao-recursos' ||
     target === 'relatorios-dados' ||
+    target === 'relatorios' ||
     target === 'configuracoes-plataforma' ||
+    target === 'configuracoes' ||
     target === 'impacto-global-plataforma' ||
     target === 'gestao-suporte' ||
     target === 'recursos' ||

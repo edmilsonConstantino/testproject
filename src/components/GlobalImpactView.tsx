@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { ImpactoGlobalView } from './ImpactoGlobalView';
 import { MainImpactGlobalView } from './MainImpactGlobalView';
 import { EnvironmentImpactView, EnvironmentImpactViewProps } from './EnvironmentImpactView';
 import { HealthImpactView } from './HealthImpactView';
@@ -62,8 +63,9 @@ export const GlobalImpactView: React.FC<GlobalImpactViewProps> = ({
 
     if (currentSubView === 'todas') {
       onBreadcrumbChangeRef.current?.([
-        { label: 'Comunidade Global', onClick: goToComunidade },
-        { label: 'Impacto Global' },
+        { label: 'Plataforma VILA', onClick: () => onNavigateToTabRef.current?.('inicio') },
+        { label: 'Impacto Global', onClick: () => onNavigateToTabRef.current?.('impacto') },
+        { label: 'Visão Geral' },
       ]);
     } else {
       onBreadcrumbChangeRef.current?.([
@@ -218,12 +220,12 @@ export const GlobalImpactView: React.FC<GlobalImpactViewProps> = ({
   }
 
   return (
-    <MainImpactGlobalView
-      onNavigateToCategory={handleCategoryNavigation}
-      onNavigateToTab={onNavigateToTab}
+    <ImpactoGlobalView
+      currentUser={restProps.currentUser}
+      onNavigateToTab={onNavigateToTab || (() => {})}
+      onBreadcrumbChange={onBreadcrumbChange}
       onOpenAuth={onOpenAuth}
       onOpenAiAssistant={onOpenAiAssistant}
-      onOpenMobileMenu={onOpenMobileMenu}
     />
   );
 };

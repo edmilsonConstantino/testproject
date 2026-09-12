@@ -46,6 +46,13 @@ import { VisaoGeralView } from './admin/VisaoGeralView';
 import { UtilizadoresComunidadesView } from './admin/UtilizadoresComunidadesView';
 import { TerritoriosPaisesView } from './admin/TerritoriosPaisesView';
 import { ProjetosIniciativasView } from './admin/ProjetosIniciativasView';
+import { ParticipacaoConsultasView } from './admin/ParticipacaoConsultasView';
+import { EventosGlobaisView } from './admin/EventosGlobaisView';
+import { ParceirosColaboracoesView } from './admin/ParceirosColaboracoesView';
+import { RecursosInfraestruturaView } from './admin/RecursosInfraestruturaView';
+import { RelatoriosDadosView } from './admin/RelatoriosDadosView';
+import { ConfiguracoesPlataformaView } from './admin/ConfiguracoesPlataformaView';
+import { ImpactoGlobalView } from './ImpactoGlobalView';
 
 interface PainelGestaoPlaceholderViewProps {
   currentUser: DemoUser;
@@ -219,7 +226,29 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
       currentSection === 'paises' ||
       currentSection === 'projetos-iniciativas' ||
       currentSection === 'gestao-projetos' ||
-      currentSection === 'projetos'
+      currentSection === 'projetos' ||
+      currentSection === 'participacao-consultas' ||
+      currentSection === 'gestao-consultas' ||
+      currentSection === 'eventos-globais-admin' ||
+      currentSection === 'gestao-eventos' ||
+      currentSection === 'eventos-globais' ||
+      currentSection === 'gestao-parceiros' ||
+      currentSection === 'parceiros-colaboracoes' ||
+      currentSection === 'parceiros' ||
+      currentSection === 'gestao-recursos' ||
+      currentSection === 'recursos-infraestrutura' ||
+      currentSection === 'recursos' ||
+      currentSection === 'gestao-relatorios' ||
+      currentSection === 'relatorios-dados' ||
+      currentSection === 'relatorios' ||
+      currentSection === 'configuracoes-plataforma' ||
+      currentSection === 'gestao-configuracoes' ||
+      currentSection === 'configuracoes' ||
+      currentSection === 'impacto-global-plataforma' ||
+      currentSection === 'gestao-impacto' ||
+      currentSection === 'impacto-plataforma' ||
+      currentSection === 'impacto' ||
+      currentSection === 'impacto-global'
     ) return;
     onBreadcrumbChangeRef.current?.([
       { label: 'Plataforma VILA', onClick: () => onNavigateToTabRef.current('painel-gestao') },
@@ -282,6 +311,118 @@ export const PainelGestaoPlaceholderView: React.FC<PainelGestaoPlaceholderViewPr
         onNavigateToTab={onNavigateToTab}
         onBreadcrumbChange={onBreadcrumbChange}
         onOpenSupportModal={onOpenSupportModal}
+      />
+    );
+  }
+
+  // Se a secção for Participação e Consultas, renderiza a tela completa com fidelidade visual à referência UI PARTICIPAÇÃO E CONSULTAS
+  if (
+    currentSection === 'participacao-consultas' ||
+    currentSection === 'gestao-consultas'
+  ) {
+    return (
+      <ParticipacaoConsultasView
+        currentUser={currentUser}
+        onNavigateToTab={onNavigateToTab}
+        onBreadcrumbChange={onBreadcrumbChange}
+        onOpenSupportModal={onOpenSupportModal}
+      />
+    );
+  }
+
+  // Se a secção for Eventos Globais, renderiza a tela completa com fidelidade visual à referência UI EVENTOS GLOBAIS
+  if (
+    currentSection === 'eventos-globais-admin' ||
+    currentSection === 'gestao-eventos' ||
+    currentSection === 'eventos-globais'
+  ) {
+    return (
+      <EventosGlobaisView
+        currentUser={currentUser}
+        onNavigateToTab={onNavigateToTab}
+        onBreadcrumbChange={onBreadcrumbChange}
+        onOpenSupportModal={onOpenSupportModal}
+      />
+    );
+  }
+
+  // Se a secção for Parceiros e Colaborações, renderiza a tela completa com fidelidade visual à referência UI PARCEIROS E COLABORAÇÕES
+  if (
+    currentSection === 'gestao-parceiros' ||
+    currentSection === 'parceiros-colaboracoes' ||
+    currentSection === 'parceiros'
+  ) {
+    return (
+      <ParceirosColaboracoesView
+        currentUser={currentUser}
+        onNavigateToTab={onNavigateToTab}
+        onBreadcrumbChange={onBreadcrumbChange}
+        onOpenSupportModal={onOpenSupportModal}
+      />
+    );
+  }
+
+  // Se a secção for Recursos e Infraestrutura, renderiza a tela completa com fidelidade visual à referência UI RECURSOS E INFRAESTRUTURA
+  if (
+    currentSection === 'gestao-recursos' ||
+    currentSection === 'recursos-infraestrutura' ||
+    currentSection === 'recursos'
+  ) {
+    return (
+      <RecursosInfraestruturaView
+        currentUser={currentUser}
+        onNavigateToTab={onNavigateToTab}
+        onBreadcrumbChange={onBreadcrumbChange}
+        onOpenSupportModal={onOpenSupportModal}
+      />
+    );
+  }
+
+  // Se a secção for Relatórios e Dados, renderiza a tela completa com fidelidade visual à referência UI RELATORIOS E DADOS
+  if (
+    currentSection === 'gestao-relatorios' ||
+    currentSection === 'relatorios-dados' ||
+    currentSection === 'relatorios'
+  ) {
+    return (
+      <RelatoriosDadosView
+        currentUser={currentUser}
+        onNavigateToTab={onNavigateToTab}
+        onBreadcrumbChange={onBreadcrumbChange}
+        onOpenSupportModal={onOpenSupportModal}
+      />
+    );
+  }
+
+  // Se a secção for Configurações, renderiza a tela completa com fidelidade visual à referência UI CONFIGURACOES
+  if (
+    currentSection === 'configuracoes-plataforma' ||
+    currentSection === 'gestao-configuracoes' ||
+    currentSection === 'configuracoes'
+  ) {
+    return (
+      <ConfiguracoesPlataformaView
+        currentUser={currentUser}
+        onNavigateToTab={onNavigateToTab}
+        onBreadcrumbChange={onBreadcrumbChange}
+        onOpenSupportModal={onOpenSupportModal}
+      />
+    );
+  }
+
+  // Se a secção for Impacto Global, renderiza a tela completa com fidelidade visual à referência UI IMPACTO GLOBAL
+  if (
+    currentSection === 'impacto-global-plataforma' ||
+    currentSection === 'gestao-impacto' ||
+    currentSection === 'impacto-plataforma' ||
+    currentSection === 'impacto' ||
+    currentSection === 'impacto-global'
+  ) {
+    return (
+      <ImpactoGlobalView
+        currentUser={currentUser}
+        onNavigateToTab={onNavigateToTab}
+        onBreadcrumbChange={onBreadcrumbChange}
       />
     );
   }

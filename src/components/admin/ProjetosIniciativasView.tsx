@@ -272,12 +272,12 @@ export const ProjetosIniciativasView: React.FC<ProjetosIniciativasViewProps> = (
     y: number;
   } | null>(null);
 
-  // Mapa com projeção D3 Natural Earth
+  // Mapa com projeção D3 Natural Earth exatamente como no design de referência
   const mapFeatures = useMemo(() => {
     const width = 520;
     const height = 260;
     const projection = geoNaturalEarth1()
-      .scale(82)
+      .scale(84)
       .translate([width / 2, height / 2 + 10]);
     const pathGen = geoPath().projection(projection);
 
@@ -298,29 +298,29 @@ export const ProjetosIniciativasView: React.FC<ProjetosIniciativasViewProps> = (
         if (!d) return null;
         const name = f.properties?.name || '';
 
-        // Cores de intensidade roxa do screenshot:
-        // Mais de 100 projetos: #4C1D95
+        // Cores e categorias do screenshot de referência:
+        // Mais de 100 projetos: #4338CA
         // Entre 50 e 100 projetos: #7C3AED
         // Entre 10 e 50 projetos: #A78BFA
         // Menos de 10 projetos: #DDD6FE
-        // Sem projetos: #F1F5F9
-        let fill = '#F1F5F9';
+        // Sem projetos: #CBD5E1
+        let fill = '#CBD5E1';
         let category = 'Sem projetos';
         let projects = 0;
 
-        if (['Portugal', 'Brazil', 'Mozambique', 'Angola'].includes(name)) {
-          fill = '#4C1D95';
+        if (['Portugal', 'Brazil', 'Mozambique', 'Angola', 'United States of America'].includes(name)) {
+          fill = '#4338CA';
           category = 'Mais de 100 projetos';
-          projects = name === 'Portugal' ? 245 : name === 'Brazil' ? 186 : name === 'Mozambique' ? 142 : 118;
-        } else if (['Spain', 'France', 'Germany', 'Cape Verde', 'Guinea-Bissau'].includes(name)) {
+          projects = name === 'Portugal' ? 245 : name === 'Brazil' ? 186 : name === 'Mozambique' ? 142 : name === 'Angola' ? 118 : 124;
+        } else if (['Russia', 'China', 'Spain', 'France', 'Germany', 'United Kingdom', 'India', 'South Africa'].includes(name)) {
           fill = '#7C3AED';
           category = 'Entre 50 e 100 projetos';
-          projects = name === 'Spain' ? 84 : name === 'France' ? 68 : name === 'Germany' ? 58 : 52;
-        } else if (['United Kingdom', 'Italy', 'Mexico', 'Colombia', 'South Africa', 'Timor-Leste', 'Sao Tome and Principe'].includes(name)) {
+          projects = name === 'Spain' ? 84 : name === 'France' ? 68 : name === 'Germany' ? 58 : name === 'Russia' ? 74 : name === 'China' ? 82 : name === 'India' ? 76 : 64;
+        } else if (['Canada', 'Australia', 'Italy', 'Japan', 'Mexico', 'Colombia', 'Argentina', 'Kenya', 'Nigeria', 'Egypt', 'Cape Verde', 'Guinea-Bissau', 'Timor-Leste', 'Sao Tome and Principe', 'Poland', 'Indonesia'].includes(name)) {
           fill = '#A78BFA';
           category = 'Entre 10 e 50 projetos';
           projects = 28;
-        } else if (['United States of America', 'Canada', 'India', 'Japan', 'Australia', 'Kenya', 'Morocco', 'Argentina', 'Chile'].includes(name)) {
+        } else if (['Greenland', 'Chile', 'Peru', 'Norway', 'Sweden', 'Finland', 'Morocco', 'Algeria', 'Dem. Rep. Congo', 'Saudi Arabia', 'Turkey', 'Kazakhstan', 'New Zealand', 'Thailand'].includes(name)) {
           fill = '#DDD6FE';
           category = 'Menos de 10 projetos';
           projects = 6;
@@ -897,43 +897,42 @@ export const ProjetosIniciativasView: React.FC<ProjetosIniciativasViewProps> = (
         </div>
 
         {/* CARD 2: Distribuição Global dos Projetos (World Map) */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-2xs flex flex-col justify-between hover:border-slate-300 transition-all">
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-5 sm:p-6 shadow-2xs flex flex-col justify-between hover:border-slate-300 transition-all">
           <div>
-            <h2 className="text-sm sm:text-base font-bold text-[#0D1E3A] font-['Outfit']">
+            <h2 className="text-base sm:text-lg font-bold text-[#0D1E3A] font-['Outfit']">
               Distribuição Global dos Projetos
             </h2>
 
-            <div className="mt-3 flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
+            <div className="mt-3 flex flex-col sm:flex-row items-center gap-3 sm:gap-4">
               {/* Legenda Vertical à Esquerda */}
-              <div className="w-full sm:w-44 space-y-1.5 text-[10.5px] shrink-0">
-                <div className="flex items-center gap-1.5 text-slate-700">
-                  <span className="w-2.5 h-2.5 rounded-sm bg-[#4C1D95] shrink-0" />
+              <div className="w-full sm:w-48 space-y-2.5 shrink-0 self-center">
+                <div className="flex items-center gap-2.5 text-xs font-medium text-[#1E1B4B]">
+                  <span className="w-3.5 h-3.5 rounded-[3px] bg-[#4338CA] shrink-0" />
                   <span>Mais de 100 projetos</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-slate-700">
-                  <span className="w-2.5 h-2.5 rounded-sm bg-[#7C3AED] shrink-0" />
+                <div className="flex items-center gap-2.5 text-xs font-medium text-[#1E1B4B]">
+                  <span className="w-3.5 h-3.5 rounded-[3px] bg-[#7C3AED] shrink-0" />
                   <span>Entre 50 e 100 projetos</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-slate-700">
-                  <span className="w-2.5 h-2.5 rounded-sm bg-[#A78BFA] shrink-0" />
+                <div className="flex items-center gap-2.5 text-xs font-medium text-[#1E1B4B]">
+                  <span className="w-3.5 h-3.5 rounded-[3px] bg-[#A78BFA] shrink-0" />
                   <span>Entre 10 e 50 projetos</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-slate-700">
-                  <span className="w-2.5 h-2.5 rounded-sm bg-[#DDD6FE] shrink-0" />
+                <div className="flex items-center gap-2.5 text-xs font-medium text-[#1E1B4B]">
+                  <span className="w-3.5 h-3.5 rounded-[3px] bg-[#DDD6FE] shrink-0" />
                   <span>Menos de 10 projetos</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-slate-700">
-                  <span className="w-2.5 h-2.5 rounded-sm bg-[#F1F5F9] border border-slate-200 shrink-0" />
+                <div className="flex items-center gap-2.5 text-xs font-medium text-[#1E1B4B]">
+                  <span className="w-3.5 h-3.5 rounded-[3px] bg-[#CBD5E1] shrink-0" />
                   <span>Sem projetos</span>
                 </div>
               </div>
 
               {/* Mapa D3 Natural Earth */}
-              <div className="relative flex-1 w-full h-[155px] flex items-center justify-center overflow-hidden">
+              <div className="relative flex-1 w-full h-[180px] sm:h-[200px] flex items-center justify-center">
                 <svg
                   viewBox="0 0 520 260"
-                  className="w-full h-full object-contain"
-                  style={{ maxHeight: '155px' }}
+                  className="w-full h-full object-contain select-none"
                 >
                   <g>
                     {mapFeatures.map((feat) => {
@@ -945,7 +944,7 @@ export const ProjetosIniciativasView: React.FC<ProjetosIniciativasViewProps> = (
                           fill={feat.fill}
                           stroke="#FFFFFF"
                           strokeWidth={0.5}
-                          className="transition-all duration-150 cursor-pointer hover:opacity-85 hover:stroke-[#5B21B6] hover:stroke-[1px]"
+                          className="transition-all duration-150 cursor-pointer hover:opacity-85 hover:stroke-[#4338CA] hover:stroke-[1px]"
                           onMouseEnter={(e) => {
                             const rect = e.currentTarget.getBoundingClientRect();
                             setHoveredCountry({
@@ -968,11 +967,11 @@ export const ProjetosIniciativasView: React.FC<ProjetosIniciativasViewProps> = (
 
                 {/* Tooltip do Mapa */}
                 {hoveredCountry && (
-                  <div className="absolute top-1 right-1 bg-slate-900/90 backdrop-blur-sm text-white px-2 py-1 rounded text-[10px] pointer-events-none shadow-lg z-10">
-                    <p className="font-bold">{hoveredCountry.name}</p>
-                    <p className="text-purple-300">{hoveredCountry.category}</p>
+                  <div className="absolute top-1 right-1 bg-slate-900/90 backdrop-blur-xs text-white px-2.5 py-1.5 rounded-lg text-[10.5px] pointer-events-none shadow-xl z-10 border border-slate-700/60 animate-in fade-in duration-100">
+                    <p className="font-bold text-slate-100">{hoveredCountry.name}</p>
+                    <p className="text-purple-300 font-semibold">{hoveredCountry.category}</p>
                     {hoveredCountry.projects > 0 && (
-                      <p className="text-slate-300">{hoveredCountry.projects} projetos ativos</p>
+                      <p className="text-slate-300 text-[10px]">{hoveredCountry.projects} projetos ativos</p>
                     )}
                   </div>
                 )}
@@ -981,14 +980,14 @@ export const ProjetosIniciativasView: React.FC<ProjetosIniciativasViewProps> = (
           </div>
 
           {/* Rodapé: Ver mapa interativo */}
-          <div className="pt-2 mt-3 border-t border-slate-100 text-right">
+          <div className="mt-2 flex justify-end">
             <button
               type="button"
               onClick={() => setIsMapModalOpen(true)}
-              className="text-xs font-semibold text-[#5B21B6] hover:text-purple-800 inline-flex items-center gap-1 cursor-pointer transition-colors"
+              className="text-xs sm:text-sm font-bold text-[#4F46E5] hover:text-indigo-800 inline-flex items-center gap-1.5 cursor-pointer transition-colors"
             >
               <span>Ver mapa interativo</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>

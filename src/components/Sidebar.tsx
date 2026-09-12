@@ -185,7 +185,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   currentTab === 'criar-comunidade' ||
                   currentTab === 'explorar-comunidade')) ||
               (item.id === 'impacto' &&
-                (currentTab === 'impacto-global' ||
+                (currentTab === 'impacto' ||
+                  currentTab === 'impacto-global' ||
+                  currentTab === 'impacto-global-plataforma' ||
+                  currentTab === 'gestao-impacto' ||
+                  currentTab === 'impacto-plataforma' ||
                   currentTab === 'saude' ||
                   currentTab === 'tecnologia' ||
                   currentTab === 'empreendedorismo' ||

@@ -18,6 +18,14 @@ import {
   FileText,
   Sun,
   Moon,
+  Bookmark,
+  Handshake,
+  UserPlus,
+  Server,
+  Activity,
+  Search,
+  Bell,
+  Clock,
   X,
   ArrowLeft,
   ShieldCheck,
@@ -122,7 +130,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
       id: 'configuracoes-plataforma',
       label: 'Configurações',
       icon: <Settings className="w-4 h-4" strokeWidth={2.2} />,
-      matches: ['configuracoes-plataforma', 'gestao-configuracoes'],
+      matches: ['configuracoes-plataforma', 'gestao-configuracoes', 'configuracoes'],
     },
     {
       id: 'impacto-global-plataforma',
@@ -132,33 +140,220 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
     },
   ];
 
-  // 4 Atalhos rápidos da Plataforma
-  const quickActions = [
-    {
-      id: 'action-add-project',
-      label: 'Adicionar Projeto',
-      icon: <PlusCircle className="w-3.5 h-3.5 text-blue-600" />,
-      targetTab: 'projetos-iniciativas',
-    },
-    {
-      id: 'action-create-consultation',
-      label: 'Criar Consulta',
-      icon: <MessageSquarePlus className="w-3.5 h-3.5 text-emerald-600" />,
-      targetTab: 'participacao-consultas',
-    },
-    {
-      id: 'action-publish-event',
-      label: 'Publicar Evento',
-      icon: <CalendarPlus className="w-3.5 h-3.5 text-amber-600" />,
-      targetTab: 'eventos-globais-admin',
-    },
-    {
-      id: 'action-generate-report',
-      label: 'Gerar Relatório',
-      icon: <FileText className="w-3.5 h-3.5 text-indigo-600" />,
-      targetTab: 'relatorios-dados',
-    },
-  ];
+  // 4 Atalhos rápidos da Plataforma conforme UI de Referência
+  const isEventsTab = currentTab === 'eventos-globais-admin' || currentTab === 'gestao-eventos';
+  const isPartnersTab = currentTab === 'gestao-parceiros' || currentTab === 'parceiros-colaboracoes';
+  const isResourcesTab = currentTab === 'gestao-recursos' || currentTab === 'recursos-infraestrutura' || currentTab === 'recursos';
+  const isReportsTab = currentTab === 'relatorios-dados' || currentTab === 'gestao-relatorios' || currentTab === 'relatorios';
+  const isSettingsTab = currentTab === 'configuracoes-plataforma' || currentTab === 'gestao-configuracoes' || currentTab === 'configuracoes';
+  const isImpactTab = currentTab === 'impacto-global-plataforma' || currentTab === 'gestao-impacto' || currentTab === 'impacto-plataforma' || currentTab === 'impacto' || currentTab === 'impacto-global';
+
+  const quickActions = isImpactTab
+    ? [
+        {
+          id: 'action-impact-reports',
+          label: 'Relatórios e Dados',
+          icon: <Search className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'impacto-global-plataforma',
+        },
+        {
+          id: 'action-global-presence',
+          label: 'Presença Global',
+          icon: <Search className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'impacto-global-plataforma',
+        },
+        {
+          id: 'action-ods-contribution',
+          label: 'Contribuição ODS',
+          icon: <Search className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'impacto-global-plataforma',
+        },
+        {
+          id: 'action-recent-activities',
+          label: 'Atividades Recentes',
+          icon: <Search className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'impacto-global-plataforma',
+        },
+        {
+          id: 'action-impact-methodology',
+          label: 'Metodologia de Impacto',
+          icon: <Search className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'impacto-global-plataforma',
+        },
+      ]
+    : isSettingsTab
+    ? [
+        {
+          id: 'action-org-profile',
+          label: 'Perfil da Organização',
+          icon: <Search className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'configuracoes-plataforma',
+        },
+        {
+          id: 'action-teams-mgmt',
+          label: 'Gestão de Equipas',
+          icon: <Search className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'configuracoes-plataforma',
+        },
+        {
+          id: 'action-plans-billing',
+          label: 'Planos e Faturação',
+          icon: <Search className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'configuracoes-plataforma',
+        },
+        {
+          id: 'action-help-center',
+          label: 'Centro de Ajuda',
+          icon: <Search className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'configuracoes-plataforma',
+        },
+        {
+          id: 'action-documentation',
+          label: 'Documentação',
+          icon: <Search className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'configuracoes-plataforma',
+        },
+      ]
+    : isReportsTab
+    ? [
+        {
+          id: 'action-generate-report',
+          label: 'Gerar Relatório',
+          icon: <FileText className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'relatorios-dados',
+        },
+        {
+          id: 'action-explore-data',
+          label: 'Explorar Dados',
+          icon: <Search className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'relatorios-dados',
+        },
+        {
+          id: 'action-schedule-report',
+          label: 'Agendar Relatório',
+          icon: <Clock className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'relatorios-dados',
+        },
+        {
+          id: 'action-alerts-notifications',
+          label: 'Alertas e Notificações',
+          icon: <Bell className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'relatorios-dados',
+        },
+        {
+          id: 'action-my-reports',
+          label: 'Meus Relatórios',
+          icon: <Bookmark className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'relatorios-dados',
+        },
+      ]
+    : isResourcesTab
+    ? [
+        {
+          id: 'action-add-resource',
+          label: 'Adicionar Recurso',
+          icon: <PlusCircle className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'gestao-recursos',
+        },
+        {
+          id: 'action-manage-infrastructure',
+          label: 'Gerir Infraestrutura',
+          icon: <Server className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'gestao-recursos',
+        },
+        {
+          id: 'action-manage-systems',
+          label: 'Gestão de Sistemas',
+          icon: <Boxes className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'gestao-recursos',
+        },
+        {
+          id: 'action-monitoring',
+          label: 'Monitorização',
+          icon: <Activity className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'gestao-recursos',
+        },
+      ]
+    : isPartnersTab
+    ? [
+        {
+          id: 'action-add-partner',
+          label: 'Adicionar Parceiro',
+          icon: <UserPlus className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'gestao-parceiros',
+        },
+        {
+          id: 'action-propose-collab',
+          label: 'Propor Colaboração',
+          icon: <Handshake className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'gestao-parceiros',
+        },
+        {
+          id: 'action-manage-partnerships',
+          label: 'Gerir Parcerias',
+          icon: <Boxes className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'gestao-parceiros',
+        },
+        {
+          id: 'action-generate-report',
+          label: 'Gerar Relatório',
+          icon: <FileText className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'relatorios-dados',
+        },
+      ]
+    : isEventsTab
+    ? [
+        {
+          id: 'action-create-event',
+          label: 'Criar Evento',
+          icon: <PlusCircle className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'eventos-globais-admin',
+        },
+        {
+          id: 'action-global-calendar',
+          label: 'Calendário Global',
+          icon: <Calendar className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'eventos-globais-admin',
+        },
+        {
+          id: 'action-my-events',
+          label: 'Meus Eventos',
+          icon: <Bookmark className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'eventos-globais-admin',
+        },
+        {
+          id: 'action-generate-report',
+          label: 'Gerar Relatório',
+          icon: <FileText className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'relatorios-dados',
+        },
+      ]
+    : [
+        {
+          id: 'action-create-consultation',
+          label: 'Criar Consulta',
+          icon: <MessageSquarePlus className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'participacao-consultas',
+        },
+        {
+          id: 'action-create-initiative',
+          label: 'Criar Iniciativa',
+          icon: <PlusCircle className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'projetos-iniciativas',
+        },
+        {
+          id: 'action-publish-call',
+          label: 'Publicar Chamada',
+          icon: <CalendarPlus className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'eventos-globais-admin',
+        },
+        {
+          id: 'action-generate-report',
+          label: 'Gerar Relatório',
+          icon: <FileText className="w-3.5 h-3.5 text-blue-600" />,
+          targetTab: 'relatorios-dados',
+        },
+      ];
 
   return (
     <>
@@ -286,7 +481,9 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
           {/* Card Missão VILA exatamente como na referência */}
           <div className="p-3 rounded-2xl bg-gradient-to-b from-[#F4F8FD] to-[#EDF4FD] border border-blue-100/70 relative overflow-hidden flex flex-col items-center text-center shadow-2xs">
             <p className="text-[11px] font-bold text-[#0F172A] leading-tight">
-              A VILA conecta pessoas, comunidades e territórios para transformar o mundo.
+              {isReportsTab || isSettingsTab
+                ? 'A VILA transforma dados em conhecimento e conhecimento em ação.'
+                : 'A VILA conecta pessoas, comunidades e territórios para transformar o mundo.'}
             </p>
 
             {/* Ilustração com pessoas unidas em torno do globo */}
@@ -331,7 +528,7 @@ export const AdminSidebar: React.FC<AdminSidebarProps> = ({
               ) : (
                 <Sun className="w-3.5 h-3.5 text-slate-600" strokeWidth={2.2} />
               )}
-              Modo escuro
+              {isDarkMode ? 'Modo escuro' : 'Modo claro'}
             </span>
             <button
               type="button"
