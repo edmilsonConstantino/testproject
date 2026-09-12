@@ -20,6 +20,8 @@ import {
   BarChart3,
   CheckSquare,
   Award,
+  BookOpen,
+  HeartPulse,
 } from 'lucide-react';
 import { geoNaturalEarth1, geoPath } from 'd3-geo';
 import { feature, mesh } from 'topojson-client';
@@ -966,86 +968,86 @@ export const VisaoGeralView: React.FC<VisaoGeralViewProps> = ({
 
       {/* 4. Terceira Fileira: Ecossistema VILA + Principais Tendências + Organizações Parceiras + ODS */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
-        {/* Card 1: Ecossistema VILA (6 estatísticas em grade 2x3 com ícone à esquerda) */}
+        {/* Card 1: Ecossistema VILA */}
         <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:border-slate-200/80 transition-all duration-200 flex flex-col justify-between">
           <div>
-            <h2 className="text-base font-bold text-slate-900 font-['Outfit'] pb-3 border-b border-slate-100">
+            <h2 className="text-base font-bold text-[#0D1E3A] font-['Outfit']">
               Ecossistema VILA
             </h2>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-4 sm:gap-y-5 mt-4">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-4 sm:gap-y-5 mt-5">
               {/* Municípios */}
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0">
-                  <Building2 className="w-5 h-5" />
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-sky-50 text-sky-600 flex items-center justify-center shrink-0">
+                  <Building2 className="w-6 h-6" strokeWidth={1.8} />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-[11px] sm:text-xs text-slate-500 font-medium leading-tight">Municípios</div>
-                  <div className="text-lg sm:text-xl font-bold text-[#0D1E3A] font-['Outfit'] leading-snug">3.642</div>
+                  <div className="text-xs text-slate-500 font-medium leading-tight">Municípios</div>
+                  <div className="text-xl font-bold text-[#0D1E3A] font-['Outfit'] leading-snug mt-0.5">3.642</div>
                 </div>
               </div>
 
               {/* Parceiros Institucionais */}
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center shrink-0">
-                  <Handshake className="w-5 h-5" />
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center shrink-0">
+                  <Handshake className="w-6 h-6" strokeWidth={1.8} />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-[11px] sm:text-xs text-slate-500 font-medium leading-tight">Parceiros Institucionais</div>
-                  <div className="text-lg sm:text-xl font-bold text-[#0D1E3A] font-['Outfit'] leading-snug">342</div>
+                  <div className="text-xs text-slate-500 font-medium leading-tight">Parceiros Institucionais</div>
+                  <div className="text-xl font-bold text-[#0D1E3A] font-['Outfit'] leading-snug mt-0.5">342</div>
                 </div>
               </div>
 
               {/* Comunidades */}
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
-                  <Users className="w-4 h-4" />
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                  <Users className="w-6 h-6" strokeWidth={1.8} />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-[11px] sm:text-xs text-slate-500 font-medium leading-tight">Comunidades</div>
-                  <div className="text-lg sm:text-xl font-bold text-[#0D1E3A] font-['Outfit'] leading-snug">18.732</div>
+                  <div className="text-xs text-slate-500 font-medium leading-tight">Comunidades</div>
+                  <div className="text-xl font-bold text-[#0D1E3A] font-['Outfit'] leading-snug mt-0.5">18.732</div>
                 </div>
               </div>
 
               {/* Eventos Realizados */}
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center shrink-0">
-                  <Calendar className="w-5 h-5" />
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center shrink-0">
+                  <Calendar className="w-6 h-6" strokeWidth={1.8} />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-[11px] sm:text-xs text-slate-500 font-medium leading-tight">Eventos Realizados</div>
-                  <div className="text-lg sm:text-xl font-bold text-[#0D1E3A] font-['Outfit'] leading-snug">9.580</div>
+                  <div className="text-xs text-slate-500 font-medium leading-tight">Eventos Realizados</div>
+                  <div className="text-xl font-bold text-[#0D1E3A] font-['Outfit'] leading-snug mt-0.5">9.580</div>
                 </div>
               </div>
 
               {/* Organizações */}
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
-                  <Users className="w-5 h-5" />
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+                  <Users className="w-6 h-6" strokeWidth={1.8} />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-[11px] sm:text-xs text-slate-500 font-medium leading-tight">Organizações</div>
-                  <div className="text-lg sm:text-xl font-bold text-[#0D1E3A] font-['Outfit'] leading-snug">1.248</div>
+                  <div className="text-xs text-slate-500 font-medium leading-tight">Organizações</div>
+                  <div className="text-xl font-bold text-[#0D1E3A] font-['Outfit'] leading-snug mt-0.5">1.248</div>
                 </div>
               </div>
 
               {/* Consultas Realizadas */}
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-2xl bg-cyan-50 text-cyan-600 flex items-center justify-center shrink-0">
-                  <MessageSquare className="w-5 h-5" />
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-cyan-50 text-cyan-600 flex items-center justify-center shrink-0">
+                  <MessageSquare className="w-6 h-6" strokeWidth={1.8} />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-[11px] sm:text-xs text-slate-500 font-medium leading-tight">Consultas Realizadas</div>
-                  <div className="text-lg sm:text-xl font-bold text-[#0D1E3A] font-['Outfit'] leading-snug">1.156</div>
+                  <div className="text-xs text-slate-500 font-medium leading-tight">Consultas Realizadas</div>
+                  <div className="text-xl font-bold text-[#0D1E3A] font-['Outfit'] leading-snug mt-0.5">1.156</div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="pt-3 border-t border-slate-100 flex justify-end mt-4">
+          <div className="mt-auto pt-4 flex justify-end">
             <button
               type="button"
               onClick={() => onNavigateToTab('utilizadores-comunidades')}
-              className="inline-flex items-center gap-1 text-xs font-bold text-[#5B21B6] hover:text-purple-800 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6D28D9] hover:text-[#5B21B6] transition-colors cursor-pointer"
             >
               <span>Ver ecossistema completo</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -1056,14 +1058,14 @@ export const VisaoGeralView: React.FC<VisaoGeralViewProps> = ({
         {/* Card 2: Principais Tendências da Rede */}
         <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:border-slate-200/80 transition-all duration-200 flex flex-col justify-between">
           <div>
-            <h2 className="text-base font-bold text-slate-900 font-['Outfit'] pb-3 border-b border-slate-100">
+            <h2 className="text-base font-bold text-[#0D1E3A] font-['Outfit']">
               Principais Tendências da Rede
             </h2>
-            <div className="space-y-3.5 mt-3.5">
+            <div className="space-y-3.5 mt-4">
               {/* Tendência 1 */}
-              <div className="flex items-start gap-2.5">
-                <div className="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
-                  <Compass className="w-3.5 h-3.5" />
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <Compass className="w-4 h-4" />
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-slate-900">Expansão global contínua</h3>
@@ -1074,9 +1076,9 @@ export const VisaoGeralView: React.FC<VisaoGeralViewProps> = ({
               </div>
 
               {/* Tendência 2 */}
-              <div className="flex items-start gap-2.5">
-                <div className="w-7 h-7 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
-                  <Sprout className="w-3.5 h-3.5" />
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <Sprout className="w-4 h-4" />
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-slate-900">Municípios cada vez mais ativos</h3>
@@ -1087,9 +1089,9 @@ export const VisaoGeralView: React.FC<VisaoGeralViewProps> = ({
               </div>
 
               {/* Tendência 3 */}
-              <div className="flex items-start gap-2.5">
-                <div className="w-7 h-7 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 mt-0.5">
-                  <Sparkles className="w-3.5 h-3.5" />
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <Sparkles className="w-4 h-4" />
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-slate-900">Sustentabilidade em destaque</h3>
@@ -1100,9 +1102,9 @@ export const VisaoGeralView: React.FC<VisaoGeralViewProps> = ({
               </div>
 
               {/* Tendência 4 */}
-              <div className="flex items-start gap-2.5">
-                <div className="w-7 h-7 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 mt-0.5">
-                  <ShieldCheck className="w-3.5 h-3.5" />
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center shrink-0 mt-0.5">
+                  <ShieldCheck className="w-4 h-4" />
                 </div>
                 <div>
                   <h3 className="text-xs font-bold text-slate-900">Fortalecimento de parcerias</h3>
@@ -1114,11 +1116,11 @@ export const VisaoGeralView: React.FC<VisaoGeralViewProps> = ({
             </div>
           </div>
 
-          <div className="pt-3 border-t border-slate-100 flex justify-end mt-4">
+          <div className="mt-auto pt-4 flex justify-end">
             <button
               type="button"
               onClick={() => onNavigateToTab('relatorios-dados')}
-              className="inline-flex items-center gap-1 text-xs font-bold text-[#5B21B6] hover:text-purple-800 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6D28D9] hover:text-[#5B21B6] transition-colors cursor-pointer"
             >
               <span>Ver todas as tendências</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -1129,85 +1131,85 @@ export const VisaoGeralView: React.FC<VisaoGeralViewProps> = ({
         {/* Card 3: Organizações Parceiras (Rosca) */}
         <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:border-slate-200/80 transition-all duration-200 flex flex-col justify-between">
           <div>
-            <h2 className="text-base font-bold text-slate-900 font-['Outfit'] pb-3 border-b border-slate-100">
+            <h2 className="text-base font-bold text-[#0D1E3A] font-['Outfit']">
               Organizações Parceiras
             </h2>
-            <div className="flex items-center gap-3.5 mt-4">
+            <div className="flex items-center gap-3.5 mt-5">
               {/* Rosca SVG */}
               <div className="w-28 h-28 shrink-0 relative flex items-center justify-center">
                 <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
-                  {/* ONGs: 42% (stroke-dasharray 100.5 138.5) -> #0D9488 */}
+                  {/* ONGs: 42% -> #10B981 */}
                   <circle
                     cx="50"
                     cy="50"
                     r="38"
                     fill="none"
-                    stroke="#0D9488"
-                    strokeWidth="16"
-                    strokeDasharray="100.5 138.5"
+                    stroke="#10B981"
+                    strokeWidth="15"
+                    strokeDasharray="100.3 238.8"
                     strokeDashoffset="0"
                   />
-                  {/* Instituições Públicas: 28% (66.9) -> #2563EB */}
+                  {/* Instituições Públicas: 28% -> #2563EB */}
                   <circle
                     cx="50"
                     cy="50"
                     r="38"
                     fill="none"
                     stroke="#2563EB"
-                    strokeWidth="16"
-                    strokeDasharray="66.9 172.1"
-                    strokeDashoffset="-100.5"
+                    strokeWidth="15"
+                    strokeDasharray="66.9 238.8"
+                    strokeDashoffset="-100.3"
                   />
-                  {/* Empresas: 20% (47.8) -> #F97316 */}
+                  {/* Empresas: 20% -> #F97316 */}
                   <circle
                     cx="50"
                     cy="50"
                     r="38"
                     fill="none"
                     stroke="#F97316"
-                    strokeWidth="16"
-                    strokeDasharray="47.8 191.2"
-                    strokeDashoffset="-167.4"
+                    strokeWidth="15"
+                    strokeDasharray="47.8 238.8"
+                    strokeDashoffset="-167.2"
                   />
-                  {/* Academia: 10% (23.9) -> #7C3AED */}
+                  {/* Academia: 10% -> #7C3AED */}
                   <circle
                     cx="50"
                     cy="50"
                     r="38"
                     fill="none"
                     stroke="#7C3AED"
-                    strokeWidth="16"
-                    strokeDasharray="23.9 215.1"
-                    strokeDashoffset="-215.2"
+                    strokeWidth="15"
+                    strokeDasharray="23.9 238.8"
+                    strokeDashoffset="-215.0"
                   />
                 </svg>
               </div>
 
               {/* Legenda com percentuais */}
-              <div className="space-y-2 text-xs flex-1">
+              <div className="space-y-2.5 text-xs flex-1">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-slate-700 font-medium">
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#0D9488]" />
+                  <div className="flex items-center gap-2 text-slate-700 font-medium">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#10B981]" />
                     <span>ONGs</span>
                   </div>
                   <span className="font-bold text-slate-900">42%</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-slate-700 font-medium">
+                  <div className="flex items-center gap-2 text-slate-700 font-medium">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#2563EB]" />
                     <span>Instituições Públicas</span>
                   </div>
                   <span className="font-bold text-slate-900">28%</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-slate-700 font-medium">
+                  <div className="flex items-center gap-2 text-slate-700 font-medium">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#F97316]" />
                     <span>Empresas</span>
                   </div>
                   <span className="font-bold text-slate-900">20%</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-1.5 text-slate-700 font-medium">
+                  <div className="flex items-center gap-2 text-slate-700 font-medium">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#7C3AED]" />
                     <span>Academia</span>
                   </div>
@@ -1217,11 +1219,11 @@ export const VisaoGeralView: React.FC<VisaoGeralViewProps> = ({
             </div>
           </div>
 
-          <div className="pt-3 border-t border-slate-100 flex justify-end mt-4">
+          <div className="mt-auto pt-4 flex justify-end">
             <button
               type="button"
               onClick={() => onNavigateToTab('parceiros-colaboracoes')}
-              className="inline-flex items-center gap-1 text-xs font-bold text-[#5B21B6] hover:text-purple-800 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6D28D9] hover:text-[#5B21B6] transition-colors cursor-pointer"
             >
               <span>Ver todas as organizações</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -1232,92 +1234,169 @@ export const VisaoGeralView: React.FC<VisaoGeralViewProps> = ({
         {/* Card 4: Objetivos de Desenvolvimento Sustentável (ODS) */}
         <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-[0_1px_3px_rgba(0,0,0,0.03)] hover:shadow-[0_4px_12px_rgba(0,0,0,0.05)] hover:border-slate-200/80 transition-all duration-200 flex flex-col justify-between">
           <div>
-            <h2 className="text-base font-bold text-slate-900 font-['Outfit']">
+            <h2 className="text-base font-bold text-[#0D1E3A] font-['Outfit']">
               Objetivos de Desenvolvimento Sustentável
             </h2>
-            <p className="text-[11px] text-slate-500 mt-0.5 pb-2.5 border-b border-slate-100">
+            <p className="text-[11px] text-slate-500 mt-0.5">
               Áreas com maior contribuição da rede VILA
             </p>
 
-            {/* Fita de 5 Cards Quadrados Oficiais dos ODS */}
-            <div className="grid grid-cols-5 gap-1.5 mt-3">
+            {/* Grid com 3 cards em cima e 2 centralizados embaixo */}
+            <div className="grid grid-cols-6 gap-x-2.5 gap-y-3 sm:gap-x-3 sm:gap-y-3.5 mt-4">
+              {/* Linha de Cima: 3 Cards (col-span-2 cada) */}
               {/* ODS 11: Cidades Sustentáveis */}
-              <div className="flex flex-col items-center justify-between p-1.5 rounded-xl bg-[#F97316] text-white text-center aspect-square shadow-2xs">
-                <div className="w-full flex items-center justify-between text-[10px] font-bold px-0.5">
-                  <span>11</span>
-                  <Building2 className="w-3 h-3" />
+              <div className="col-span-2 flex flex-col items-center">
+                <div className="w-full aspect-square rounded-2xl bg-[#F97316] text-white p-2 sm:p-2.5 flex flex-col justify-between shadow-xs transition-transform hover:scale-105">
+                  <div className="w-full flex items-start justify-between">
+                    <span className="text-xs sm:text-sm font-black font-['Outfit'] leading-none">11</span>
+                    <span className="text-[6.5px] font-bold tracking-tight opacity-75 uppercase">ODS</span>
+                  </div>
+                  <div className="my-auto flex items-center justify-center">
+                    <svg viewBox="0 0 32 32" className="w-8 h-8 sm:w-9 sm:h-9 fill-white">
+                      <path d="M4 14h6v14H4zM12 6h8v22h-8zM22 10h6v18h-6z" opacity="0.95" />
+                      <rect x="6" y="16" width="2" height="2" fill="#F97316" />
+                      <rect x="6" y="20" width="2" height="2" fill="#F97316" />
+                      <rect x="6" y="24" width="2" height="2" fill="#F97316" />
+                      <rect x="14" y="9" width="2" height="2" fill="#F97316" />
+                      <rect x="14" y="13" width="2" height="2" fill="#F97316" />
+                      <rect x="14" y="17" width="2" height="2" fill="#F97316" />
+                      <rect x="14" y="21" width="2" height="2" fill="#F97316" />
+                      <rect x="14" y="25" width="2" height="2" fill="#F97316" />
+                      <rect x="17" y="9" width="2" height="2" fill="#F97316" />
+                      <rect x="17" y="13" width="2" height="2" fill="#F97316" />
+                      <rect x="17" y="17" width="2" height="2" fill="#F97316" />
+                      <rect x="17" y="21" width="2" height="2" fill="#F97316" />
+                      <rect x="17" y="25" width="2" height="2" fill="#F97316" />
+                      <rect x="24" y="13" width="2" height="2" fill="#F97316" />
+                      <rect x="24" y="17" width="2" height="2" fill="#F97316" />
+                      <rect x="24" y="21" width="2" height="2" fill="#F97316" />
+                      <rect x="24" y="25" width="2" height="2" fill="#F97316" />
+                    </svg>
+                  </div>
                 </div>
-                <div className="text-[7.5px] font-semibold leading-tight line-clamp-2 px-0.5">
-                  Cidades e Comunidades
-                </div>
-                <div className="text-[10px] font-bold bg-black/20 rounded px-1 w-full text-center">
-                  26%
+                <div className="mt-1.5 text-center">
+                  <div className="text-[10px] sm:text-[11px] font-medium text-slate-700 leading-tight min-h-[30px] flex items-center justify-center">
+                    Cidades e Comunidades
+                  </div>
+                  <div className="text-xs sm:text-sm font-bold text-[#0D1E3A] font-['Outfit'] mt-0.5">
+                    26%
+                  </div>
                 </div>
               </div>
 
               {/* ODS 3: Saúde e Bem-Estar */}
-              <div className="flex flex-col items-center justify-between p-1.5 rounded-xl bg-[#10B981] text-white text-center aspect-square shadow-2xs">
-                <div className="w-full flex items-center justify-between text-[10px] font-bold px-0.5">
-                  <span>3</span>
-                  <TrendingUp className="w-3 h-3" />
+              <div className="col-span-2 flex flex-col items-center">
+                <div className="w-full aspect-square rounded-2xl bg-[#10B981] text-white p-2 sm:p-2.5 flex flex-col justify-between shadow-xs transition-transform hover:scale-105">
+                  <div className="w-full flex items-start justify-between">
+                    <span className="text-xs sm:text-sm font-black font-['Outfit'] leading-none">3</span>
+                    <span className="text-[6.5px] font-bold tracking-tight opacity-75 uppercase">ODS</span>
+                  </div>
+                  <div className="my-auto flex items-center justify-center">
+                    <svg viewBox="0 0 32 32" className="w-8 h-8 sm:w-9 sm:h-9 text-white" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M2 17h6l2.5-7 4 14 3.5-10 2 5 2.5-2h3" />
+                      <path d="M25 12.5a2.5 2.5 0 0 1 4.2 1.8c0 2.2-3.2 4.7-4.2 5.5-.9-.8-4.2-3.3-4.2-5.5a2.5 2.5 0 0 1 4.2-1.8z" fill="currentColor" stroke="none" />
+                    </svg>
+                  </div>
                 </div>
-                <div className="text-[7.5px] font-semibold leading-tight line-clamp-2 px-0.5">
-                  Saúde e Bem-Estar
-                </div>
-                <div className="text-[10px] font-bold bg-black/20 rounded px-1 w-full text-center">
-                  21%
+                <div className="mt-1.5 text-center">
+                  <div className="text-[10px] sm:text-[11px] font-medium text-slate-700 leading-tight min-h-[30px] flex items-center justify-center">
+                    Saúde e Bem-Estar
+                  </div>
+                  <div className="text-xs sm:text-sm font-bold text-[#0D1E3A] font-['Outfit'] mt-0.5">
+                    21%
+                  </div>
                 </div>
               </div>
 
               {/* ODS 13: Ação Climática */}
-              <div className="flex flex-col items-center justify-between p-1.5 rounded-xl bg-[#15803D] text-white text-center aspect-square shadow-2xs">
-                <div className="w-full flex items-center justify-between text-[10px] font-bold px-0.5">
-                  <span>13</span>
-                  <Globe className="w-3 h-3" />
+              <div className="col-span-2 flex flex-col items-center">
+                <div className="w-full aspect-square rounded-2xl bg-[#15803D] text-white p-2 sm:p-2.5 flex flex-col justify-between shadow-xs transition-transform hover:scale-105">
+                  <div className="w-full flex items-start justify-between">
+                    <span className="text-xs sm:text-sm font-black font-['Outfit'] leading-none">13</span>
+                    <span className="text-[6.5px] font-bold tracking-tight opacity-75 uppercase">ODS</span>
+                  </div>
+                  <div className="my-auto flex items-center justify-center">
+                    <svg viewBox="0 0 32 32" className="w-8 h-8 sm:w-9 sm:h-9 text-white" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M2 16s5.5-8 14-8 14 8 14 8-5.5 8-14 8-14-8-14-8z" />
+                      <circle cx="16" cy="16" r="5" fill="currentColor" fillOpacity="0.25" stroke="currentColor" strokeWidth="1.8" />
+                      <ellipse cx="16" cy="16" rx="2.2" ry="5" stroke="currentColor" strokeWidth="1.2" />
+                      <line x1="11" y1="16" x2="21" y2="16" stroke="currentColor" strokeWidth="1.2" />
+                    </svg>
+                  </div>
                 </div>
-                <div className="text-[7.5px] font-semibold leading-tight line-clamp-2 px-0.5">
-                  Ação Climática
-                </div>
-                <div className="text-[10px] font-bold bg-black/20 rounded px-1 w-full text-center">
-                  18%
+                <div className="mt-1.5 text-center">
+                  <div className="text-[10px] sm:text-[11px] font-medium text-slate-700 leading-tight min-h-[30px] flex items-center justify-center">
+                    Ação Climática
+                  </div>
+                  <div className="text-xs sm:text-sm font-bold text-[#0D1E3A] font-['Outfit'] mt-0.5">
+                    18%
+                  </div>
                 </div>
               </div>
 
+              {/* Linha de Baixo: 2 Cards centralizados (col-start-2 e col-span-2) */}
               {/* ODS 4: Educação de Qualidade */}
-              <div className="flex flex-col items-center justify-between p-1.5 rounded-xl bg-[#DC2626] text-white text-center aspect-square shadow-2xs">
-                <div className="w-full flex items-center justify-between text-[10px] font-bold px-0.5">
-                  <span>4</span>
-                  <Award className="w-3 h-3" />
+              <div className="col-start-2 col-span-2 flex flex-col items-center">
+                <div className="w-full aspect-square rounded-2xl bg-[#DC2626] text-white p-2 sm:p-2.5 flex flex-col justify-between shadow-xs transition-transform hover:scale-105">
+                  <div className="w-full flex items-start justify-between">
+                    <span className="text-xs sm:text-sm font-black font-['Outfit'] leading-none">4</span>
+                    <span className="text-[6.5px] font-bold tracking-tight opacity-75 uppercase">ODS</span>
+                  </div>
+                  <div className="my-auto flex items-center justify-center">
+                    <svg viewBox="0 0 32 32" className="w-8 h-8 sm:w-9 sm:h-9 text-white" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M4 8c4-1 9 0 10 3v13c-2-1-6-2-10-1V8z" fill="currentColor" fillOpacity="0.2" />
+                      <path d="M24 8c-4-1-9 0-10 3v13c2-1 6-2 10-1V8z" fill="currentColor" fillOpacity="0.2" />
+                      <path d="M14 11c1-3 6-4 10-3v15c-4-1-8 0-10 1" />
+                      <path d="M14 11c-1-3-6-4-10-3v15c4-1 8 0 10 1" />
+                      <path d="M27 7l2 2-7 7-2-2 7-7z" fill="currentColor" stroke="none" />
+                    </svg>
+                  </div>
                 </div>
-                <div className="text-[7.5px] font-semibold leading-tight line-clamp-2 px-0.5">
-                  Educação de Qualidade
-                </div>
-                <div className="text-[10px] font-bold bg-black/20 rounded px-1 w-full text-center">
-                  15%
+                <div className="mt-1.5 text-center">
+                  <div className="text-[10px] sm:text-[11px] font-medium text-slate-700 leading-tight min-h-[30px] flex items-center justify-center">
+                    Educação de Qualidade
+                  </div>
+                  <div className="text-xs sm:text-sm font-bold text-[#0D1E3A] font-['Outfit'] mt-0.5">
+                    15%
+                  </div>
                 </div>
               </div>
 
               {/* ODS 17: Parcerias */}
-              <div className="flex flex-col items-center justify-between p-1.5 rounded-xl bg-[#1E3A8A] text-white text-center aspect-square shadow-2xs">
-                <div className="w-full flex items-center justify-between text-[10px] font-bold px-0.5">
-                  <span>17</span>
-                  <Handshake className="w-3 h-3" />
+              <div className="col-span-2 flex flex-col items-center">
+                <div className="w-full aspect-square rounded-2xl bg-[#1E3A8A] text-white p-2 sm:p-2.5 flex flex-col justify-between shadow-xs transition-transform hover:scale-105">
+                  <div className="w-full flex items-start justify-between">
+                    <span className="text-xs sm:text-sm font-black font-['Outfit'] leading-none">17</span>
+                    <span className="text-[6.5px] font-bold tracking-tight opacity-75 uppercase">ODS</span>
+                  </div>
+                  <div className="my-auto flex items-center justify-center">
+                    <svg viewBox="0 0 32 32" className="w-8 h-8 sm:w-9 sm:h-9 text-white" fill="none" stroke="currentColor" strokeWidth="1.8">
+                      <circle cx="16" cy="11" r="5.2" />
+                      <circle cx="20.3" cy="13.5" r="5.2" />
+                      <circle cx="20.3" cy="18.5" r="5.2" />
+                      <circle cx="16" cy="21" r="5.2" />
+                      <circle cx="11.7" cy="18.5" r="5.2" />
+                      <circle cx="11.7" cy="13.5" r="5.2" />
+                    </svg>
+                  </div>
                 </div>
-                <div className="text-[7.5px] font-semibold leading-tight line-clamp-2 px-0.5">
-                  Parcerias Globais
-                </div>
-                <div className="text-[10px] font-bold bg-black/20 rounded px-1 w-full text-center">
-                  10%
+                <div className="mt-1.5 text-center">
+                  <div className="text-[10px] sm:text-[11px] font-medium text-slate-700 leading-tight min-h-[30px] flex items-center justify-center">
+                    Parcerias e Meios
+                  </div>
+                  <div className="text-xs sm:text-sm font-bold text-[#0D1E3A] font-['Outfit'] mt-0.5">
+                    10%
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="pt-3 border-t border-slate-100 flex justify-end mt-4">
+          <div className="mt-auto pt-4 flex justify-end">
             <button
               type="button"
               onClick={() => onNavigateToTab('projetos-iniciativas')}
-              className="inline-flex items-center gap-1 text-xs font-bold text-[#5B21B6] hover:text-purple-800 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#6D28D9] hover:text-[#5B21B6] transition-colors cursor-pointer"
             >
               <span>Ver contribuição completa aos ODS</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -1491,10 +1570,11 @@ export const VisaoGeralView: React.FC<VisaoGeralViewProps> = ({
                 Parceiros em Destaque
               </h2>
             </div>
-            {/* Logos Vetoriais Oficiais dos Parceiros Globais */}
-            <div className="flex items-center justify-between gap-3 py-6 px-1">
+            {/* Logos Vetoriais dos Parceiros em 2 fileiras (3 em cima, 2 centralizados embaixo) para evitar cortes em telas menores */}
+            <div className="grid grid-cols-6 gap-x-3 gap-y-4 py-4 px-1 items-center">
+              {/* Linha de Cima: 3 Logos */}
               {/* UN / Nações Unidas */}
-              <div className="h-10 flex items-center justify-center opacity-85 hover:opacity-100 transition-opacity" title="Nações Unidas">
+              <div className="col-span-2 h-11 flex items-center justify-center opacity-85 hover:opacity-100 transition-opacity" title="Nações Unidas">
                 <svg viewBox="0 0 50 50" className="h-9 w-9">
                   <circle cx="25" cy="25" r="23" fill="#1E3A8A" />
                   <circle cx="25" cy="25" r="14" fill="none" stroke="#FFFFFF" strokeWidth="1.5" />
@@ -1504,7 +1584,7 @@ export const VisaoGeralView: React.FC<VisaoGeralViewProps> = ({
               </div>
 
               {/* UNESCO */}
-              <div className="h-10 flex items-center justify-center opacity-85 hover:opacity-100 transition-opacity" title="UNESCO">
+              <div className="col-span-2 h-11 flex items-center justify-center opacity-85 hover:opacity-100 transition-opacity" title="UNESCO">
                 <svg viewBox="0 0 80 40" className="h-8 w-16">
                   <path d="M10 12 L40 4 L70 12 H10 Z" fill="#0077D4" />
                   <rect x="14" y="14" width="6" height="18" fill="#0077D4" />
@@ -1517,28 +1597,29 @@ export const VisaoGeralView: React.FC<VisaoGeralViewProps> = ({
               </div>
 
               {/* ICLEI */}
-              <div className="h-10 flex items-center justify-center opacity-85 hover:opacity-100 transition-opacity" title="ICLEI">
+              <div className="col-span-2 h-11 flex items-center justify-center opacity-85 hover:opacity-100 transition-opacity" title="ICLEI">
                 <span className="font-['Outfit'] font-bold text-xl tracking-tight text-[#059669]">
                   ICLEI
                 </span>
               </div>
 
+              {/* Linha de Baixo: 2 Logos Centralizados */}
               {/* WHO / OMS */}
-              <div className="h-10 flex items-center justify-center opacity-85 hover:opacity-100 transition-opacity" title="Organização Mundial da Saúde">
-                <div className="flex items-center gap-1 text-[#0284C7]">
-                  <svg viewBox="0 0 30 30" className="w-7 h-7 fill-current">
+              <div className="col-start-2 col-span-2 h-11 flex items-center justify-center opacity-85 hover:opacity-100 transition-opacity" title="Organização Mundial da Saúde">
+                <div className="flex items-center gap-1.5 text-[#0284C7]">
+                  <svg viewBox="0 0 30 30" className="w-7 h-7 fill-current shrink-0">
                     <circle cx="15" cy="15" r="13" fill="none" stroke="currentColor" strokeWidth="2" />
                     <path d="M15 6 v18 M12 11 c3 -2 3 4 0 6 c3 2 3 8 0 6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
                   </svg>
-                  <div className="text-[8.5px] font-bold uppercase leading-tight">
+                  <div className="text-[9px] font-bold uppercase leading-tight">
                     World Health<br />Organization
                   </div>
                 </div>
               </div>
 
               {/* Google.org */}
-              <div className="h-10 flex items-center justify-center opacity-85 hover:opacity-100 transition-opacity" title="Google.org">
-                <span className="font-['Outfit'] font-bold text-base text-slate-800">
+              <div className="col-span-2 h-11 flex items-center justify-center opacity-85 hover:opacity-100 transition-opacity" title="Google.org">
+                <span className="font-['Outfit'] font-bold text-base text-slate-800 whitespace-nowrap">
                   <span className="text-[#4285F4]">G</span>
                   <span className="text-[#EA4335]">o</span>
                   <span className="text-[#FBBC05]">o</span>
