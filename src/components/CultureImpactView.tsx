@@ -306,7 +306,7 @@ export const CultureImpactView: React.FC<CultureImpactViewProps> = ({
       title: 'Património para o Futuro',
       supporters: '186K apoiadores',
       growth: '18%',
-      image: 'https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=120&auto=format&fit=crop&q=80',
+      image: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=120&auto=format&fit=crop&q=80',
     },
     {
       id: 'pop3',
@@ -314,7 +314,7 @@ export const CultureImpactView: React.FC<CultureImpactViewProps> = ({
       title: 'Música que Transforma',
       supporters: '132K apoiadores',
       growth: '16%',
-      image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=120&auto=format&fit=crop&q=80',
+      image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=120&auto=format&fit=crop&q=80',
     },
     {
       id: 'pop4',

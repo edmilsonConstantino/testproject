@@ -571,7 +571,7 @@ export const EntrepreneurshipImpactView: React.FC<EntrepreneurshipImpactViewProp
               {/* Imagem de Fundo de Empreendedora trabalhando em notebook */}
               <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=1400&auto=format&fit=crop&q=85"
+                  src="/imagens-paginas/06-impacto-global/empreendedorismo/empreendedorismo1.png"
                   alt="Empreendedora com notebook trabalhando"
                   className="w-full h-full object-cover object-right group-hover:scale-102 transition-transform duration-700 opacity-40"
                   referrerPolicy="no-referrer"

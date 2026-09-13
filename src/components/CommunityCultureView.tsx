@@ -264,31 +264,31 @@ const FEATURED_ARTICLES: FeaturedCultureArticle[] = [
     id: 'art-1',
     title: 'A importância da cultura na sociedade moderna',
     type: 'Guia',
-    image: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=200&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=200&auto=format&fit=crop&q=80',
   },
   {
     id: 'art-2',
     title: 'Como preservar o património imaterial',
     type: 'Artigo',
-    image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=200&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=200&auto=format&fit=crop&q=80',
   },
   {
     id: 'art-3',
     title: '10 livros que mudaram o mundo',
     type: 'Guia',
-    image: 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=200&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=200&auto=format&fit=crop&q=80',
   },
   {
     id: 'art-4',
     title: 'A música como linguagem universal',
     type: 'Artigo',
-    image: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=200&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=200&auto=format&fit=crop&q=80',
   },
   {
     id: 'art-5',
     title: 'Festivais culturais que você precisa conhecer',
     type: 'Guia',
-    image: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=200&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200&auto=format&fit=crop&q=80',
   },
 ];
 
@@ -680,7 +680,7 @@ export const CommunityCultureView: React.FC<CommunityCultureViewProps> = ({
               {/* Imagem de Fundo com mulher sorrindo em vestes tradicionais vibrantes */}
               <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=1400&auto=format&fit=crop&q=85"
+                  src="/imagens-paginas/05-comunidade-global/cultura/cultura1.png"
                   alt="Mulher celebrando a cultura"
                   className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-700"
                   referrerPolicy="no-referrer"

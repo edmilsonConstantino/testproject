@@ -336,7 +336,7 @@ export const EnvironmentImpactView: React.FC<EnvironmentImpactViewProps> = ({
       title: 'Proteção dos Oceanos',
       supporters: '98K apoiadores',
       growth: '16%',
-      imageUrl: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=200&auto=format&fit=crop&q=80',
+      imageUrl: 'https://images.unsplash.com/photo-1518399681705-1c1a55e5e883?w=200&auto=format&fit=crop&q=80',
     },
     {
       id: 'pop4',
@@ -516,7 +516,7 @@ export const EnvironmentImpactView: React.FC<EnvironmentImpactViewProps> = ({
               {/* Imagem de fundo com floresta/rio e gradiente conforme a referência */}
               <div className="absolute inset-0 z-0">
                 <img
-                  src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1200&auto=format&fit=crop&q=80"
+                  src="/imagens-paginas/06-impacto-global/ambiente/1ambiente.png"
                   alt="Natureza sustentável"
                   className="w-full h-full object-cover opacity-25"
                 />

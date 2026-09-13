@@ -305,7 +305,7 @@ export const HumanRightsImpactView: React.FC<HumanRightsImpactViewProps> = ({
       title: 'Acesso à Justiça',
       supporters: '98K apoiadores',
       growth: '15%',
-      avatar: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=160&auto=format&fit=crop&q=80',
+      avatar: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=160&auto=format&fit=crop&q=80',
     },
     {
       id: 'pop5',

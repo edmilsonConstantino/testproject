@@ -231,7 +231,7 @@ const FEATURED_ARTICLES: FeaturedEntrepreneurshipArticle[] = [
     id: 'art-5',
     title: 'Ferramentas essenciais para empreendedores',
     type: 'Artigo',
-    image: 'https://images.unsplash.com/photo-1531403009284-440f080d1e12?w=200&auto=format&fit=crop&q=80',
+    image: 'https://images.unsplash.com/photo-1518186285589-2f7649de83e0?w=200&auto=format&fit=crop&q=80',
   },
 ];
 
@@ -563,8 +563,8 @@ export const CommunityEntrepreneurshipView: React.FC<CommunityEntrepreneurshipVi
             >
               <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1400&auto=format&fit=crop&q=85"
-                  alt="Pessoas colaborando em um projeto"
+                  src="/imagens-paginas/05-comunidade-global/empreendedorismo/empreendedorismo1.png"
+                  alt="Empreendedora trabalhando"
                   className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-700"
                   referrerPolicy="no-referrer"
                 />

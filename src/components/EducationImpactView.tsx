@@ -299,7 +299,7 @@ export const EducationImpactView: React.FC<EducationImpactViewProps> = ({
       title: 'Educação para Todos',
       supporters: '286K apoiadores',
       growth: '24%',
-      image: 'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=120&auto=format&fit=crop&q=80',
+      image: 'https://images.unsplash.com/photo-1497486751825-1233686d5d80?w=120&auto=format&fit=crop&q=80',
     },
     {
       id: 'pop2',
@@ -307,7 +307,7 @@ export const EducationImpactView: React.FC<EducationImpactViewProps> = ({
       title: 'Alfabetização Digital',
       supporters: '198K apoiadores',
       growth: '18%',
-      image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=120&auto=format&fit=crop&q=80',
+      image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=120&auto=format&fit=crop&q=80',
     },
     {
       id: 'pop3',
@@ -315,7 +315,7 @@ export const EducationImpactView: React.FC<EducationImpactViewProps> = ({
       title: 'STEM para o Futuro',
       supporters: '142K apoiadores',
       growth: '16%',
-      image: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=120&auto=format&fit=crop&q=80',
+      image: 'https://images.unsplash.com/photo-1588072432836-e10032774350?w=120&auto=format&fit=crop&q=80',
     },
     {
       id: 'pop4',
@@ -323,7 +323,7 @@ export const EducationImpactView: React.FC<EducationImpactViewProps> = ({
       title: 'Bolsas que Transformam',
       supporters: '112K apoiadores',
       growth: '15%',
-      image: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=120&auto=format&fit=crop&q=80',
+      image: 'https://images.unsplash.com/photo-1571260899304-425eee4c7efc?w=120&auto=format&fit=crop&q=80',
     },
     {
       id: 'pop5',
@@ -331,7 +331,7 @@ export const EducationImpactView: React.FC<EducationImpactViewProps> = ({
       title: 'Escolas Sustentáveis',
       supporters: '98K apoiadores',
       growth: '12%',
-      image: 'https://images.unsplash.com/photo-1577896851231-70ef18881754?w=120&auto=format&fit=crop&q=80',
+      image: 'https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=120&auto=format&fit=crop&q=80',
     },
   ];
 

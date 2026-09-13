@@ -648,7 +648,7 @@ export const CommunityHumanRightsView: React.FC<CommunityHumanRightsViewProps> =
               {/* Imagem de Fundo com braços erguidos em união */}
               <div className="absolute inset-0 pointer-events-none overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1576267423445-b2e0074d68a4?w=1400&auto=format&fit=crop&q=85"
+                  src="/imagens-paginas/05-comunidade-global/direitos-humanos/1direitoshumanos.png"
                   alt="Pessoas unidas pelos direitos humanos"
                   className="w-full h-full object-cover object-center group-hover:scale-102 transition-transform duration-700"
                   referrerPolicy="no-referrer"

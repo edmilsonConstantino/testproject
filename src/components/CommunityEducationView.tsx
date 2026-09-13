@@ -289,7 +289,7 @@ const RECENT_EDUCATION_ACTIVITIES: RecentEducationActivity[] = [
   {
     id: 'act-5',
     user: 'Carla Souza',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80',
+    avatar: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=120&auto=format&fit=crop&q=80',
     action: 'entrou na comunidade',
     target: 'Leitura que Transforma',
     timeAgo: 'Há 5 horas',
