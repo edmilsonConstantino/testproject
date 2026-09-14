@@ -113,14 +113,14 @@
   background: #94a3b8;
 }
 
-/* Utilitário para esconder a scrollbar em carrosséis horizontais (arraste continua a funcionar) */
+/* Utilitário para ocultar barras de scroll mantendo a funcionalidade de deslizamento */
 .no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  -ms-overflow-style: none !important; /* IE e Edge */
+  scrollbar-width: none !important; /* Firefox */
 }
 
 .no-scrollbar::-webkit-scrollbar {
-  display: none;
-  width: 0;
-  height: 0;
+  display: none !important; /* Chrome, Safari e Opera */
+  width: 0 !important;
+  height: 0 !important;
 }
