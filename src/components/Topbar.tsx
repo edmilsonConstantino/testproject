@@ -199,14 +199,14 @@ export const Topbar: React.FC<TopbarProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={searchPlaceholder}
-            className="w-full bg-white border border-slate-200/80 rounded-full pl-11 pr-14 py-2.5 text-[13px] font-medium text-[#122244] placeholder:text-slate-400 shadow-[0_1px_2px_rgba(0,0,0,0.04)] focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
+            className="w-full bg-white border border-slate-200/80 rounded-lg pl-11 pr-14 py-2 text-[13px] font-medium text-[#122244] placeholder:text-slate-400 shadow-2xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all"
           />
           <kbd
             onClick={() => {
               if (onOpenSearchModal) onOpenSearchModal();
               else searchInputRef.current?.focus();
             }}
-            className="absolute right-4 text-[11px] font-bold text-slate-400 select-none cursor-pointer hover:text-slate-600 transition-colors"
+            className="absolute right-3.5 text-[11px] font-mono font-medium text-slate-400 select-none cursor-pointer hover:text-slate-600 transition-colors"
             title="Pressione ⌘K ou Ctrl+K para pesquisar"
           >
             ⌘K
@@ -240,7 +240,7 @@ export const Topbar: React.FC<TopbarProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Pesquisar no VILA..."
-              className="w-full h-10 pl-9 pr-9 rounded-full bg-slate-50 border border-slate-200 text-xs text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+              className="w-full h-10 pl-9 pr-9 rounded-lg bg-slate-50 border border-slate-200 text-xs text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
             />
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             {searchQuery && (

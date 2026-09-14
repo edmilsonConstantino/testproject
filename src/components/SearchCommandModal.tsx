@@ -70,7 +70,7 @@ export const SearchCommandModal: React.FC<SearchCommandModalProps> = ({
               <X className="w-4 h-4" />
             </button>
           )}
-          <kbd className="px-2 py-0.5 text-[10px] font-semibold text-slate-400 bg-slate-100 rounded-md">
+          <kbd className="px-2 py-0.5 text-[10px] font-mono font-medium text-slate-400 bg-slate-100 rounded-md">
             ESC
           </kbd>
         </div>
@@ -79,7 +79,7 @@ export const SearchCommandModal: React.FC<SearchCommandModalProps> = ({
         <div className="max-h-80 overflow-y-auto p-2 divide-y divide-slate-100">
           {filteredCountries.length === 0 ? (
             <div className="p-8 text-center text-slate-400 text-xs">
-              Nenhum país ou iniciativa encontrada para "{searchTerm}".
+              Nenhum resultado encontrado para "{searchTerm}".
             </div>
           ) : (
             filteredCountries.map((country) => (
@@ -89,16 +89,16 @@ export const SearchCommandModal: React.FC<SearchCommandModalProps> = ({
                   onSelectCountry(country);
                   onClose();
                 }}
-                className="p-3 rounded-xl hover:bg-blue-50/50 cursor-pointer flex items-center justify-between transition-colors group"
+                className="p-3 rounded-lg hover:bg-slate-50 cursor-pointer flex items-center justify-between transition-colors group"
               >
                 <div className="flex items-center gap-3">
                   <span className="text-xl">{country.flag}</span>
                   <div>
                     <div className="flex items-center gap-2">
-                      <p className="text-xs font-bold text-[#0F1E3D] group-hover:text-[#2563EB]">
+                      <p className="text-xs font-semibold text-[#0F1E3D] group-hover:text-[#0055FE]">
                         {country.name}
                       </p>
-                      <span className="text-[10px] text-[#94A3B8]">• {country.region}</span>
+                      <span className="text-[10px] text-slate-400">• {country.region}</span>
                     </div>
                     <p className="text-[11px] text-[#64748B] mt-0.5 line-clamp-1">
                       {country.initiatives.join(' • ')}
@@ -107,10 +107,10 @@ export const SearchCommandModal: React.FC<SearchCommandModalProps> = ({
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-[10px] font-semibold text-slate-500">
+                  <span className="text-[11px] font-mono text-slate-500">
                     {country.projectsCount} projetos
                   </span>
-                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#2563EB] group-hover:translate-x-0.5 transition-all" />
+                  <ArrowRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#0055FE] group-hover:translate-x-0.5 transition-all stroke-[2]" />
                 </div>
               </div>
             ))

@@ -603,13 +603,13 @@ export const WorldMap: React.FC<WorldMapProps> = ({
                 : 'translate(0%, -50%)',
             }}
             id="country-card-pin-tooltip"
-            className="absolute z-35 min-w-[220px] sm:min-w-[238px] bg-white rounded-[22px] p-4 sm:p-4.5 shadow-[0_16px_38px_rgba(15,30,61,0.09),0_4px_12px_rgba(15,30,61,0.03)] border-0 animate-in fade-in zoom-in-95 duration-200 select-none"
+            className="absolute z-35 min-w-[220px] sm:min-w-[238px] bg-white rounded-xl p-4 shadow-[0_12px_32px_rgba(15,30,61,0.08),0_2px_8px_rgba(15,30,61,0.04)] border border-slate-200/80 animate-in fade-in zoom-in-95 duration-200 select-none"
           >
             {/* Card Header: Code/Flag + Country Name + Status Badge */}
             <div className="relative flex items-center justify-between gap-2 pb-3">
               <div className="flex items-center gap-2 min-w-0">
                 {selectedCountry.id === 'portugal' ? (
-                  <span className="text-[13px] font-semibold text-slate-400 shrink-0">
+                  <span className="text-[12px] font-semibold text-slate-400 font-mono shrink-0">
                     PT
                   </span>
                 ) : (
@@ -618,14 +618,14 @@ export const WorldMap: React.FC<WorldMapProps> = ({
                   </span>
                 )}
 
-                <h3 className="text-[15px] font-bold text-[#0D1E3A] tracking-tight font-['Outfit'] truncate">
+                <h3 className="text-[15px] font-semibold text-[#0D1E3A] tracking-tight font-serif truncate">
                   {selectedCountry.name}
                 </h3>
               </div>
 
               <div className="flex items-center gap-1 shrink-0">
                 <span
-                  className={`text-[9.5px] font-bold px-2.5 py-0.5 rounded-lg uppercase tracking-wider ${
+                  className={`text-[9.5px] font-semibold px-2 py-0.5 rounded-md uppercase tracking-wide ${
                     selectedCountry.status === 'active'
                       ? 'bg-[#E8FAF2] text-[#10B981]'
                       : selectedCountry.status === 'with-activity'
@@ -634,49 +634,49 @@ export const WorldMap: React.FC<WorldMapProps> = ({
                   }`}
                 >
                   {selectedCountry.status === 'active'
-                    ? 'PAÍS ATIVO'
+                    ? 'Ativo'
                     : selectedCountry.status === 'with-activity'
-                    ? 'COM ATIVIDADE'
-                    : 'INATIVO'}
+                    ? 'Com Atividade'
+                    : 'Inativo'}
                 </span>
               </div>
             </div>
 
-            {/* Stats List */}
+            {/* Stats List - IBM Plex Mono for technical metrics */}
             <div className="relative space-y-2 text-[12.5px]">
               <div className="flex items-center justify-between">
                 <span className="font-normal text-slate-500">Projetos ativos</span>
-                <span className="font-bold text-[#0D1E3A] text-[13px] tracking-tight font-['Outfit']">
+                <span className="font-semibold text-[#0D1E3A] text-[13px] font-mono tracking-tight">
                   {selectedCountry.projectsCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="font-normal text-slate-500">Comunidades</span>
-                <span className="font-bold text-[#0D1E3A] text-[13px] tracking-tight font-['Outfit']">
+                <span className="font-semibold text-[#0D1E3A] text-[13px] font-mono tracking-tight">
                   {selectedCountry.communitiesCount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
                 </span>
               </div>
             </div>
 
             {/* Explore Action Button */}
-            <div className="relative pt-3">
+            <div className="relative pt-3 border-t border-slate-100 mt-2.5">
               <button
                 type="button"
                 onClick={() => onExploreCountry(selectedCountry)}
-                className="inline-flex items-center gap-1.5 text-[12.5px] font-bold text-[#0055FE] hover:text-[#0042CC] transition-colors py-0.5 group/btn cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-[#0055FE] hover:text-[#0042CC] transition-colors group/btn cursor-pointer"
               >
-                <span>Explorar {selectedCountry.name}</span>
-                <ArrowRight className="w-3.5 h-3.5 transform group-hover/btn:translate-x-1 transition-transform stroke-[2.2]" />
+                <span>Explorar país</span>
+                <ArrowRight className="w-3.5 h-3.5 transform group-hover/btn:translate-x-1 transition-transform stroke-[2]" />
               </button>
             </div>
           </div>
         )}
       </div>
 
-      {/* 2. Floating Map Controls (Zoom +/-) */}
+      {/* 2. Floating Map Controls (Zoom +/-) - 8px radius */}
       <div
         id="map-floating-controls"
-        className={`absolute z-25 flex flex-col items-center bg-white rounded-xl p-1 shadow-[0_6px_20px_rgba(15,30,61,0.08),0_2px_6px_rgba(15,30,61,0.04)] border-0 space-y-0.5 select-none ${
+        className={`absolute z-25 flex flex-col items-center bg-white rounded-lg p-0.5 shadow-[0_4px_16px_rgba(15,30,61,0.06)] border border-slate-200/80 space-y-0.5 select-none ${
           controlsPosition === 'top-right'
             ? 'right-4 sm:right-6 top-4 sm:top-6'
             : controlsPosition === 'lateral-right'

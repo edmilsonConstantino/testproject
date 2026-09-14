@@ -20,8 +20,8 @@ export const MapHeroSection: React.FC<MapHeroSectionProps> = ({
 }) => {
   return (
     <section id="map-hero-section" className="relative flex flex-col">
-      {/* Hero World Canvas Container with content inside */}
-      <div className="relative rounded-[24px] sm:rounded-[28px] overflow-hidden min-h-[460px] sm:min-h-[500px] lg:min-h-[520px] shadow-xs bg-[#F8FAFD] border border-slate-200/60">
+      {/* Hero World Canvas Container with content inside - 16px radius, unified background */}
+      <div className="relative rounded-2xl overflow-hidden min-h-[460px] sm:min-h-[500px] lg:min-h-[520px] shadow-xs bg-[#F8FAFD] border border-slate-200/70">
         {/* Real World Vector Map Component with Natural Earth Projection */}
         <WorldMap
           selectedCountry={selectedCountry}
@@ -36,112 +36,92 @@ export const MapHeroSection: React.FC<MapHeroSectionProps> = ({
           id="hero-intro-overlay"
           className="lg:absolute lg:left-8 xl:left-10 lg:top-8 xl:top-10 lg:max-w-[480px] z-25 p-5 sm:p-6 lg:p-0 pointer-events-auto select-none"
         >
-          {/* Main Headline with exact 4-line layout and typographic weights */}
-          <h1 className="text-3xl sm:text-4xl lg:text-[40px] xl:text-[44px] font-extrabold text-[#0F172A] tracking-[-0.03em] font-['Outfit'] leading-[1.14]">
+          {/* Main Headline with Fraunces serif typography */}
+          <h1 className="text-3xl sm:text-4xl lg:text-[40px] xl:text-[43px] font-semibold text-[#0F172A] tracking-[-0.02em] font-serif leading-[1.12]">
             Conectando pessoas, <br />
             comunidades e <br />
             oportunidades em <br />
-            <span className="text-[#1E4FD6] font-extrabold">todos os continentes.</span>
+            <span className="text-[#1E4FD6] font-bold italic">todos os continentes.</span>
           </h1>
 
-          {/* Subtitle with exact line-wrap and clean typography */}
+          {/* Subtitle with clean Public Sans typography */}
           <p className="mt-3.5 text-sm sm:text-[15px] text-[#64748B] leading-[1.55] max-w-[430px] font-normal">
-            Descubra comunidades, projetos e iniciativas que fazem a diferença em Portugal e no mundo.
+            Descubra comunidades, projetos e iniciativas em Portugal e no mundo.
           </p>
 
-          {/* Call to Actions */}
-          <div className="mt-5 sm:mt-6 flex flex-wrap items-center gap-3.5 sm:gap-4">
-            {/* Primary Brand Solid Pill CTA */}
+          {/* Call to Actions - 8px radius, no unnecessary pill glassmorphism */}
+          <div className="mt-5 sm:mt-6 flex flex-wrap items-center gap-3 sm:gap-3.5">
+            {/* Primary Brand CTA */}
             <button
               id="hero-cta-explore-world"
               onClick={onExploreWorld}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#0055FE] hover:bg-[#1E4FD6] active:bg-[#0040CC] text-white font-semibold text-[14px] shadow-sm hover:shadow transition-all cursor-pointer"
+              className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-[#0055FE] hover:bg-[#1E4FD6] active:bg-[#0040CC] text-white font-medium text-[13.5px] shadow-xs hover:shadow transition-all cursor-pointer"
             >
               <span>Explorar o Mundo</span>
-              <ArrowRight className="w-4 h-4 stroke-[2.2]" />
+              <ArrowRight className="w-4 h-4 stroke-[2]" />
             </button>
 
-            {/* Secondary Video Action - Pill with outline, soft translucent bg, and play icon in circle */}
+            {/* Secondary Video Action - Clean border and 8px radius */}
             <button
               id="hero-cta-watch-video"
               onClick={onWatchTour}
-              className="inline-flex items-center justify-center gap-2.5 px-5 py-3 rounded-full bg-white/85 hover:bg-white border border-slate-200/90 hover:border-slate-300 text-[14px] font-semibold text-[#0F172A] shadow-xs hover:shadow transition-all cursor-pointer group backdrop-blur-xs"
+              className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-white hover:bg-slate-50 border border-slate-200 text-[13.5px] font-medium text-[#0F172A] shadow-2xs hover:shadow-xs transition-all cursor-pointer group"
             >
-              <div className="w-5 h-5 rounded-full bg-[#0F172A]/5 group-hover:bg-[#1E4FD6]/10 flex items-center justify-center transition-colors shrink-0">
-                <Play className="w-2.5 h-2.5 text-[#0F172A] group-hover:text-[#1E4FD6] fill-current ml-0.5 transition-colors" />
+              <div className="w-4 h-4 rounded-full bg-slate-100 group-hover:bg-[#1E4FD6]/10 flex items-center justify-center transition-colors shrink-0">
+                <Play className="w-2 h-2 text-[#0F172A] group-hover:text-[#1E4FD6] fill-current ml-0.5 transition-colors" />
               </div>
               <span>Ver como funciona (2:14)</span>
             </button>
           </div>
         </div>
 
-        {/* Floating Bottom Global Metrics & Map Legend Capsule Cards (Positioned over the bottom of the map canvas) */}
+        {/* Floating Bottom Global Metrics & Map Legend - Non-repetitive editorial stats without decorative colorful squares */}
         <div
           id="global-metrics-floating-banner"
           className="p-3 lg:p-0 lg:absolute lg:bottom-4 lg:left-6 lg:right-6 z-25 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 pointer-events-auto select-none"
         >
-          {/* Left Card: 4 Primary Stats in White Pill Container */}
-          <div className="bg-white rounded-[22px] px-5 sm:px-6 py-3 shadow-[0_6px_22px_rgba(15,30,61,0.08),0_2px_6px_rgba(0,0,0,0.03)] border-0">
+          {/* Left Card: 4 Primary Stats - Clean numerical data with IBM Plex Mono and subtle dividers */}
+          <div className="bg-white rounded-xl px-5 sm:px-6 py-3 shadow-[0_4px_16px_rgba(15,30,61,0.06)] border border-slate-200/80">
             <div className="flex flex-wrap sm:flex-nowrap items-center gap-4 sm:gap-6 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
-              {/* 1. Países ativos (Globo - Azul) */}
-              <div className="flex items-center gap-2.5 pt-1 sm:pt-0">
-                <div className="w-8 h-8 rounded-xl bg-blue-50 text-[#0055FE] flex items-center justify-center shrink-0">
-                  <Globe className="w-4 h-4 stroke-[2.2]" />
-                </div>
-                <div>
-                  <p className="text-[15px] font-black text-[#0D1E3A] leading-tight font-['Outfit']">128</p>
-                  <p className="text-[10px] font-medium text-[#64748B] whitespace-nowrap">Países ativos</p>
-                </div>
+              {/* 1. Países ativos */}
+              <div className="pt-1 sm:pt-0">
+                <p className="text-[17px] font-bold text-[#0D1E3A] leading-none font-mono tracking-tight">128</p>
+                <p className="text-[11px] font-medium text-[#64748B] mt-1 whitespace-nowrap">Países ativos</p>
               </div>
 
-              {/* 2. Cidadãos (Pessoas - Roxo) */}
-              <div className="flex items-center gap-2.5 pt-1 sm:pt-0 sm:pl-6">
-                <div className="w-8 h-8 rounded-xl bg-purple-50 text-[#8B5CF6] flex items-center justify-center shrink-0">
-                  <Users className="w-4 h-4 stroke-[2.2]" />
-                </div>
-                <div>
-                  <p className="text-[15px] font-black text-[#0D1E3A] leading-tight font-['Outfit']">7.842.521</p>
-                  <p className="text-[10px] font-medium text-[#64748B] whitespace-nowrap">Cidadãos</p>
-                </div>
+              {/* 2. Cidadãos */}
+              <div className="pt-1 sm:pt-0 sm:pl-6">
+                <p className="text-[17px] font-bold text-[#0D1E3A] leading-none font-mono tracking-tight">7.842.521</p>
+                <p className="text-[11px] font-medium text-[#64748B] mt-1 whitespace-nowrap">Cidadãos</p>
               </div>
 
-              {/* 3. Projetos ativos (Usuários/Grupo - Laranja) */}
-              <div className="flex items-center gap-2.5 pt-1 sm:pt-0 sm:pl-6">
-                <div className="w-8 h-8 rounded-xl bg-orange-50 text-[#F97316] flex items-center justify-center shrink-0">
-                  <FolderKanban className="w-4 h-4 stroke-[2.2]" />
-                </div>
-                <div>
-                  <p className="text-[15px] font-black text-[#0D1E3A] leading-tight font-['Outfit']">24.651</p>
-                  <p className="text-[10px] font-medium text-[#64748B] whitespace-nowrap">Projetos ativos</p>
-                </div>
+              {/* 3. Projetos ativos */}
+              <div className="pt-1 sm:pt-0 sm:pl-6">
+                <p className="text-[17px] font-bold text-[#0D1E3A] leading-none font-mono tracking-tight">24.651</p>
+                <p className="text-[11px] font-medium text-[#64748B] mt-1 whitespace-nowrap">Projetos ativos</p>
               </div>
 
-              {/* 4. Parceiros globais (Coração - Vermelho/Rosa) */}
-              <div className="flex items-center gap-2.5 pt-1 sm:pt-0 sm:pl-6">
-                <div className="w-8 h-8 rounded-xl bg-rose-50 text-[#F43F5E] flex items-center justify-center shrink-0">
-                  <HeartHandshake className="w-4 h-4 stroke-[2.2]" />
-                </div>
-                <div>
-                  <p className="text-[15px] font-black text-[#0D1E3A] leading-tight font-['Outfit']">3.412</p>
-                  <p className="text-[10px] font-medium text-[#64748B] whitespace-nowrap">Parceiros globais</p>
-                </div>
+              {/* 4. Parceiros globais */}
+              <div className="pt-1 sm:pt-0 sm:pl-6">
+                <p className="text-[17px] font-bold text-[#0D1E3A] leading-none font-mono tracking-tight">3.412</p>
+                <p className="text-[11px] font-medium text-[#64748B] mt-1 whitespace-nowrap">Parceiros globais</p>
               </div>
             </div>
           </div>
 
-          {/* Right Card: Map Legend Pill Container matching screenshot */}
-          <div className="bg-white rounded-full px-6 py-3 shadow-[0_6px_22px_rgba(15,30,61,0.08),0_2px_6px_rgba(0,0,0,0.03)] border-0 flex items-center justify-center sm:justify-start gap-4 sm:gap-5 shrink-0">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] shrink-0" />
-              <span className="text-[#0D1E3A] font-bold text-[12px] whitespace-nowrap font-['Outfit']">País Ativo</span>
+          {/* Right Card: Map Legend - 12px container with semantic color dots */}
+          <div className="bg-white rounded-xl px-4 sm:px-5 py-2.5 shadow-[0_4px_16px_rgba(15,30,61,0.06)] border border-slate-200/80 flex items-center justify-center sm:justify-start gap-3.5 sm:gap-4 shrink-0">
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-[#10B981] shrink-0" />
+              <span className="text-[#0D1E3A] font-semibold text-[11.5px] whitespace-nowrap">País Ativo</span>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#0055FE] shrink-0" />
-              <span className="text-[#0D1E3A] font-bold text-[12px] whitespace-nowrap font-['Outfit']">País com Atividade</span>
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-[#0055FE] shrink-0" />
+              <span className="text-[#0D1E3A] font-semibold text-[11.5px] whitespace-nowrap">Com Atividade</span>
             </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[#94A3B8] shrink-0" />
-              <span className="text-[#0D1E3A] font-bold text-[12px] whitespace-nowrap font-['Outfit']">País Inativo</span>
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-[#94A3B8] shrink-0" />
+              <span className="text-[#0D1E3A] font-semibold text-[11.5px] whitespace-nowrap">Inativo</span>
             </div>
           </div>
         </div>

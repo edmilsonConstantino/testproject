@@ -648,7 +648,7 @@ export default function App() {
             {/* Back to Home Breadcrumb */}
             <div className="flex items-center justify-between pb-2 border-b border-slate-200">
               <div>
-                <h1 className="text-2xl font-extrabold text-[#0F1E3D] font-['Outfit'] capitalize">
+                <h1 className="text-2xl font-semibold text-[#0F1E3D] font-serif capitalize">
                   {currentTab === 'comunidade' && 'Comunidade Global'}
                   {currentTab === 'indicadores' && 'Indicadores Globais'}
                   {currentTab === 'ia' && 'VILA AI'}
@@ -675,7 +675,7 @@ export default function App() {
                 <div className="w-16 h-16 rounded-full bg-gradient-to-tr from-[#2563EB] to-[#10B981] mx-auto flex items-center justify-center shadow-lg shadow-blue-500/20 text-white">
                   <Sparkles className="w-8 h-8" />
                 </div>
-                <h2 className="text-2xl font-extrabold text-[#0F1E3D] font-['Outfit']">
+                <h2 className="text-2xl font-semibold text-[#0F1E3D] font-serif">
                   VILA AI Assistant
                 </h2>
                 <p className="text-xs sm:text-sm text-[#64748B]">

@@ -239,7 +239,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
                 {item.badge && (
                   <span
-                    className={`ml-1 px-1.5 py-0.5 rounded-full text-[8.5px] font-extrabold tracking-wider uppercase shrink-0 transition-colors ${
+                    className={`ml-1 px-1.5 py-0.5 rounded-md text-[8.5px] font-bold tracking-wider uppercase shrink-0 transition-colors ${
                       isActive
                         ? 'bg-white/25 text-white'
                         : 'bg-[#D1FAE5] text-[#047857] border border-[#A7F3D0]'
