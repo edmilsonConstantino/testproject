@@ -563,14 +563,14 @@ export const ExploreWorldView: React.FC<ExploreWorldViewProps> = ({
           {/* - Legenda flutuante centralizada na parte inferior        */}
           {/* --------------------------------------------------------- */}
           {viewMode === 'map' ? (
-            <div className="relative w-full rounded-[24px] sm:rounded-[28px] bg-gradient-to-b from-[#E7F1FD] via-[#EEF6FE] to-[#DFECFB] border border-slate-200/60 shadow-xs overflow-hidden">
+            <div className="relative w-full rounded-[24px] sm:rounded-[28px] bg-[#F8FAFD] border border-slate-200/60 shadow-xs overflow-hidden">
               <WorldMap
                 selectedCountry={selectedCountry}
                 onSelectCountry={handleCountryClick}
                 onExploreCountry={onExploreCountry}
                 className="h-[500px] sm:h-[540px] lg:h-[560px]"
                 showLegend={false}
-                controlsPosition="bottom-left-stacked"
+                controlsPosition="top-right"
               />
 
               {/* 1. BOTÃO FLUTUANTE "VER POR REGIÕES" (Canto Superior Esquerdo) */}

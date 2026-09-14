@@ -12,7 +12,8 @@ interface WorldMapProps {
   onExploreCountry: (country: CountryData) => void;
   className?: string;
   showLegend?: boolean;
-  controlsPosition?: 'bottom-left' | 'bottom-right' | 'lateral-right' | 'bottom-left-stacked';
+  controlsPosition?: 'bottom-left' | 'bottom-right' | 'lateral-right' | 'bottom-left-stacked' | 'top-right';
+  initialZoom?: number;
 }
 
 // Geographic coordinates for accurate pins and projection matching the global map
@@ -249,8 +250,9 @@ export const WorldMap: React.FC<WorldMapProps> = ({
   className = '',
   showLegend = true,
   controlsPosition = 'bottom-left',
+  initialZoom = 0.85,
 }) => {
-  const [zoomLevel, setZoomLevel] = useState(1);
+  const [zoomLevel, setZoomLevel] = useState(initialZoom);
   const [is3DMode, setIs3DMode] = useState(false);
   const [isPopupDismissed, setIsPopupDismissed] = useState(false);
 
@@ -259,10 +261,10 @@ export const WorldMap: React.FC<WorldMapProps> = ({
     setIsPopupDismissed(false);
   }, [selectedCountry.id]);
 
-  const handleZoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.2, 1.8));
-  const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.2, 0.85));
+  const handleZoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.15, 1.8));
+  const handleZoomOut = () => setZoomLevel((prev) => Math.max(prev - 0.15, 0.7));
   const handleReset = () => {
-    setZoomLevel(1);
+    setZoomLevel(initialZoom);
     setIs3DMode(false);
   };
   const toggle3D = () => setIs3DMode((prev) => !prev);
@@ -377,7 +379,7 @@ export const WorldMap: React.FC<WorldMapProps> = ({
   return (
     <div
       id="interactive-world-map-wrapper"
-      className={`relative w-full h-[460px] sm:h-[500px] lg:h-[520px] select-none bg-transparent overflow-hidden ${className}`}
+      className={`relative w-full h-[460px] sm:h-[500px] lg:h-[520px] select-none rounded-[24px] sm:rounded-[28px] bg-[#F8FAFD] overflow-hidden ${className}`}
       style={{
         perspective: is3DMode ? '1200px' : 'none',
       }}
@@ -386,22 +388,22 @@ export const WorldMap: React.FC<WorldMapProps> = ({
       {showLegend && (
         <div
           id="world-map-fixed-legend"
-          className="absolute bottom-3.5 right-3.5 sm:bottom-4 sm:right-4 z-25 bg-white/95 backdrop-blur-md rounded-full px-5 py-2.5 sm:py-3 border border-slate-100/90 shadow-[0_4px_16px_rgba(15,30,61,0.08),0_2px_6px_rgba(0,0,0,0.04)] flex items-center gap-3.5 sm:gap-5 select-none animate-in fade-in duration-200"
+          className="absolute bottom-3.5 right-3.5 sm:bottom-4 sm:right-4 z-25 bg-white rounded-full px-5 py-2.5 sm:py-3 shadow-[0_4px_16px_rgba(15,30,61,0.08),0_2px_6px_rgba(0,0,0,0.04)] flex items-center gap-3.5 sm:gap-5 select-none animate-in fade-in duration-200"
         >
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] ring-2 ring-emerald-200 shrink-0" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#10B981] shrink-0" />
             <span className="text-[#0D1E3A] font-bold text-xs sm:text-[12px] whitespace-nowrap font-['Outfit']">
               País Ativo
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#1264FF] ring-2 ring-blue-200 shrink-0" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#0055FE] shrink-0" />
             <span className="text-[#0D1E3A] font-bold text-xs sm:text-[12px] whitespace-nowrap font-['Outfit']">
               País com Atividade
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#94A3B8] ring-2 ring-slate-200 shrink-0" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#94A3B8] shrink-0" />
             <span className="text-[#0D1E3A] font-bold text-xs sm:text-[12px] whitespace-nowrap font-['Outfit']">
               País Inativo
             </span>
@@ -424,34 +426,36 @@ export const WorldMap: React.FC<WorldMapProps> = ({
           preserveAspectRatio="xMidYMid slice"
         >
           <defs>
-            {/* Continent Gradient (Clean White to Light Embossed Soft Gray-Blue) */}
-            <linearGradient id="geoContinentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#FFFFFF" />
-              <stop offset="60%" stopColor="#F8FAFD" />
-              <stop offset="100%" stopColor="#EDF3FB" />
+            {/* Ocean Gradient (Branco-azulado muito claro #F4F7FC a #FFFFFF) */}
+            <linearGradient id="geoOceanGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stopColor="#F8FAFD" />
+              <stop offset="100%" stopColor="#EEF4FB" />
             </linearGradient>
 
-            {/* Elevation Drop Shadow for Natural Continents */}
-            <filter id="geoElevationShadow" x="-15%" y="-15%" width="130%" height="130%">
-              <feDropShadow dx="0" dy="12" stdDeviation="14" floodColor="#0F1E3D" floodOpacity="0.06" />
-              <feDropShadow dx="0" dy="3" stdDeviation="4" floodColor="#0F1E3D" floodOpacity="0.03" />
-            </filter>
+            {/* Continent Gradient (Azul-acinzentado muito claro #DCE4F0 a #E4E9F5 - uniforme e sutil) */}
+            <linearGradient id="geoContinentGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#DFE6F2" />
+              <stop offset="100%" stopColor="#DCE4F0" />
+            </linearGradient>
 
             {/* Radiant Aura Gradient - soft mint glow */}
             <radialGradient id="activeAuraGrad" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#10B981" stopOpacity="0.2" />
-              <stop offset="55%" stopColor="#10B981" stopOpacity="0.08" />
+              <stop offset="0%" stopColor="#10B981" stopOpacity="0.22" />
+              <stop offset="50%" stopColor="#10B981" stopOpacity="0.08" />
               <stop offset="100%" stopColor="#10B981" stopOpacity="0" />
             </radialGradient>
           </defs>
 
-          {/* High-Precision Continents Base Layer with Multi-Layer Shadow */}
-          <g id="geo-landmass" filter="url(#geoElevationShadow)">
+          {/* Ocean Base Layer in SVG Vector Space - Uniform #F8FAFD matching container with zero division */}
+          <rect x="-2000" y="-2000" width="6000" height="5000" fill="#F8FAFD" />
+
+          {/* High-Precision Continents Base Layer cleanly flush against the ocean */}
+          <g id="geo-landmass">
             <path
               d={landPath}
               fill="url(#geoContinentGrad)"
-              stroke="#DDE6F4"
-              strokeWidth="0.75"
+              stroke="#C8D2E4"
+              strokeWidth="0.55"
             />
           </g>
 
@@ -460,8 +464,8 @@ export const WorldMap: React.FC<WorldMapProps> = ({
             <path
               d={bordersPath}
               fill="none"
-              stroke="#E2EBF7"
-              strokeWidth="0.5"
+              stroke="#C8D2E4"
+              strokeWidth="0.45"
               strokeLinejoin="round"
             />
           </g>
@@ -472,7 +476,7 @@ export const WorldMap: React.FC<WorldMapProps> = ({
             <circle
               cx={activePinPos.x}
               cy={activePinPos.y}
-              r="68"
+              r="76"
               fill="url(#activeAuraGrad)"
             />
             {/* Inner Ring */}
@@ -482,18 +486,18 @@ export const WorldMap: React.FC<WorldMapProps> = ({
               r="28"
               fill="none"
               stroke="#10B981"
-              strokeWidth="1.1"
-              opacity="0.45"
+              strokeWidth="0.9"
+              opacity="0.4"
             />
             {/* Middle Ring */}
             <circle
               cx={activePinPos.x}
               cy={activePinPos.y}
-              r="48"
+              r="50"
               fill="none"
               stroke="#10B981"
-              strokeWidth="0.95"
-              opacity="0.3"
+              strokeWidth="0.8"
+              opacity="0.25"
             />
             {/* Outer Ring */}
             <circle
@@ -502,8 +506,8 @@ export const WorldMap: React.FC<WorldMapProps> = ({
               r="74"
               fill="none"
               stroke="#10B981"
-              strokeWidth="0.8"
-              opacity="0.18"
+              strokeWidth="0.7"
+              opacity="0.15"
             />
           </g>
         </svg>
@@ -669,16 +673,18 @@ export const WorldMap: React.FC<WorldMapProps> = ({
         )}
       </div>
 
-      {/* 2. Floating Map Controls (Zoom +/-, Localization - 3 icons total) */}
+      {/* 2. Floating Map Controls (Zoom +/-) */}
       <div
         id="map-floating-controls"
-        className={`absolute z-25 flex flex-col items-center bg-white rounded-2xl p-1 shadow-[0_8px_24px_rgba(15,30,61,0.08),0_2px_6px_rgba(15,30,61,0.03)] border-0 space-y-0.5 select-none ${
-          controlsPosition === 'lateral-right'
+        className={`absolute z-25 flex flex-col items-center bg-white rounded-xl p-1 shadow-[0_6px_20px_rgba(15,30,61,0.08),0_2px_6px_rgba(15,30,61,0.04)] border-0 space-y-0.5 select-none ${
+          controlsPosition === 'top-right'
+            ? 'right-4 sm:right-6 top-4 sm:top-6'
+            : controlsPosition === 'lateral-right'
             ? 'right-4 sm:right-5 top-1/2 -translate-y-1/2'
             : controlsPosition === 'bottom-right'
             ? 'right-4 sm:right-5 bottom-4 sm:bottom-5'
             : controlsPosition === 'bottom-left-stacked'
-            ? 'left-4 sm:left-5 bottom-[68px] sm:bottom-[76px]'
+            ? 'left-4 sm:left-6 bottom-[82px] sm:bottom-[88px]'
             : 'left-4 sm:left-5 bottom-4 sm:bottom-5'
         }`}
       >
@@ -686,27 +692,20 @@ export const WorldMap: React.FC<WorldMapProps> = ({
           onClick={handleZoomIn}
           title="Aumentar Zoom (+)"
           type="button"
-          className="w-8.5 h-8.5 flex items-center justify-center rounded-xl text-[#0D1E3A] hover:bg-slate-50 hover:text-[#0055FE] transition-colors cursor-pointer"
+          className="w-8 h-8 flex items-center justify-center rounded-lg text-[#0D1E3A] hover:bg-slate-50 hover:text-[#0055FE] transition-colors cursor-pointer"
         >
           <Plus className="w-4 h-4 stroke-[2.2]" />
         </button>
+
+        <div className="w-5 h-[1px] bg-slate-100" />
 
         <button
           onClick={handleZoomOut}
           title="Diminuir Zoom (-)"
           type="button"
-          className="w-8.5 h-8.5 flex items-center justify-center rounded-xl text-[#0D1E3A] hover:bg-slate-50 hover:text-[#0055FE] transition-colors cursor-pointer"
+          className="w-8 h-8 flex items-center justify-center rounded-lg text-[#0D1E3A] hover:bg-slate-50 hover:text-[#0055FE] transition-colors cursor-pointer"
         >
           <Minus className="w-4 h-4 stroke-[2.2]" />
-        </button>
-
-        <button
-          onClick={handleReset}
-          title="Localização / Redefinir Visão"
-          type="button"
-          className="w-8.5 h-8.5 flex items-center justify-center rounded-xl text-[#0D1E3A] hover:bg-slate-50 hover:text-[#0055FE] transition-colors cursor-pointer"
-        >
-          <Crosshair className="w-4 h-4 stroke-[2.2]" />
         </button>
       </div>
     </div>
